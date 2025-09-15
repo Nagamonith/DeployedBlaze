@@ -1,0 +1,156 @@
+<app-alert
+  [type]="alertType()"
+  [message]="alertMessage()"
+  [show]="showAlert()"
+  [isConfirm]="isConfirmAlert()"
+  (onConfirm)="handleConfirmDelete()"
+  (onCancel)="handleCancelDelete()">
+</app-alert>
+
+<div class="test-run-container">
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoadingRuns() || isLoadingSuites()" class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <span>Loading...</span>
+  </div>
+
+  <!-- Main List View -->
+  <div *ngIf="mode() === 'list' && !isLoadingRuns()" class="list-view">
+    <h2 class="text-center">Test Runs Management</h2>
+
+    <div class="action-buttons">
+      <button class="btn-primary" (click)="startAddNewRun()" [disabled]="isLoadingSuites()">
+       <span [innerHTML]="icons.Add"></span> Add  Test Run
+      </button>
+    </div>
+
+    <div *ngIf="testRuns().length > 0" class="runs-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <!-- <th>Status</th> -->
+            <th>Test Suites</th>
+            <th>Last Updated</th>
+            <!-- <th>Created By</th> -->
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let run of testRuns()">
+            <td>{{ run.name }}</td>
+            <td>{{ run.description || '-' }}</td>
+            <!-- <td>{{ run.status }}</td> -->
+           <td>{{ run.testSuites?.length || 0 }}</td>
+            <td>{{ formatDate(run.updatedAt) }}</td>
+            <!-- <td>{{ run.createdBy || '-' }}</td> -->
+            <td class="actions">
+              <button class="btn-edit" 
+                      (click)="startEditRun(run.id)"
+                      [disabled]="isLoadingSuites()">
+               <span [innerHTML]="icons.Edit">Edit</span>
+              </button>
+              <button class="btn-delete" 
+                      (click)="confirmDeleteRun(run.id)"
+                      [disabled]="isLoadingSuites()">
+               <span [innerHTML]="icons.Delete">Delete</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="testRuns().length === 0 && !isLoadingRuns()" class="no-runs">
+      No test runs found. Create your first test run!
+    </div>
+  </div>
+
+  <!-- Add/Edit View -->
+  <div *ngIf="mode() !== 'list' && !isLoadingRuns()" class="edit-view">
+    <h2 class="text-center">{{ mode() === 'add' ? 'Add New' : 'Edit' }} Test Run</h2>
+
+    <div class="form-group">
+      <label>Test Run Name *</label>
+      <input type="text" 
+             [(ngModel)]="runName" 
+             placeholder="Enter run name" 
+             [disabled]="isSaving()">
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea [(ngModel)]="runDescription" 
+                placeholder="Enter description"
+                [disabled]="isSaving()"></textarea>
+    </div>
+
+    <!-- Test Suite Selection -->
+    <div *ngIf="testSuites().length > 0" class="available-test-suites">
+      <h4>Select Test Suites *</h4>
+      
+      <div class="search-box">
+        <input type="text" 
+               [(ngModel)]="suiteSearchTerm" 
+               placeholder="Search test suites..." 
+               (input)="filterTestSuites()"
+               [disabled]="isSaving()">
+      </div>
+
+      <div *ngIf="filteredTestSuites().length > 0; else noMatchingSuites" class="suites-list-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 30px;">Select</th>
+              <th>Suite Name</th>
+              <th>Description</th>
+              <th>Test Cases</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let suite of filteredTestSuites()">
+              <td>
+                <input type="checkbox"
+                       [checked]="isSuiteSelected(suite.id)"
+                       (change)="handleCheckboxChange(suite.id, $event)"
+                       [disabled]="isSaving()">
+              </td>
+              <td>{{ suite.name }}</td>
+              <td>{{ suite.description || '-' }}</td>
+             <td>{{ suite.testCases?.length || 0 }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #noMatchingSuites>
+        <div class="no-matching-suites">
+          No test suites match your search criteria.
+        </div>
+      </ng-template>
+    </div>
+
+    <div *ngIf="testSuites().length === 0 && !isLoadingSuites()" class="no-suites">
+      No test suites available. Please create test suites first.
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button class="btn-save" 
+              (click)="saveTestRun()" 
+              [disabled]="isSaving() || selectedSuiteIds().length === 0">
+        <span *ngIf="!isSaving()">{{ mode() === 'add' ? 'Create' : 'Update' }} Test Run</span>
+        <span *ngIf="isSaving()">
+          <mat-spinner diameter="20"></mat-spinner>
+          Processing...
+        </span>
+      </button>
+      <button class="btn-cancel" 
+              (click)="cancelEdit()" 
+              [disabled]="isSaving()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

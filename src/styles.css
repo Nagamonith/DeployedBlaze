@@ -1,0 +1,56 @@
+
+/* Mobile devices (up to 600px) */
+@media (max-width: 600px) {
+  .card {
+    min-width: 100% !important;
+    max-width: 100% !important;
+    margin: 0.5rem 0;
+  }
+  .navbar-brand span {
+    font-size: 1.1rem;
+  }
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+  .container-fluid {
+    padding: 0 0.5rem;
+  }
+}
+
+/* Tablet devices (601px to 900px) */
+@media (min-width: 601px) and (max-width: 900px) {
+  .card {
+    min-width: 80% !important;
+    max-width: 80% !important;
+    margin: 1rem auto;
+  }
+  .navbar-brand span {
+    font-size: 1.2rem;
+  }
+  .navbar {
+    padding: 0.75rem 2rem;
+  }
+  .container-fluid {
+    padding: 0 2rem;
+  }
+}
+
+/* Desktop (above 900px) */
+@media (min-width: 901px) {
+  .card {
+    min-width: 350px;
+    max-width: 500px;
+    margin: 1.5rem auto;
+  }
+  .navbar-brand span {
+    font-size: 1.5rem;
+  }
+  .navbar {
+    padding: 1rem 3rem;
+  }
+  .container-fluid {
+    padding: 0 3rem;
+  }
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

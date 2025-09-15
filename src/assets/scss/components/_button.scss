@@ -1,0 +1,43 @@
+@use '../base/variables' as *;
+
+button {
+    border-radius: 6px;
+    height: 36px;
+    padding: 0px 15px;
+    border: solid 1px transparent;
+    font-size: 14px;
+
+    &:disabled {
+        background-color: rgba($fullDarkColor, 9%) !important;
+    }
+
+    &.primary {
+        background-color: $primaryColor;
+        color: $lightColor;
+
+        &:hover {
+            background-color: darken($primaryColor, 10%);
+        }
+    }
+
+    &.secondary {
+        background-color: transparent;
+        border: solid 2px $primaryColor;
+        color: $primaryColor;
+
+        &:hover {
+            background-color: lighten($primaryColor, 35%);
+        }
+    }
+
+    &.icon {
+        background-color: transparent;
+        border: none;
+        color: rgba($fullDarkColor, 60%);
+        padding: 0px 10px;
+        font-size: 20px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+    }
+}

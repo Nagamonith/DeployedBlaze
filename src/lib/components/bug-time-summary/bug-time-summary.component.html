@@ -1,0 +1,60 @@
+<!-- <div class="container mt-4">
+    <h2 class="ms-2">Bug Time Summary</h2><button class="btn custom-btn-secondary mb-3" (click)="gotoprevious()">Back</button>
+
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error" class="text-danger">{{ error }}</div>
+ <table *ngIf="bugSummary.length > 0" class="table table-bordered table-hover mt-3">
+  <thead>
+    <tr>
+      <th *ngFor="let key of displayOrder">{{ key }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let bug of bugSummary" (dblclick)="goToDetails(bug.bug_id)">
+      <td *ngFor="let key of displayOrder">
+        {{ bug[key] }}
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+  <div *ngIf="!loading && bugSummary.length === 0">No data found.</div>
+</div> -->
+
+<div class="container mt-4">
+  <h2 class="ms-2">Bug Time Summary</h2>
+  <button class="btn custom-btn-secondary mb-3" (click)="gotoprevious()">Back</button>
+
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error" class="text-danger">{{ error }}</div>
+
+  <table *ngIf="bugSummary.length > 0" class="table table-bordered table-hover mt-3">
+    <thead>
+      <tr>
+        <th *ngFor="let key of displayOrder">{{ key }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let bug of bugSummary" (dblclick)="goToDetails(bug.bug_id)">
+        <td *ngFor="let key of displayOrder">
+          {{ bug[key] }}
+        </td>
+      </tr>
+      <!-- Total Row -->
+      <tr class="table-success fw-bold">
+        <td *ngFor="let key of displayOrder; let i = index">
+          <ng-container *ngIf="i < 3"></ng-container>
+          <ng-container *ngIf="i >= 3">
+            {{
+              getTotalForColumn(key)
+            }}
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && bugSummary.length === 0">No data found.</div>
+</div>

@@ -1,0 +1,427 @@
+<app-alert
+  *ngIf="showAlert"
+  [type]="alertType"
+  [message]="alertMessage"
+  [show]="showAlert"
+  (onCancel)="onAlertClose()"
+></app-alert>
+
+<h2 class="text-center">Test Management</h2>
+
+<!-- Selection Toggle -->
+<div class="selection-toggle">
+  <button class="toggle-btn"
+          [class.active]="!showTestSuites && !showTestRuns"
+          (click)="toggleSelectionMode(false, false)">
+    Modules
+  </button>
+  <button class="toggle-btn"
+          [class.active]="showTestSuites && !showTestRuns"
+          (click)="toggleSelectionMode(true, false)">
+    Test Suites
+  </button>
+  <button class="toggle-btn"
+          [class.active]="showTestRuns"
+          (click)="toggleSelectionMode(false, true)">
+    Test Runs
+  </button>
+</div>
+
+<!-- Dynamic Selection Dropdown - Updated -->
+<div class="form-group">
+  <label>
+    {{ showTestRuns ? 'Select Test Run' :
+       (showTestSuites ? 'Select Test Suite' : 'Select Module') }}
+  </label>
+  <select class="select-dropdown"
+          [ngModel]="showTestRuns ? selectedTestRunId() : selectedModule()"
+          (ngModelChange)="onSelectionChange($event)"
+          [ngModelOptions]="{standalone: true}">
+    <option value="">-- Choose {{ showTestRuns ? 'Test Run' :
+                            (showTestSuites ? 'Test Suite' : 'Module') }} --</option>
+
+    <!-- Test Runs -->
+    <ng-container *ngIf="showTestRuns">
+      <option *ngFor="let run of testRuns()" [value]="run.id">
+        {{ run.name }} 
+      </option>
+    </ng-container>
+
+    <!-- Test Suites -->
+    <ng-container *ngIf="showTestSuites && !showTestRuns">
+      <option *ngFor="let suite of testSuites()" [value]="suite.id">
+        {{ suite.name }} ({{ suite.testCases?.length || 0 }} test cases)
+      </option>
+    </ng-container>
+
+    <!-- Modules -->
+    <ng-container *ngIf="!showTestSuites && !showTestRuns">
+      <option *ngFor="let module of filteredModules()" [value]="module.id">
+        {{ module.name }}
+      </option>
+    </ng-container>
+  </select>
+</div>
+
+<!-- Action buttons - Updated -->
+<div class="action-buttons" *ngIf="(selectedModule() && !showTestRuns) || (selectedTestRunId() && showTestRuns)">
+  <button class="btn-view"
+          (click)="handleViewAction()"
+          [disabled]="!hasTestCasesToView()">
+    {{ showTestRuns ? 'View Test Run Cases' :
+       (showTestSuites ? 'View Suite Cases' : 'View Module Cases') }}
+  </button>
+  <button class="btn-start"
+          (click)="handleStartTesting()"
+          [disabled]="!hasTestCasesToView()">
+    {{ showTestRuns ? 'Start Test Execution' : 'Start Testing' }}
+  </button>
+</div>
+
+<!-- Test Run Info -->
+<div *ngIf="showTestRuns && selectedTestRunId() && selectedTestRun()" class="run-info">
+  <h4>{{ selectedTestRun()?.name }}</h4>
+  <!-- <p>Status: <span class="status-badge" [class]="selectedTestRun()?.status">{{ selectedTestRun()?.status }}</span></p> -->
+  <p>Contains {{ selectedTestRun()?.testSuites?.length || 0 }} test suites</p>
+  <div *ngIf="testRunProgress().total > 0" class="progress-info">
+    Progress: {{ getCompletedCaseCount() }}/{{ getTotalCaseCount() }} test cases completed
+    ({{ getRunCompletionPercentage() }}%)
+  </div>
+</div>
+
+<!-- Test Suite Info -->
+<div *ngIf="showTestSuites && !showTestRuns && selectedModule() && selectedTestSuite()" class="suite-info">
+  <h4>{{ selectedTestSuite()?.name }}</h4>
+  <p>{{ selectedTestSuite()?.description || 'No description available' }}</p>
+  <small>Contains {{ selectedTestSuite()?.testCases?.length || 0 }} test cases</small>
+</div>
+
+<!-- Test Run Suites List - Updated -->
+<div *ngIf="showTestRuns && selectedTestRunId() && selectedTestRun()?.testSuites?.length" class="run-suites">
+  <h4>Test Suites in this Run</h4>
+
+
+  <!-- Select all checkbox -->
+  <!-- <div class="select-all-section">
+    <label>
+      <input type="checkbox"
+             [checked]="areAllSuitesSelected()"
+             (change)="toggleSelectAllSuites($event)">
+      Select All Suites ({{ selectedTestRun()?.testSuites?.length }})
+    </label>
+  </div> -->
+
+  <!-- <div class="suite-cards">
+    <div *ngFor="let suiteRef of selectedTestRun()?.testSuites"
+         class="suite-card"
+         [class.selected]="isSuiteSelected(suiteRef.id)">
+      <div class="suite-header">
+        <input type="checkbox"
+               [id]="'suite-' + suiteRef.id"
+               [checked]="isSuiteSelected(suiteRef.id)"
+               (change)="toggleSuiteSelection(suiteRef.id)">
+        <label [for]="'suite-' + suiteRef.id">
+          <h5>{{ suiteRef.name }}</h5>
+        </label>
+
+        Status indicators
+        <span *ngIf="isSuiteComplete(suiteRef.id)" class="status-badge complete" title="All test cases completed">
+         
+        </span>
+        <span *ngIf="isSuiteInProgress(suiteRef.id)" class="status-badge in-progress" title="Test cases in progress">
+          
+        </span>
+        <span *ngIf="isSuiteNotStarted(suiteRef.id)" class="status-badge not-started" title="Not started">
+          
+        </span>
+      </div>
+
+      <p>{{ getSuiteDescription(suiteRef.id) || 'No description available' }}</p>
+      <div class="suite-stats">
+        <small>{{ getSuiteTestCaseCount(suiteRef.id) }} total test cases</small>
+        <small *ngIf="getSuiteCompletedCount(suiteRef.id) > 0">
+          {{ getSuiteCompletedCount(suiteRef.id) }} completed
+        </small>
+      </div>
+    </div>
+  </div> -->
+  <!-- In the suite-cards section, replace the checkbox with a radio button -->
+<!-- <div class="suite-cards">
+  <div *ngFor="let suiteRef of selectedTestRun()?.testSuites"
+       class="suite-card"
+       [class.selected]="isSuiteSelected(suiteRef.id)">
+    <div class="suite-header">
+      <input type="radio"
+             [id]="'suite-' + suiteRef.id"
+             [checked]="isSuiteSelected(suiteRef.id)"
+             (change)="selectSuite(suiteRef.id)">
+      <label [for]="'suite-' + suiteRef.id">
+        <h5>{{ suiteRef.name }}</h5>
+      </label>
+
+      Status indicators
+      <span *ngIf="isSuiteComplete(suiteRef.id)" class="status-badge complete" title="All test cases completed">
+       
+      </span>
+      <span *ngIf="isSuiteInProgress(suiteRef.id)" class="status-badge in-progress" title="Test cases in progress">
+        
+      </span>
+      <span *ngIf="isSuiteNotStarted(suiteRef.id)" class="status-badge not-started" title="Not started">
+        
+      </span>
+    </div>
+
+    <p>{{ getSuiteDescription(suiteRef.id) || 'No description available' }}</p>
+    <div class="suite-stats">
+      <small>{{ getSuiteTestCaseCount(suiteRef.id) }} total test cases</small>
+      <small *ngIf="getSuiteCompletedCount(suiteRef.id) > 0">
+        {{ getSuiteCompletedCount(suiteRef.id) }} completed
+      </small>
+    </div>
+  </div>
+</div> -->
+<div class="suite-cards">
+  <div *ngFor="let suiteRef of selectedTestRun()?.testSuites"
+       class="suite-card"
+       [class.selected]="isSuiteSelected(suiteRef.id)"
+       (click)="selectSuite(suiteRef.id)">
+    <div class="suite-header">
+      <!-- Hidden radio button for accessibility -->
+      <input type="radio"
+             [id]="'suite-' + suiteRef.id"
+             [checked]="isSuiteSelected(suiteRef.id)"
+             class="visually-hidden">
+      <label [for]="'suite-' + suiteRef.id">
+        <h5>{{ suiteRef.name }}</h5>
+      </label>
+
+      <!-- Status indicators -->
+      <!-- <span *ngIf="isSuiteComplete(suiteRef.id)" class="status-badge complete" title="All test cases completed">
+       
+      </span>
+      <span *ngIf="isSuiteInProgress(suiteRef.id)" class="status-badge in-progress" title="Test cases in progress">
+        
+      </span>
+      <span *ngIf="isSuiteNotStarted(suiteRef.id)" class="status-badge not-started" title="Not started">
+        
+      </span> -->
+    </div>
+
+    <p>{{ getSuiteDescription(suiteRef.id) || 'No description available' }}</p>
+    <div class="suite-stats">
+      <small>{{ getSuiteTestCaseCount(suiteRef.id) }} total test cases</small>
+      <small *ngIf="getSuiteCompletedCount(suiteRef.id) > 0">
+        {{ getSuiteCompletedCount(suiteRef.id) }} completed
+      </small>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- View Test Cases Section -->
+<div *ngIf="showViewTestCases">
+  <div class="form-group" *ngIf="availableVersions.length && !showTestSuites && !showTestRuns">
+    <label>Select Version</label>
+    <select [(ngModel)]="selectedVersion" (ngModelChange)="onVersionChange()" [ngModelOptions]="{ standalone: true }">
+      <option value="">-- Choose Version --</option>
+      <option value="all">All Versions</option>
+      <option *ngFor="let v of availableVersions" [value]="v">{{ v }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="(showTestSuites || selectedVersion || showTestRuns) && versionTestCases().length">
+    <h3 *ngIf="showTestRuns && viewingSuiteId()">
+      Test Cases in {{ getSuiteName(viewingSuiteId()!) }}
+    </h3>
+    <h3 *ngIf="showTestSuites && !showTestRuns">
+      Test Cases in Suite
+    </h3>
+    <h3 *ngIf="!showTestSuites && !showTestRuns">
+      Test Cases for {{ selectedVersion === 'all' ? 'All Versions' : ('Version ' + selectedVersion) }}
+    </h3>
+
+    <div class="filters">
+      <input *ngIf="filter.attributeKey" type="text" placeholder="Attribute value"
+             [(ngModel)]="filter.attributeValue" [ngModelOptions]="{standalone: true}">
+    </div>
+
+    <div class="table-scroll-container">
+      <button class="scroll-button scroll-left" (click)="scrollTable(-200)" [class.hidden]="!canScrollLeft">&larr;</button>
+      <div class="table-container" #tableContainer>
+        <table class="resizable-table">
+          <thead>
+            <tr>
+              <th *ngFor="let col of viewColumns"
+                  [style.width.px]="col.width"
+                  (mousedown)="startResize($event, col)">
+                {{ col.header }}
+                <div class="resize-handle" *ngIf="!col.noResize"></div>
+              </th>
+              <th *ngFor="let col of attributeColumns"
+                  [style.width.px]="col.width"
+                  (mousedown)="startResize($event, col)">
+                {{ col.header }}
+                <div class="resize-handle"></div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let tc of versionTestCases(); let i = index">
+              <td *ngFor="let col of viewColumns" class="wrap-text" [style.width.px]="col.width">
+                {{ getCellValue(tc, col.field, i) }}
+              </td>
+              <td *ngFor="let col of attributeColumns" class="wrap-text" [style.width.px]="col.width">
+                {{ getCellValue(tc, col.field) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="scroll-button scroll-right" (click)="scrollTable(200)" [class.hidden]="!canScrollRight">&rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- Start Testing Section -->
+<div *ngIf="showStartTesting">
+  <div class="filters" *ngIf="filteredTestCases().length">
+    <input type="text" placeholder="Filter by Sl No" [(ngModel)]="filter.slNo" [ngModelOptions]="{standalone: true}">
+    <input type="text" placeholder="Filter by TestCase ID" [(ngModel)]="filter.testCaseId" [ngModelOptions]="{standalone: true}">
+    <input type="text" placeholder="Filter by Use Case" [(ngModel)]="filter.useCase" [ngModelOptions]="{standalone: true}">
+    <select [(ngModel)]="filter.result" [ngModelOptions]="{standalone: true}">
+      <option value="">All Results</option>
+      <option value="Pass">Pass</option>
+      <option value="Fail">Fail</option>
+      <option value="Pending">Pending</option>
+    </select>
+    <input *ngIf="filter.attributeKey" type="text" placeholder="Attribute value"
+           [(ngModel)]="filter.attributeValue" [ngModelOptions]="{standalone: true}">
+  </div>
+
+  <div *ngIf="filteredAndSearchedTestCases().length">
+    <div class="table-scroll-container">
+      <button class="scroll-button scroll-left" (click)="scrollTable(-200)" [class.hidden]="!canScrollLeft">&larr;</button>
+      <div class="table-container" #tableContainer>
+        <table class="resizable-table">
+          <thead>
+            <tr>
+              <th class="copy-header"></th>
+              <th *ngFor="let col of testColumns"
+                  [style.width.px]="col.width"
+                  (mousedown)="startResize($event, col)">
+                {{ col.header }}
+                <div class="resize-handle" *ngIf="!col.noResize"></div>
+              </th>
+              <th *ngFor="let col of attributeColumns"
+                  [style.width.px]="col.width"
+                  (mousedown)="startResize($event, col)">
+                {{ col.header }}
+                <div class="resize-handle"></div>
+              </th>
+              <th class="sticky-col sticky-actual">Actual Result</th>
+              <th class="sticky-col sticky-result">Result</th>
+              <th class="sticky-col sticky-remarks">Remarks</th>
+              <th class="sticky-col sticky-uploads">Uploads</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let tc of filteredAndSearchedTestCases(); let i = index" [formGroup]="formGroups()[i]">
+              <td class="copy-cell">
+                <button (click)="copyTestCaseLink(tc.testCaseId)" class="copy-btn" title="Copy test case link">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </td>
+
+              <td *ngFor="let col of testColumns" class="wrap-text" [style.width.px]="col.width">
+                {{ getCellValue(tc, col.field, i) }}
+              </td>
+
+              <td *ngFor="let col of attributeColumns" class="wrap-text" [style.width.px]="col.width">
+                {{ getCellValue(tc, col.field) }}
+              </td>
+
+              <td class="wrap-text sticky-col sticky-actual">
+                <div class="popup-cell" (click)="openPopup(i, 'actual', $event)">
+                  <span>{{ getFormControl(i, 'actual').value || 'Click to enter' }}</span>
+                  <div *ngIf="isPopupOpen && popupIndex === i && popupField === 'actual'" class="popup-box">
+                    <h5>Actual Result</h5>
+                    <textarea [formControl]="getFormControl(i, 'actual')" rows="5" cols="40"></textarea>
+                    <div class="popup-actions">
+                      <button (click)="saveAndClosePopup(i); $event.stopPropagation()">Save</button>
+                      <button (click)="closePopup(i); $event.stopPropagation()">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Result dropdown updated -->
+              <td class="wrap-text sticky-col sticky-result">
+                <select [formControl]="getFormControl(i, 'result')" class="result-select">
+                  <option value="Pending">Pending</option>
+                  <option value="Pass">Pass</option>
+                  <option value="Fail">Fail</option>
+                  <option value="Blocked">Blocked</option>
+                </select>
+              </td>
+
+              <td class="wrap-text sticky-col sticky-remarks">
+                <div class="popup-cell" (click)="openPopup(i, 'remarks', $event)">
+                  <span>{{ getFormControl(i, 'remarks').value || 'Click to enter' }}</span>
+                  <div *ngIf="isPopupOpen && popupIndex === i && popupField === 'remarks'" class="popup-box">
+                    <h5>Remarks</h5>
+                    <textarea [formControl]="getFormControl(i, 'remarks')" rows="5" cols="40"></textarea>
+                    <div class="popup-actions">
+                      <button (click)="saveAndClosePopup(i); $event.stopPropagation()">Save</button>
+                      <button (click)="closePopup(i); $event.stopPropagation()">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="uploads-cell sticky-col sticky-uploads">
+                <!-- Use uploadTes for suite/run context, fallback to onUpload for module context -->
+                <label class="file-upload-label" *ngIf="showTestSuites || showTestRuns">
+                  <input type="file" accept="image/*, .pdf, .txt" (change)="onSuiteUpload($event, i, tc.id)">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </label>
+                <label class="file-upload-label" *ngIf="!showTestSuites && !showTestRuns">
+                  <input type="file" (change)="onUpload($event, i)" accept="image/*, .pdf, .txt" multiple>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </label>
+
+                <div class="upload-previews">
+  <div *ngFor="let file of uploads[i]; let j = index" class="upload-preview">
+    <div class="preview-container">
+      <img *ngIf="isImage(file.fileType)" 
+           [src]="getTestSuiteUploadUrl(file.id, (showTestSuites ? (selectedModule() || '') : (showTestRuns && selectedSuiteIds.length === 1 ? (selectedSuiteIds[0] || '') : '')))" 
+           (load)="onImageLoad($event, i, j)"
+           class="preview-image">
+      <div *ngIf="!isImage(file.fileType)" class="file-preview">
+        <a [href]="getTestSuiteUploadUrl(file.id, (showTestSuites ? (selectedModule() || '') : (showTestRuns && selectedSuiteIds.length === 1 ? (selectedSuiteIds[0] || '') : '')))" target="_blank">{{ file.fileName }}</a>
+      </div>
+      <div class="loading-spinner" *ngIf="!file.loaded"></div>
+    </div>
+ <button class="remove-btn" 
+        (click)="deleteSuiteUpload(i, j, file.id)">×</button>
+  </div>
+</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="scroll-button scroll-right" (click)="scrollTable(200)" [class.hidden]="!canScrollRight">&rarr;</button>
+    </div>
+
+    <div class="save-section">
+      <button class="btn-save" (click)="onSave()">Save Results</button>
+      <button class="btn-back" *ngIf="showTestRuns" (click)="backToSuiteList()">Back to Suite List</button>
+    </div>
+  </div>
+</div>

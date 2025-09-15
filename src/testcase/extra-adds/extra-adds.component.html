@@ -1,0 +1,296 @@
+<app-alert
+  [type]="alertType"
+  [message]="alertMessage"
+  [show]="showAlert"
+  [isConfirm]="isConfirmAlert"
+  (onConfirm)="handleConfirmDelete()"
+  (onCancel)="handleCancelDelete()">
+</app-alert>
+
+<div class="container">
+  <!-- <h2 class="header">Module & Version Management</h2> -->
+
+  <!-- Independent Action Buttons -->
+  <div class="action-buttons d-flex flex-wrap gap-2 align-items-center position-relative">
+    <button class="btn btn-silver" (click)="showAddProductForm = true">
+       Add Product
+    </button>
+    <button class="btn btn-silver" (click)="handleAddModule()">
+      Add Module
+    </button>
+    <button class="btn btn-silver" (click)="handleAddVersion()">
+      Add Version 
+    </button>
+    <button class="btn btn-silver" (click)="handleToggleModules()">
+      {{ showModuleList ? 'Hide' : 'Show' }} Modules
+    </button>
+    <button class="btn btn-silver"  (click)="showProducts = !showProducts">
+      {{ showProducts ? 'Hide' : 'Show' }} Products
+    </button>
+    
+    <!-- Auto Save Toggle Button -->
+    <div class="position-relative">
+      <button class="btn btn-silver" (click)="toggleAutoSavePopup()">
+        Auto Save
+      </button>
+
+      <!-- Auto Save Popup -->
+      <div *ngIf="showAutoSavePopup" class="auto-save-popup card p-0 shadow-lg position-absolute" style="width: 260px;">
+        <div class="card-body p-0">
+          <div class="auto-save-toggle p-3 border-bottom">
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <label class="form-label mb-1 fw-semibold">Auto Save</label>
+              </div>
+              <label class="switch mb-0">
+                <input type="checkbox" [checked]="autoSaveEnabled" (change)="toggleAutoSave()" />
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+          
+          <div *ngIf="autoSaveEnabled" class="p-3">
+            <label class="form-label mb-2 fw-semibold">Interval</label>
+            <select class="form-select form-select-sm" [(ngModel)]="selectedInterval" (change)="updateInterval()">
+              <option *ngFor="let opt of intervalOptions" [value]="opt.value">
+                {{ opt.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Product Form -->
+  <div *ngIf="showAddProductForm" class="form-section card mt-3">
+    <div class="card-body">
+      <h4 class="card-title">Add New Product</h4>
+      <div class="form-group mb-3">
+        <input 
+          class="form-control" 
+          placeholder="Product name" 
+          [(ngModel)]="newProductName"
+          (keyup.enter)="addProduct()"
+        />
+      </div>
+      <div class="form-actions">
+        <button 
+          class="btn btn-blue me-2" 
+          (click)="addProduct()" 
+          [disabled]="!newProductName.trim()"
+        >
+          Add
+        </button>
+        <button class="btn btn-silver" (click)="showAddProductForm = false; newProductName = ''">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Selection Modal -->
+  <div *ngIf="showProductSelectorModal" class="modal-overlay">
+    <div class="modal-content card">
+      <div class="card-body">
+        <h4 class="card-title">Select Product</h4>
+        <div class="form-group mb-3">
+          <select class="form-select" [(ngModel)]="selectedProductId">
+            <option value="" disabled>-- Select Product --</option>
+            <option *ngFor="let p of products()" [value]="p.id">{{ p.name }}</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary me-2" (click)="confirmProductSelection()" [disabled]="!selectedProductId">
+            Continue
+          </button>
+          <button class="btn btn-silver" (click)="cancelProductSelection()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Module Form -->
+  <div *ngIf="showAddModuleForm" class="form-section card mt-3">
+    <div class="card-body">
+      <h4 class="card-title">Add Module to {{ getProductName(selectedProductId()) }}</h4>
+      <div class="form-group mb-3">
+        <input class="form-control" placeholder="Module name" [(ngModel)]="newModuleName" />
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-success me-2" (click)="saveModule()"
+          [disabled]="!newModuleName.trim()">
+          Save Module
+        </button>
+        <button class="btn btn-silver" (click)="showAddModuleForm = false">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Version Form -->
+  <div *ngIf="showAddVersionForm" class="form-section card mt-3">
+    <div class="card-body">
+      <h4 class="card-title">Add Version to {{ getProductName(selectedProductId()) }}</h4>
+      <div class="form-group mb-3">
+        <input class="form-control" placeholder="Version name (e.g., v1.1)" [(ngModel)]="newVersionName" />
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-info me-2" (click)="saveVersion()"
+          [disabled]="!newVersionName.trim()">
+          Save Version
+        </button>
+        <button class="btn btn-silver" (click)="showAddVersionForm = false">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products List -->
+  <div *ngIf="showProducts" class="products-list card mt-3">
+    <div class="card-body">
+      <h4 class="card-title mb-4">Product Management</h4>
+
+      <div *ngFor="let product of products()" class="product-item mb-3 border-bottom pb-2">
+        <div class="d-flex align-items-center gap-3">
+          <!-- Product name or input -->
+          <div class="flex-grow-1" (click)="toggleProductSelection(product.id)">
+            <span *ngIf="!product.editing" class="fw-bold">{{ product.name }}</span>
+            <input *ngIf="product.editing" type="text" [(ngModel)]="product.name" 
+                  class="form-control form-control-sm w-auto" (click)="$event.stopPropagation()">
+          </div>
+
+          <!-- Buttons - Show only when product is selected or in edit mode -->
+          <div class="d-flex align-items-center gap-2" *ngIf="selectedProductId() === product.id || product.editing">
+            <!-- Display mode buttons -->
+            <ng-container *ngIf="!product.editing">
+              <button class="btn btn-sm btn-outline-primary" (click)="product.editing = true; $event.stopPropagation()">
+                Edit
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteProduct(product.id); $event.stopPropagation()">
+                Delete
+              </button>
+            </ng-container>
+
+            <!-- Edit mode buttons -->
+            <ng-container *ngIf="product.editing">
+              <button class="btn btn-sm btn-success" (click)="saveProductEdit(product); $event.stopPropagation()">
+                Save
+              </button>
+              <button class="btn btn-sm btn-secondary" (click)="product.editing = false; $event.stopPropagation()">
+                Cancel
+              </button>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modules List -->
+  <div *ngIf="showModuleList" class="modules-container">
+    <div class="modules-section card mt-3">
+      <div class="card-body">
+        <div class="section-header d-flex justify-content-between align-items-center mb-4">
+          <h4 class="card-title">
+            Modules for {{ getProductName(selectedProductId()) }}
+          </h4>
+          <div>
+            <span class="badge bg-primary rounded-pill me-2">
+              {{ modules().length }} module{{ modules().length !== 1 ? 's' : '' }}
+            </span>
+            <span class="badge bg-success rounded-pill">
+              {{ productVersions().length }} version{{ productVersions().length !== 1 ? 's' : '' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Product Versions Section -->
+        <div class="product-versions-section mb-4">
+          <h5>Product Versions</h5>
+          <div class="versions-container p-3 bg-light rounded">
+            <div *ngIf="productVersions().length > 0; else noProductVersions" class="d-flex flex-wrap gap-2">
+              <span *ngFor="let version of productVersions()" class="badge bg-secondary">
+                {{ version.version }}
+                <button class="btn-close btn-close-white btn-sm ms-2" (click)="confirmRemoveProductVersion(version.version)"></button>
+              </span>
+            </div>
+            <ng-template #noProductVersions>
+              <div class="text-muted text-center py-2">
+                No versions added yet for this product
+              </div>
+            </ng-template>
+            
+            <div class="add-version-form mt-3">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Add new version (e.g. v1.0)" [(ngModel)]="newProductVersion">
+                <button class="btn btn-primary" (click)="addProductVersion()" [disabled]="!newProductVersion.trim()">
+                  Add
+                </button>
+              </div>
+              <small *ngIf="versionExists" class="text-danger mt-1">
+                This version already exists
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modules List -->
+      <div *ngFor="let mod of modules()" class="module-item mb-3 p-3 border-0 rounded shadow-sm">
+  <div class="module-info mb-3">
+    <div class="module-name mb-2 d-flex align-items-center">
+      <span *ngIf="!mod.editing" class="fw-bold text-primary">{{ mod.name }}</span>
+      <input *ngIf="mod.editing" class="form-control form-control-sm" [(ngModel)]="mod.name" />
+      <small class="text-muted ms-2">(ID: {{ mod.id }})</small>
+    </div>
+    <div class="module-stats d-flex gap-3 small text-muted">
+      <span>
+        {{ mod.testCaseCount || 0 }} test cases
+      </span>
+      <span>
+        Version: {{ mod.version || 'N/A' }}
+      </span>
+    </div>
+  </div>
+  <div class="module-actions d-flex justify-content-end gap-2">
+    <button *ngIf="!mod.editing" class="btn btn-sm btn-outline-primary" (click)="startEditing(mod)">
+      Edit
+    </button>
+    <button *ngIf="mod.editing" class="btn btn-sm btn-success" (click)="saveEditing(mod)">
+      Save
+    </button>
+    <button *ngIf="mod.editing" class="btn btn-sm btn-outline-secondary" (click)="mod.editing = false">
+      Cancel
+    </button>
+    <button class="btn btn-sm btn-outline-danger" (click)="deleteModule(mod.id)">
+      Delete
+    </button>
+  </div>
+</div>
+
+        <!-- Add Module Form -->
+        <div class="add-module-form mt-4 p-3 bg-light rounded">
+          <h5>Add New Module</h5>
+          <div class="input-group mb-2">
+            <input type="text" class="form-control" placeholder="Module name" [(ngModel)]="newModuleName">
+            <button class="btn btn-primary" (click)="saveModule()" [disabled]="!newModuleName.trim()">
+              Save
+            </button>
+          </div>
+          <small class="text-muted">Modules help organize your test cases by functional areas</small>
+        </div>
+
+        <!-- Close Button -->
+        <div class="text-end mt-3">
+          <button class="btn btn-outline-dark" (click)="showModuleList = false">
+            Close Modules
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

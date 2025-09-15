@@ -1,0 +1,42 @@
+<div class="container-fluid">
+  <h2 class="text-center mb-4">Test Summary Matrix - {{ getProductName() }}</h2>
+  
+  <div *ngIf="modules().length === 0" class="alert alert-info">
+    No modules found for the selected product. Please select a product from the navigation.
+  </div>
+
+  <div *ngIf="modules().length > 0" class="table-responsive">
+    <table class="matrix-table table table-bordered table-hover">
+      <thead class="table-primary">
+        <tr>
+          <th class="module-header">Module</th>
+          <th *ngFor="let ver of versions()" class="text-center version-header">{{ ver }}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let mod of modules()">
+          <td class="module-name">
+            <a class="fw-bold text-decoration-none" 
+               [routerLink]="['/tester/modules', mod.id]" 
+               [queryParams]="{ productId: selectedProductId(), loadAllVersions: true }">
+              {{ mod.name }}
+            </a>
+          </td>
+          <td *ngFor="let ver of versions()" class="text-center count-cell">
+            {{ getCount(mod.id, ver) || 0 }}
+          </td>
+        </tr>
+      </tbody>
+
+      <tfoot class="table-secondary">
+        <tr>
+          <th class="total-header">Total</th>
+          <td *ngFor="let ver of versions()" class="text-center fw-bold total-count">
+            {{ getVersionTotal(ver) }}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>

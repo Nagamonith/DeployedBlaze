@@ -1,0 +1,21 @@
+<div class="dialog-container">
+  <div class="left-border"></div>
+
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <span class="dialog-icon">❓</span>
+      <span class="dialog-title">Confirm Delete</span>
+      <span class="dialog-close" (click)="onClose()">✕</span>
+    </div>
+
+   <div class="dialog-body">
+  {{ data.message || 'Are you sure you want to delete this item?' }}
+</div>
+
+
+    <div class="dialog-actions">
+      <button mat-flat-button color="primary" class="btn-delete" (click)="onDelete()">Delete</button>
+      <button mat-stroked-button class="btn-close" (click)="onClose()">Close</button>
+    </div>
+  </div>
+</div>

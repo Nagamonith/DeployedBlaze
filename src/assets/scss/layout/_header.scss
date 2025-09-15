@@ -1,0 +1,98 @@
+@use '../base/variables' as *;
+
+header {
+    background-color: $secondaryColor;
+    height: 45px;
+
+    .logo {
+        a {
+            display: block;
+            height: 45px;
+            padding-top: 7px;
+        }
+    }
+
+    .short-nav {
+        margin-left: 10px;
+
+        ul {
+            height: 100%;
+            display: flex;
+            padding-left: 30px;
+
+            li {
+                height: inherit;
+                display: flex;
+                align-items: center;
+                padding: 0px;
+
+                a {
+                    color: $lightColor !important;
+                    height: inherit;
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 0px 10px;
+                    text-decoration: none;
+                }
+
+                button {
+                    background-color: transparent;
+                    border: none;
+                    height: 25px;
+                    width: 25px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0px;
+
+                    [class^="dl-"], [class*=" dl-"] {
+                        font-size: 9px;
+                        color: $lightColor;
+                    }
+                }
+
+                &.active {
+                    background-color: darken($color: $secondaryColor, $amount: 10);
+                    border-bottom: solid 2px $primaryColor;
+                }
+            }
+        }
+    }
+
+    .quick-actions {
+        margin-left: auto;
+        padding-right: 10px;
+
+        ul {
+            display: flex;
+            align-items: center;
+            height: 100%;
+
+            li {
+                position: relative;
+                a {
+                    padding: 5px 10px;
+                    color: $lightColor !important;
+
+                    .dl-bell {
+                        margin-right: 5px;
+                    }
+
+                    .count {
+                        position: absolute;
+                        top: -2px;
+                        right: 0px;
+                        width: 15px;
+                        height: 15px;
+                        background-color: $yellow;
+                        color: $lightColor;
+                        text-align: center;
+                        font-size: 9px;
+                        border-radius: 10px;
+                        line-height: 15px;
+                    }
+                }
+            }
+        }
+    }
+}

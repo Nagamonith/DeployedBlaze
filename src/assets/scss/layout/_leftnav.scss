@@ -1,0 +1,103 @@
+@use '../base/variables' as *;
+@use '../base/utilities' as *;
+
+.left-nav {
+    padding-top: 10px;
+    height: calc(100vh - 45px);
+    position: relative;
+    
+    ul {
+        padding: 0px;
+        margin: 0px;
+
+        li {
+            @include flex-center;
+            padding: 5px 0px;
+
+            a {
+                @include flex-center;
+                width: 32px;
+                height: 32px;
+                text-align: center;
+                color: rgba($lightColor, 60%) !important;
+                border-radius: 4px;
+                text-decoration: none;
+
+                &:hover {
+                    background-color: darken($color: $secondaryColor, $amount: 10);
+                }
+
+                &.active {
+                    background-color: $primaryColor;
+                    color: $lightColor !important;
+                }
+            }
+        }
+
+        &.lower-nav {
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            width: 100%;
+
+            .dropdown {
+                ul {
+                    position: absolute;
+                    bottom: 0px;
+                    left: 50px;
+                    z-index: 1000;
+                    background-color: $widgetBgColor;
+                    width: 180px;
+                    border-radius: 4px;
+                    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+
+                    li {
+                        padding: 0px;
+                        a {
+                            width: 100%;
+                            height: auto;
+                            color: $darkColor !important;
+                            text-align: left;
+                            justify-content: flex-start;
+                            padding: 10px 15px;
+                            gap: 10px;
+
+                            &.active, &:hover {
+                                background-color: $lightBg;
+                            }
+                        }
+
+                        &.dropdown {
+                            position: relative;
+
+                            &:after {
+                                content: "\e9d1";
+                                font-family: 'dl-icons' !important;
+                                position: absolute;
+                                top: 14px;
+                                right: 8px;
+                                z-index: 10;
+                            }
+
+                            [class^=dl-] {
+                                width: 16px;
+                                display: inline-block;
+                                overflow: hidden;
+                                border-radius: 10px;
+                            }
+
+                            ul {
+                                left: 180px;
+                                bottom: -41px;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .datalyzer {
+                background-color: darken($secondaryColor, 15%);
+            }
+        }
+    }
+}

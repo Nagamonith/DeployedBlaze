@@ -1,0 +1,312 @@
+
+<app-alert
+  [type]="alertType()"
+  [message]="alertMessage()"
+  [show]="showAlert()"
+  [isConfirm]="isConfirmAlert()"
+  (onConfirm)="handleConfirmDelete()"
+  (onCancel)="handleCancelDelete()">
+</app-alert>
+
+<!-- <div class="test-suite-container"> -->
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading()" class="loading-overlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>{{ isSaving() ? 'Saving...' : isDeleting() ? 'Deleting...' : 'Loading...' }}</p>
+    </div>
+  </div>
+
+  <!-- Main List View -->
+  <div *ngIf="mode() === 'list'" class="list-view">
+    <div class="page-header">
+      <h2 class="text-center">Test Suites Management</h2>
+      <!-- <p *ngIf="currentProductId()" class="product-info">Product ID: {{ currentProductId() }}</p> -->
+    </div>
+
+    <div class="action-buttons">
+      <button 
+        class="btn-primary" 
+        (click)="startAddNewSuite()"
+        [disabled]="isLoadingSuites()"> 
+        <span *ngIf="!isLoadingSuites()"><span [innerHTML]="icons.Add"></span> Add Test Suite</span>
+        <span *ngIf="isLoadingSuites()">Loading...</span>
+      </button>
+    </div>
+
+    <!-- Loading State for List -->
+    <div *ngIf="isLoadingSuites()" class="loading-message">
+      <p>Loading test suites...</p>
+    </div>
+
+    <!-- Test Suites Table -->
+    <div *ngIf="!isLoadingSuites() && testSuites().length > 0" class="suites-list">
+      <!-- <div class="table-container"> -->
+        <table class="suites-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Test Cases</th>
+              <!-- <th>Status</th> -->
+              <th>Last Updated</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let suite of testSuites(); trackBy: trackBySuiteId">
+              <td class="suite-name">
+                <strong>{{ suite.name }}</strong>
+              </td>
+              <td class="suite-description">
+                {{ suite.description || '-' }}
+              </td>
+              <td class="test-case-count">
+                <span class="badge">{{ getTestCaseCount(suite) }}</span>
+              </td>
+              <!-- <td class="suite-status">
+                <span class="status-badge" [class.active]="suite.isActive" [class.inactive]="!suite.isActive">
+                  {{ suite.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td> -->
+              <td class="suite-date">
+                {{ formatDate(suite.createdAt || suite.updatedAt) }}
+              </td>
+              <td class="actions">
+                <button 
+                  class="btn-edit" 
+                  (click)="startEditSuite(suite.id!)"
+                  [disabled]="isLoading()"
+                  title="Edit Test Suite">
+                   <span [innerHTML]="icons.Edit">Edit</span>
+                </button>
+                <button 
+                  class="btn-delete" 
+                  (click)="confirmDeleteSuite(suite.id!)"
+                  [disabled]="isLoading()"
+                  title="Delete Test Suite">
+                  <span [innerHTML]="icons.Delete">Delete</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <!-- </div> -->
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoadingSuites() && testSuites().length === 0" class="no-suites">
+      <div class="empty-state">
+        <h3>No Test Suites Found</h3>
+        <p>Create your first test suite to get started!</p>
+        <button class="btn-primary" (click)="startAddNewSuite()">
+          Create Test Suite
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit View -->
+  <div *ngIf="mode() !== 'list'" class="edit-view">
+    <div class="page-header">
+      <h2 class="text-center">{{ mode() === 'add' ? 'Add New' : 'Edit' }} Test Suite</h2>
+      <!-- <p *ngIf="mode() === 'edit'" class="edit-info">Editing: {{ selectedSuiteId() }}</p> -->
+    </div>
+
+    <div class="form-container">
+      <!-- Basic Information -->
+      <div class="form-section">
+        <!-- <h3>Basic Information</h3> -->
+        
+        <div class="form-group">
+          <label for="suiteName" class="required">Test Suite Name</label>
+          <input 
+            id="suiteName"
+            type="text" 
+            [(ngModel)]="suiteName" 
+            placeholder="Enter suite name"
+            class="form-control"
+            [class.error]="!suiteName.trim()"
+            maxlength="100"
+            required>
+          <div *ngIf="!suiteName.trim()" class="field-error">
+            Test suite name is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="suiteDescription">Description</label>
+          <textarea 
+            id="suiteDescription"
+            [(ngModel)]="suiteDescription" 
+            placeholder="Enter description (optional)"
+            class="form-control"
+            rows="3"
+            maxlength="500"></textarea>
+        </div>
+      </div>
+
+      <!-- Module Selection -->
+      <div class="form-section">
+        <h3>Test Case Selection</h3>
+        
+        <div class="form-group">
+          <label for="moduleSelect">Select Module</label>
+          <select 
+            id="moduleSelect"
+            [(ngModel)]="selectedModuleId" 
+            (ngModelChange)="onModuleSelect($event)"
+            class="form-control"
+            [disabled]="isLoadingModules()">
+            <option value="">-- Select Module --</option>
+            <option *ngFor="let module of modules(); trackBy: trackByModuleId" [value]="module.id">
+              {{ module.name }}
+            </option>
+          </select>
+          
+          <div *ngIf="isLoadingModules()" class="loading-text">
+            Loading modules...
+          </div>
+        </div>
+      </div>
+
+      <!-- Available Test Cases -->
+      <div *ngIf="selectedModuleId && !isLoadingTestCases()" class="form-section">
+        <h3>Available Test Cases</h3>
+        
+        <div *ngIf="availableTestCases().length > 0" class="available-test-cases">
+          <div class="section-info">
+            <p>Select test cases to include in this test suite:</p>
+            <p class="selection-summary">
+              Selected: {{ selectedTestCases().length }} / {{ availableTestCases().length }}
+            </p>
+          </div>
+          
+          <div class="table-container">
+            <table class="test-cases-table">
+              <thead>
+                <tr>
+                  <th class="select-column">
+                    <input 
+                      type="checkbox" 
+                      [checked]="areAllTestCasesSelected()"
+                      [indeterminate]="areSomeTestCasesSelected()"
+                      (change)="toggleAllTestCases($event)"
+                      title="Select/Deselect All">
+                  </th>
+                  <th>Test Case ID</th>
+                  <th>Use Case</th>
+                  <th>Scenario</th>
+                  <!-- <th>Type</th> -->
+                  <th>Version</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let testCase of availableTestCases(); trackBy: trackByTestCaseId"
+                    [class.selected]="isTestCaseSelected(testCase)">
+                  <td class="select-column">
+                    <input 
+                      type="checkbox"
+                      [checked]="isTestCaseSelected(testCase)"
+                      (change)="handleCheckboxChange(testCase, $event)"
+                      [id]="'tc-' + testCase.id">
+                  </td>
+                  <td class="test-case-id">{{ testCase.testCaseId || testCase.id }}</td>
+                  <td class="use-case">{{ testCase.useCase || '-' }}</td>
+                  <td class="scenario">{{ testCase.scenario || '-' }}</td>
+                  <!-- <td class="test-type">
+                    <span class="type-badge">{{ testCase.testType || 'Manual' }}</span>
+                  </td> -->
+                  <td class="version">{{ testCase.version || testCase.productVersionName || '-' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div *ngIf="availableTestCases().length === 0" class="no-test-cases">
+          <p>No test cases found for the selected module.</p>
+        </div>
+      </div>
+
+      <!-- Loading Test Cases -->
+      <div *ngIf="selectedModuleId && isLoadingTestCases()" class="loading-section">
+        <div class="loading-text">
+          Loading test cases for selected module...
+        </div>
+      </div>
+
+      <!-- Selected Test Cases Summary -->
+      <div *ngIf="selectedTestCases().length > 0" class="form-section">
+        <h3>Selected Test Cases ({{ selectedTestCases().length }})</h3>
+        
+        <div class="selected-test-cases">
+          <div class="table-container">
+            <table class="selected-cases-table">
+              <thead>
+                <tr>
+                  <th>Test Case ID</th>
+                  <th>Module</th>
+                  <th>Use Case</th>
+                  <!-- <th>Type</th> -->
+                  <th>Version</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let testCase of selectedTestCases(); trackBy: trackByTestCaseId">
+                  <td class="test-case-id">{{ testCase.testCaseId || testCase.id }}</td>
+                  <td class="module-name">{{ getModuleName(testCase.moduleId!) }}</td>
+                  <td class="use-case">{{ testCase.useCase || '-' }}</td>
+                  <!-- <td class="test-type">
+                    <span class="type-badge">{{ testCase.testType || 'Manual' }}</span>
+                  </td> -->
+                  <td class="version">{{ testCase.version || testCase.productVersionName || '-' }}</td>
+                  <td class="actions">
+                    <button 
+                      class="btn-removes" 
+                      (click)="removeSelectedTestCase(testCase.id!)"
+                      title="Remove from selection">
+                      Remove <span [innerHTML]="icons.Remove"></span>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button 
+          class="btn-save" 
+          (click)="saveTestSuite()"
+          [disabled]="!canSave()">
+          <span *ngIf="!isSaving()">
+            {{ mode() === 'add' ? 'Create' : 'Update' }} <span [innerHTML]="icons.Save"></span>
+          </span>
+          <span *ngIf="isSaving()">
+            {{ mode() === 'add' ? 'Creating...' : 'Updating...' }}
+          </span>
+        </button>
+        <button 
+          class="btn-cancels" 
+          (click)="cancelEdit()"
+          [disabled]="isSaving()">
+          Cancel
+         <span [innerHTML]="icons.Cancel"></span>
+        </button>
+      </div>
+
+      <!-- Debug Information (remove in production) -->
+      <!-- <div *ngIf="mode() === 'edit'" class="debug-section" style="margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 4px;">
+  <h4>Debug Information</h4>
+  <p><strong>Selected Suite ID:</strong> {{ selectedSuiteId() }}</p>
+  <p><strong>Selected Module ID:</strong> {{ selectedModuleId }}</p>
+  <p><strong>Available Test Cases Count:</strong> {{ availableTestCases().length }}</p>
+  <p><strong>Selected Test Cases Count:</strong> {{ selectedTestCases().length }}</p>
+  <p><strong>Selected Test Case IDs:</strong> {{ getSelectedTestCaseIds() }}</p>
+</div>
+  </div> -->
+<!-- </div> -->

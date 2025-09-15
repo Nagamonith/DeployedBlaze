@@ -1,0 +1,89 @@
+.dialog-container {
+  display: flex;
+  background-color: white;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.left-border {
+  width: 4px;
+  background-color: #4caf50; /* Green for "Add" */
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.dialog-content {
+  flex: 1;
+  padding: 0;
+  border-radius: 0 10px 10px 0;
+}
+
+.dialog-header {
+  background-color: #4caf50;
+  color: white;
+  padding: 16px;
+  border-top-right-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog-icon {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.dialog-title {
+  font-weight: 600;
+  font-size: 16px;
+  flex: 1;
+}
+
+.dialog-close {
+   height: 36px;
+  padding: 5px 10px;
+  background: #fff;
+  color: #30B9EF;
+  font-size: 14px;
+  font-weight: 500;
+  border: 2px solid #30B9EF;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dialog-body {
+  padding: 20px;
+  font-size: 14px;
+  color: #333;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 20px 20px 20px;
+}
+
+.btn-add {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-add:hover {
+  background-color: #45a045;
+}
+
+.btn-close {
+  color: #4caf50;
+  border-color: #4caf50;
+}
+
+.btn-close:hover {
+  border-color: #45a045;
+  color: #45a045;
+}

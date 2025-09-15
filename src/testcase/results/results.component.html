@@ -1,0 +1,302 @@
+<h2 class="text-center">Results Summary</h2>
+
+<!-- Test Run Results Toggle -->
+<div class="test-run-toggle">
+  <button class="toggle-btn" 
+          [class.active]="showTestRunResults()"
+          (click)="showTestRunResults.set(true)">
+    Test Run Results
+  </button>
+</div>
+
+<!-- Test Run Results Section -->
+<div *ngIf="showTestRunResults()" class="test-run-results">
+  <!-- Test Run selector -->
+  <div class="form-section">
+    <label for="testRunSelect">Select Test Run</label>
+    <select id="testRunSelect"
+            [(ngModel)]="selectedTestRunId">
+      <option value="">-- Choose Test Run --</option>
+      <option *ngFor="let run of testRuns()" [value]="run.id">{{ run.name }}</option>
+    </select>
+  </div>
+
+  <!-- Test Run statistics -->
+  <div *ngIf="testRunStats()" class="run-stats">
+    <h3>{{ testRunStats()!.runName }} - Overall Statistics</h3>
+    
+    <!-- Metadata Section -->
+    <div class="metadata-section">
+      <div><strong>Description:</strong> {{ testRunStats()!.metadata.description }}</div>
+      <!-- <div><strong>Created By:</strong> {{ testRunStats()!.metadata.createdBy }}</div> -->
+      <div><strong>Created At:</strong> {{ testRunStats()!.metadata.createdAt }}</div>
+      <!-- <div><strong>Updated At:</strong> {{ testRunStats()!.metadata.updatedAt }}</div> -->
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <h4>Total</h4>
+        <p>{{ testRunStats()!.total }}</p>
+      </div>
+      <div class="stat-card pass">
+        <h4>Passed</h4>
+        <p>{{ testRunStats()!.passed }}</p>
+      </div>
+      <div class="stat-card fail">
+        <h4>Failed</h4>
+        <p>{{ testRunStats()!.failed }}</p>
+      </div>
+      <div class="stat-card pending">
+        <h4>Pending</h4>
+        <p>{{ testRunStats()!.pending }}</p>
+      </div>
+      <div class="stat-card completion">
+        <h4>Completion</h4>
+        <p>{{ testRunStats()!.completion }}%</p>
+      </div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill pass" [style.width.%]="testRunStats()!.completion"></div>
+    </div>
+
+    <div class="export-buttons">
+      <button class="export-btn" (click)="exportAllTestSuites()">
+  <span [innerHTML]="icons.Export"></span> Export All Test Suites
+      </button>
+    </div>
+
+    <!-- Suite statistics -->
+    <h4>Test Suite Breakdown</h4>
+    <div class="suite-list">
+      <div *ngFor="let suite of testRunStats()!.suiteStats" class="suite-item">
+        <div class="suite-header" (click)="toggleSuiteExpansion(suite.suiteId)">
+          <div class="suite-name">{{ suite.suiteName }}</div>
+          <div class="suite-stats">
+            <span class="pass">{{ suite.passed }}</span> /
+            <span class="fail">{{ suite.failed }}</span> /
+            <span class="pending">{{ suite.pending }}</span> /
+            <span>{{ suite.total }}</span>
+            <span class="completion">{{ suite.completion }}%</span>
+          </div>
+          <div class="suite-actions">
+            <button class="export-btn" (click)="$event.stopPropagation(); exportSingleSuite(suite.suiteId)">
+              <span [innerHTML]="icons.Export"></span>Export
+            </button>
+          </div>
+          <div class="expand-icon">
+            <h1> {{ isSuiteExpanded(suite.suiteId) ? '«' : '»' }}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expanded suite details (placed outside the suite-list for better layout) -->
+    <div *ngFor="let suite of testRunStats()!.suiteStats">
+      <div *ngIf="isSuiteExpanded(suite.suiteId)" class="suite-details-expanded">
+        <h4>{{ suite.suiteName }} - Test Cases</h4>
+        <div class="table-container-full">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Sl.No</th>
+                <th>Test Case ID</th>
+                <th>Use Case</th>
+                <th>Scenario</th>
+                <th>Steps</th>
+                <th>Expected</th>
+                <th>Actual</th>
+                <th>Status</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let testCase of getTestCasesForSuite(suite.suiteId); let i = index" 
+                  [class.pass-row]="testCase.result === 'Pass'"
+                  [class.fail-row]="testCase.result === 'Fail'"
+                  [class.pending-row]="!testCase.result || testCase.result === 'Pending'">
+                <td>{{ i + 1 }}</td>
+                <td>{{ testCase.testCaseId }}</td>
+                <td>{{ testCase.useCase }}</td>
+                <td>{{ testCase.scenario }}</td>
+                <td class="steps-cell">
+                  <div *ngIf="testCase.steps && testCase.steps.length > 0; else noSteps">
+                    <div *ngFor="let step of testCase.steps" class="step-item">
+                      <div><strong>Step {{ step.id }}:</strong> {{ step.steps }}</div>
+                    </div>
+                  </div>
+                  <ng-template #noSteps>
+                    <div class="no-data">No steps available</div>
+                  </ng-template>
+                </td>
+                <td>
+                  <div *ngIf="testCase.steps && testCase.steps.length > 0; else noExpected">
+                    <div *ngFor="let step of testCase.steps" class="expected-item">
+                      <div><strong>Expected {{ step.id }}:</strong> {{ step.expectedResult }}</div>
+                    </div>
+                  </div>
+                  <ng-template #noExpected>
+                    <div class="no-data">No expected results</div>
+                  </ng-template>
+                </td>
+                <td>{{ testCase.actual || '-' }}</td>
+                <td [class]="testCase.result?.toLowerCase() || 'pending'">
+                  {{ testCase.result || 'Pending' }}
+                </td>
+                <td>{{ testCase.remarks || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Suite Test Cases (Detailed View) -->
+    <div *ngIf="selectedSuiteId() && suiteTestCases().length > 0" class="suite-test-cases">
+      <h4>Detailed View: {{ getSelectedSuiteName() | async }}</h4>
+      
+      <div class="table-container-full">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Sl.No</th>
+              <th>Test Case ID</th>
+              <th>Use Case</th>
+              <th>Scenario</th>
+              <th>Steps</th>
+              <th>Expected</th>
+              <th>Actual</th>
+              <th>Status</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let testCase of suiteTestCases()" 
+                [class.pass-row]="testCase.result === 'Pass'"
+                [class.fail-row]="testCase.result === 'Fail'"
+                [class.pending-row]="!testCase.result || testCase.result === 'Pending'">
+              <td>{{ testCase.slNo }}</td>
+              <td>{{ testCase.testCaseId }}</td>
+              <td>{{ testCase.useCase }}</td>
+              <td>{{ testCase.scenario }}</td>
+              <td class="steps-cell">
+                <div *ngFor="let step of testCase.steps">{{ step.steps }}</div>
+              </td>
+              <td>
+                <div *ngFor="let step of testCase.steps">{{ step.expectedResult }}</div>
+              </td>
+              <td>{{ testCase.actual || '-' }}</td>
+              <td [class]="testCase.result?.toLowerCase() || 'pending'">
+                {{ testCase.result || 'Pending' }}
+              </td>
+              <td>{{ testCase.remarks || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Module Results Section -->
+<div *ngIf="!showTestRunResults()">
+  <!-- Module selector -->
+  <div class="form-section">
+    <label for="moduleSelect">Select Module</label>
+    <select id="moduleSelect"
+            [(ngModel)]="selectedModule">
+      <option value="">-- Choose Module --</option>
+      <option *ngFor="let module of modules()" [value]="module.id">{{ module.name }}</option>
+    </select>
+  </div>
+
+  <!-- Results summary section -->
+  <div *ngIf="selectedModule" class="results-summary">
+    <div class="stats-section">
+      <h4> Module Statistics</h4>
+      <ul>
+        <li>Total Test Cases: {{ stats().total }}</li>
+        <li class="pass"> Passed: {{ stats().pass }}</li>
+        <li class="fail"> Failed: {{ stats().fail }}</li>
+        <li class="pending"> Pending: {{ stats().pending }}</li>
+      </ul>
+    </div>
+
+    <!-- Filter controls -->
+    <div class="filter-controls">
+      <div class="filter-section">
+        <label for="statusFilter">Filter by Status</label>
+        <select id="statusFilter" [(ngModel)]="filterStatus">
+          <option value="All">All Results</option>
+          <option value="Pass">Passed Only</option>
+          <option value="Fail">Failed Only</option>
+          <option value="Pending">Pending Only</option>
+        </select>
+      </div>
+      
+      <button class="export-btn" (click)="exportResults()">
+        <span class="export-icon">⬇️</span> Export to Excel
+      </button>
+    </div>
+
+    <!-- Results table -->
+    <div class="table-container-full">
+      <h4>🧪 Test Cases for {{ getModuleName(selectedModule) | async }}</h4>
+      
+      <div *ngIf="filteredTestCases().length > 0; else noResults" class="table-wrapper">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Sl.No</th>
+              <th>Test Case ID</th>
+              <th>Use Case</th>
+              <th>Scenario</th>
+              <th>Steps</th>
+              <th>Expected</th>
+              <th>Actual</th>
+              <th>Status</th>
+              <th>Remarks</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let testCase of filteredTestCases(); let i = index"
+                [class.pass-row]="testCase.result === 'Pass'"
+                [class.fail-row]="testCase.result === 'Fail'"
+                [class.pending-row]="!testCase.result || testCase.result === 'Pending'">
+              <td>{{ i + 1 }}</td>
+              <td>{{ testCase.testCaseId }}</td>
+              <td>{{ testCase.useCase }}</td>
+              <td>{{ testCase.scenario }}</td>
+              <td class="steps-cell">
+                <div *ngFor="let step of testCase.steps">{{ step.steps }}</div>
+              </td>
+              <td>
+                <div *ngFor="let step of testCase.steps">{{ step.expectedResult }}</div>
+              </td>
+              <td>{{ testCase.actual || '-' }}</td>
+              <td [class]="testCase.result?.toLowerCase() || 'pending'">
+                {{ testCase.result || 'Pending' }}
+              </td>
+              <td>{{ testCase.remarks || '-' }}</td>
+              <td>
+                <button class="copy-btn" (click)="copyTestCaseLink(testCase.testCaseId)" title="Copy test case link">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" 
+                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #noResults>
+        <div class="no-results">
+          <p>No test cases found matching the current filters</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

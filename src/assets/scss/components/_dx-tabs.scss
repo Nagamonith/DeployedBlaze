@@ -1,0 +1,169 @@
+@use '../base/variables' as *;
+@use '../base/utilities' as *;
+
+.tabs-widget-container {
+    margin-top: 12px;
+    position: relative;
+    z-index: 1080;
+
+    .dx-tabs-wrapper {
+        background-color: transparent;
+        border: none;
+
+        .dx-tab {
+            max-width: fit-content !important;
+            padding: 7px 24px;
+            margin-right: 5px;
+            border-radius: 12px 12px 0px 0px;
+            background-color: rgba($fullDarkColor, 5%);
+
+            &:first-child {
+                margin-left: 12px;
+            }
+
+            &.dx-tab-selected {
+                background-color: $widgetBgColor;
+                border-color: $widgetBgColor;
+
+                &:after {
+                    border-color: $widgetBorderColor;
+                    border-radius: 12px 12px 0px 0px;
+                }
+
+                .dx-tab-text {
+                    color: $primaryColor;
+                }
+            }
+
+            &.dx-state-hover:not(.dx-tab-selected) {
+                background-color: rgba($fullDarkColor, 10%);
+                &:after {
+                    border: none;
+                }
+            }
+
+            .dx-tab-text {
+                color: rgba($fullDarkColor, 60%);
+                font-size: 16px;
+                @include font-weight(medium);   
+            }
+        }
+    }
+
+    .dx-tabpanel-tabs-position-top {
+        &.dx-state-focused {
+            .dx-tabs-nav-button, .dx-tabs-wrapper {
+                border-color: $widgetBorderColor !important;
+            }
+        }
+    }
+
+    .dx-tabpanel {
+        &.dx-state-focused {
+            .dx-multiview-wrapper {
+                &.dx-state-focused {
+                    border-color: $widgetBorderColor !important;
+                    margin-top: -1px;
+                }
+            }
+        }
+    }
+
+    .dx-tabpanel-container {
+        box-shadow: 0px 3px 6px rgba($fullDarkColor, 16%);
+        .dx-multiview-wrapper {
+            overflow: visible;
+            border-top: solid 1px;
+            border-color: $widgetBorderColor;
+            border-bottom-color: $lightBorder;
+
+            .dx-multiview-item {
+                overflow: visible;
+            }
+        }
+        .dx-item {
+            background-color: $widgetBgColor;
+        }
+    }
+}
+
+.vertical-tabs-widget-container {
+    border: solid 1px lighten($fullDarkColor, 90%);
+    border-radius: 9px;
+
+    dx-tab-panel {
+        flex-direction: row !important;
+
+        .dx-tabs-wrapper {
+            flex-direction: column;
+            border-block: none;
+            background-color: $widgetBgColor;
+            border-radius: 9px 0px 0px 9px;
+            border-right: solid 1px darken($widgetBgColor, 15%);
+
+            .dx-tab {
+                flex-basis: auto !important;
+                max-width: none !important;
+                background-color: transparent;
+                justify-content: flex-end;
+                padding: 10px 15px;
+                font-size: 14px;
+
+                &.dx-tab-selected {
+                    background-color: $lightColor;
+                    margin-bottom: 0px;
+                    margin-right: -1px;
+                    border: solid 1px darken($widgetBgColor, 15%);
+                    border-right-color: $lightColor;
+
+                    &:first-child {
+                        border-top-left-radius: 9px;
+                    }
+                    &:last-child {
+                        border-bottom-left-radius: 9px;
+                    }
+                }
+
+                &.dx-tab-selected, 
+                &.dx-state-hover,
+                &.dx-state-active {
+                    &::after {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        &.dx-tabpanel-tabs-position-top.dx-state-focused {
+            .dx-tabs-wrapper {
+                border-block: none;
+            }
+        }
+
+        .dx-tabs {
+            .dx-tabs-scrollable {
+                &::after {
+                   display: none;
+                }
+
+                .dx-scrollable-content {
+                    &::after {
+                        display: none;
+                     }
+                }
+            }
+        }
+
+        .dx-tabpanel-container {
+            .dx-multiview-wrapper {
+                border-block: none;
+                border: none;
+
+                .card {
+                    border-radius: 0px;
+                    background-color: transparent;
+                }
+            }
+        }
+    }
+}

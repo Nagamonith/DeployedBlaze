@@ -1,0 +1,688 @@
+<nav class="left-nav">
+  <ul>
+    <!-- <li>
+      <a placement="end" >
+        <span [innerHTML]="leftNavIcon.Dashboard" (click)="navigatePreDashboard()" >&nbsp;</span>
+      </a>
+    </li>
+    <li>
+      <a placement="end" >
+        <span [innerHTML]="leftNavIcon.Catalogue" (click)="navigateToSprintMatrix()">&nbsp;</span>
+      </a>  
+    </li> -->
+      <li>
+    <a placement="end">
+      <span
+        [innerHTML]="leftNavIcon.Dashboard"
+        (click)="navigatePreDashboard()"
+        [class.active]="activeIcon === 'Dashboard'"
+        >&nbsp;</span>
+    </a>
+  </li>
+  <!-- <li>
+    <a placement="end">
+      <span
+        [innerHTML]="leftNavIcon.Catalogue"
+        (click)="navigateToSprintMatrix()"
+        [class.active]="activeIcon === 'Catalogue'"
+        >&nbsp;</span>
+    </a>
+  </li> -->
+  <li>
+    <a placement="end">
+      <span
+        [innerHTML]="leftNavIcon.Catalogue"
+        (click)="navigateToProjects()"
+        [class.active]="activeIcon === 'Catalogue'"
+        >&nbsp;</span>
+    </a>
+  </li>
+  
+   <li>
+  <a ngbTooltip="Testcase" routerLink="/tester" routerLinkActive="active">
+  <img src="assets/images/icons/testcase-logo3.svg" alt="Testcase" class="testcase-logo" />
+</a>
+
+</li>
+    <!-- <li>
+      <a placement="end" >
+        <span 
+        [innerHTML]="leftNavIcon.Report" 
+        (click)="navigateToWorkload()"
+       [class.active]="activeIcon === 'Report'"
+        >&nbsp;</span>
+      </a>
+    </li> -->
+   <!-- <li>
+      <a placement="end" >
+        <span [innerHTML]="leftNavIcon.Notification">&nbsp;</span>
+      </a>
+    </li>
+    <li>
+      <a placement="end" >
+        <span [innerHTML]="leftNavIcon.AccessControl">&nbsp;</span>
+      </a>
+    </li>
+    <li>
+      <a placement="end" >
+        <span [innerHTML]="leftNavIcon.Template">&nbsp;</span>
+      </a>
+    </li>
+    <li>
+      <a placement="end">
+        <span [innerHTML]="leftNavIcon.Setting">&nbsp;</span>
+      </a>
+    </li>
+    <li>
+      <a placement="end"  >
+        <span [innerHTML]="leftNavIcon.Maintenance">&nbsp;</span>
+      </a>
+    </li>
+    <li>
+      <a placement="end" >
+        <span [innerHTML]="leftNavIcon.Help">&nbsp;</span>
+      </a>
+    </li> -->
+  </ul>
+
+  <ul class="lower-nav">
+    <li class="dropdown">
+      <a placement="end" ngbTooltip="Profile" (click)="toggleUserNav()" [class.active]="showUserNav" #userNavLink>
+        <span [innerHTML]="leftNavIcon.User">&nbsp;</span>
+      </a>
+      @if(showUserNav) {
+        <ul #userNavTemplate>
+          <li>
+            <a>
+              <span [innerHTML]="leftNavIcon.User2">&nbsp;</span> 
+               Admin
+            </a>
+          </li>
+          <li class="dropdown">
+            <!-- <a (click)="toggleLanguageList()" [class.active]="showLanguageList"> 
+              <span [innerHTML]="langIcon">&nbsp;</span>
+              {{langText}}
+            </a> -->
+  
+            <!-- @if(showLanguageList) {
+              <ul>
+                <li>
+                  <a (click)="switchLanguage($event)"> 
+                    <span [innerHTML]="leftNavIcon.English">&nbsp;</span>
+                    English
+                  </a>
+                </li>
+                <li>
+                  <a (click)="switchLanguage($event)">  
+                    <span [innerHTML]="leftNavIcon.Chinese">&nbsp;</span>
+                    Chinese
+                  </a>
+                </li>
+                <li>
+                  <a (click)="switchLanguage($event)"> 
+                    <span [innerHTML]="leftNavIcon.Dutch">&nbsp;</span>
+                    Dutch
+                  </a>
+                </li>
+                <li>
+                  <a (click)="switchLanguage($event)"> 
+                    <span [innerHTML]="leftNavIcon.Danish">&nbsp;</span>
+                    Danish
+                  </a>
+                </li>
+                <li>
+                  <a (click)="switchLanguage($event)"> 
+                    <span [innerHTML]="leftNavIcon.French">&nbsp;</span>
+                    French
+                  </a>
+                </li>
+                <li>
+                  <a (click)="switchLanguage($event)"> 
+                    <span [innerHTML]="leftNavIcon.German">&nbsp;</span>
+                    German
+                  </a>
+                </li>
+                <li>
+                  <a (click)="switchLanguage($event)"> 
+                    <span [innerHTML]="leftNavIcon.Hungarian">&nbsp;</span>
+                    Hungarian
+                  </a>
+                </li>
+                <li>
+                  <a (click)="switchLanguage($event)"> 
+                    <span [innerHTML]="leftNavIcon.Malay">&nbsp;</span>
+                    Malay
+                  </a>
+                </li>
+                <li>
+                  <a (click)="switchLanguage($event)"> 
+                    <span [innerHTML]="leftNavIcon.Portuguese">&nbsp;</span>
+                    Portuguese
+                  </a>
+                </li>
+                <li>
+                  <a (click)="switchLanguage($event)"> 
+                    <span [innerHTML]="leftNavIcon.Spanish">&nbsp;</span>
+                    Spanish
+                  </a>
+                </li>
+                <li>
+                  <a (click)="switchLanguage($event)"> 
+                    <span [innerHTML]="leftNavIcon.Turkish">&nbsp;</span>
+                    Turkish
+                  </a>
+                </li>
+              </ul>
+            } -->
+          </li>
+          <li>
+            <a (click)="logout()">
+              <span [innerHTML]="leftNavIcon.Logout">&nbsp;</span>
+              Logout
+            </a>
+          </li>
+        </ul>
+      }
+    </li>
+    <li class="datalyzer">
+      <a placement="end" ngbTooltip="Datalyzer">  
+        <img src="../../../../assets/images/datalyzer-icon.svg" />
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- <div class="qual_side_nav_container">
+  <div class="qual_side_icons_group">
+    <div class="iconpos-top">
+      <div class="qual_side_icon fill_color">
+        <span>
+          <img [src]="'./assets/svg_icons/admin dashboard.svg?relVern'"
+        /></span>
+      </div>
+      <div class="qual_side_icon fill_color">
+        <span>
+          <img [src]="'./assets/svg_icons/admin dashboard.svg?relVern'"
+        /></span>
+      </div>
+      <div class="qual_side_icon fill_color">
+        <span>
+          <img [src]="'./assets/svg_icons/admin dashboard.svg?relVern'"
+        /></span>
+      </div>
+      <div class="qual_side_icon fill_color">
+        <span>
+          <img [src]="'./assets/svg_icons/admin dashboard.svg?relVern'"
+        /></span>
+      </div>
+    </div>
+    <div class="iconpos-bottom">
+      <ul class="iconpos_bottom_ico navbar-nav ml-auto">
+        <li [ngClass]="'nav-item dropdown user_log user_manage'">
+          <a class="nav-link" data-bs-toggle="dropdown">
+            <span
+              [ngClass]="
+                activePage == 'ManageLayout' || activePage == 'SatelliteMapping'
+                  ? 'inline_svg svg_highlight icon_size bottomicon active'
+                  : 'inline_svg svg_highlight icon_size bottomicon'
+              "
+              ngbTooltip="{{ 'SAT_SEQ_TLP_SET' | translate }}"
+            >
+              <img [src]="'./assets/svg_icons/settings_white.svg?relVern'"
+            /></span>
+          </a>
+          <div class="dropdown-menu dl_coonnection">
+            <li class="dropdown-item usrmgr">
+              <a
+                ><span class="inline_svg svg_highlight"
+                  ><img
+                    id="USM_BLUE"
+                    [src]="'./assets/svg_icons/userman.svg?relVern'"
+                /></span>
+                <div
+                  class="drop_text"
+                  ngbTooltip="{{ 'SAT_HOST_LBL_UM' | translate }}"
+                >
+                  {{ "SAT_HOST_LBL_UM" | translate }}
+                </div>
+                <span class="inline_svg right_arrow">
+                  <img
+                    [src]="'./assets/svg_icons/right_arrow_line.svg?relVern'"
+                /></span>
+              </a>
+              <div class="dropdown-menu submenu">
+                <li class="dropdown-submenu">
+                  <a
+                    (click)="
+                      onclickactionitem(
+                        leftnavbardata.botommenu.Settings.UserManagement.Roles
+                          .actionitem,
+                        false
+                      )
+                    "
+                    class="dropdown-item"
+                  >
+                    <span class="inline_svg svg_highlight">
+                      <img
+                        id="ROLE_BLUE"
+                        [src]="'./assets/svg_icons/role.svg?relVern'"
+                    /></span>
+                    <div
+                      class="drop_text"
+                      ngbTooltip="{{ 'SAT_HOST_LBL_ROLE' | translate }}"
+                    >
+                      {{ "SAT_HOST_LBL_ROLE" | translate }}
+                    </div>
+                  </a>
+                  <a
+                    (click)="
+                      onclickactionitem(
+                        leftnavbardata.botommenu.Settings.UserManagement.User
+                          .actionitem,
+                        false
+                      )
+                    "
+                    class="dropdown-item"
+                  >
+                    <span class="inline_svg svg_highlight">
+                      <img
+                        id="USR_BLUE"
+                        [src]="'./assets/svg_icons/user_1.svg?relVern'"
+                    /></span>
+                    <div
+                      class="drop_text"
+                      ngbTooltip="{{ 'SAT_HOST_LBL_USER' | translate }}"
+                    >
+                      {{ "SAT_HOST_LBL_USER" | translate }}
+                    </div>
+                  </a>
+                  <a
+                    (click)="
+                      onclickactionitem(
+                        leftnavbardata.botommenu.Settings.UserManagement
+                          .UserGroup.actionitem,
+                        false
+                      )
+                    "
+                    class="dropdown-item"
+                  >
+                    <span class="inline_svg svg_highlight">
+                      <img
+                        id="USRGRP_BLUE"
+                        [src]="'./assets/svg_icons/usergroup.svg?relVern'"
+                    /></span>
+                    <div
+                      class="drop_text"
+                      ngbTooltip="{{ 'SAT_UM_LBL_USRGR' | translate }}"
+                    >
+                      {{ "SAT_UM_LBL_USRGR" | translate }}
+                    </div>
+                  </a>
+                </li>
+              </div>
+            </li>
+
+            <a
+              (click)="
+                onclickactionitem(
+                  leftnavbardata.botommenu.Settings.SatelliteMapping.actionitem,
+                  true
+                )
+              "
+              [ngClass]="
+                Headprivilage?.ID_USER_MAPPING
+                  ? 'dropdown-item'
+                  : 'privlge_disable'
+              "
+            >
+              <span class="inline_svg svg_highlight"
+                ><img
+                  id="LDFLE_BLUE"
+                  [src]="'./assets/svg_icons/loadfile.svg?relVern'"
+              /></span>
+              <div
+                class="drop_text"
+                ngbTooltip="{{ 'ID_USER_MAPPING' | translate }}"
+              >
+                {{ "ID_USER_MAPPING" | translate }}
+              </div>
+            </a>
+            <a
+              *ngIf="userinfo.users.username != 'Anonymous'"
+              [ngClass]="
+                Headprivilage?.ID_GLOBALSETTING
+                  ? 'dropdown-item'
+                  : 'privlge_disable'
+              "
+              data-bs-toggle="modal"
+              data-bs-target="#globalsettings"
+              (click)="
+                onclickactionitem(
+                  leftnavbardata.botommenu.Settings.GlobalSettings.actionitem,
+                  false
+                )
+              "
+            >
+              <span class="inline_svg svg_highlight"
+                ><img
+                  id="CRT_BLUE"
+                  [src]="'./assets/svg_icons/createweb.svg?relVern'"
+              /></span>
+              <div
+                class="drop_text"
+                ngbTooltip="{{ 'ID_GLOBALSETTING' | translate }}"
+              >
+                {{ "ID_GLOBALSETTING" | translate }}
+              </div>
+            </a>
+            <li
+              *ngIf="userinfo.users.username != 'Anonymous'"
+              class="dropdown-item connections"
+              [ngClass]="{ connections1: !isdesktop }"
+            >
+              <a
+                ><span class="inline_svg svg_highlight"
+                  ><img
+                    id="CN_BLUE"
+                    [src]="'./assets/svg_icons/material.svg?relVern'"
+                /></span>
+                <div
+                  class="drop_text"
+                  ngbTooltip="{{ 'Connections' | translate }}"
+                >
+                  {{ "Connections" | translate }}
+                </div>
+                <span class="inline_svg right_arrow"
+                  ><img
+                    [src]="'./assets/svg_icons/right_arrow_line.svg?relVern'"
+                /></span>
+              </a>
+              <div
+                class="dropdown-menu submenu"
+                [ngClass]="
+                  showWebLic ? 'dropdown-menu submenu' : 'privlge_disable'
+                "
+              >
+                <li class="dropdown-submenu">
+                  <a
+                    *ngIf="isdesktop"
+                    [ngClass]="
+                      Headprivilage?.ID_WIM_DB_CON
+                        ? 'dropdown-item'
+                        : 'privlge_disable'
+                    "
+                    (click)="LoadWindowsmenu('DATABASECONNECTION')"
+                    placement="top"
+                    ngbTooltip="{{ 'ID_WIM_DB_CON' | translate }}"
+                  >
+                    <span class="inline_svg svg_highlight"
+                      ><img
+                        id="DB_BLUE"
+                        [src]="'./assets/svg_icons/database.svg?relVern'"
+                    /></span>
+                    <div class="drop_text">
+                      {{ "ID_WIM_DB_CON" | translate }}
+                    </div>
+                  </a>
+
+                  <a
+                    [ngClass]="
+                      Headprivilage?.ID_WIM_LIC_REG
+                        ? 'dropdown-item'
+                        : 'privlge_disable'
+                    "
+                    (click)="LoadWindowsmenu('LICENSE')"
+                    placement="top"
+                    ngbTooltip="{{ 'SAT_DESK_LBL_LICENSE' | translate }}"
+                  >
+                    <span class="inline_svg svg_highlight"
+                      ><img
+                        id="CNTRCT_BLUE"
+                        [src]="'./assets/svg_icons/contract.svg?relVern'"
+                    /></span>
+                    <div class="drop_text">
+                      {{ "SAT_DESK_LBL_LICENSE" | translate }}
+                    </div>
+                  </a>
+                  <a
+                    *ngIf="isdesktop"
+                    [ngClass]="
+                      Headprivilage?.ID_WIM_GAGE_CONFIG
+                        ? 'dropdown-item'
+                        : 'privlge_disable'
+                    "
+                    (click)="LoadWindowsmenu('GAGE')"
+                    placement="top"
+                    ngbTooltip="{{ 'SAT_DESK_LBL_GAGE' | translate }}"
+                  >
+                    <span class="inline_svg svg_highlight"
+                      ><img
+                        id="CNCT_BLUE"
+                        [src]="'./assets/svg_icons/Connect.svg?relVern'"
+                    /></span>
+                    <div class="drop_text">
+                      {{ "SAT_DESK_LBL_GAGE" | translate }}
+                    </div>
+                  </a>
+                </li>
+              </div>
+            </li>
+            <a
+              *ngIf="isdesktop"
+              class="dropdown-item"
+              (click)="LoadWindowsmenu('ABOUT')"
+              placement="top"
+              [ngClass]="
+                Headprivilage?.ID_WIM_ABOUT
+                  ? 'dropdown-item'
+                  : 'privlge_disable'
+              "
+              ngbTooltip="{{ 'SAT_DESK_LBL_About' | translate }}"
+            >
+              <span class="inline_svg svg_highlight"
+                ><img
+                  id="INFO_BLUE"
+                  [src]="'./assets/svg_icons/info_circle.svg?relVern'"
+              /></span>
+              <div class="drop_text">
+                {{ "SAT_DESK_LBL_About" | translate }}
+              </div>
+            </a>
+            <a
+              class="dropdown-item"
+              (click)="
+                onclickactionitem(
+                  leftnavbardata.botommenu.Settings.About.actionitem,
+                  false
+                )
+              "
+              placement="top"
+              *ngIf="!isdesktop"
+              [ngClass]="
+                Headprivilage?.ID_WIM_ABOUT
+                  ? 'dropdown-item'
+                  : 'privlge_disable'
+              "
+              ngbTooltip="{{ 'SAT_DESK_LBL_About' | translate }}"
+            >
+              <span
+                class="inline_svg svg_highlight"
+                id="globalsettbtn"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+                ><img
+                  id="INFO_BLUE"
+                  [src]="'./assets/svg_icons/info_circle.svg?relVern'"
+              /></span>
+              <div class="drop_text">
+                {{ "SAT_DESK_LBL_About" | translate }}
+              </div>
+            </a>
+          </div>
+        </li>
+      </ul>
+      <span
+        *ngIf="userinfo.users.username != 'Anonymous' && isdesktop"
+        class="log"
+      >
+        <ul
+          class="iconpos_bottom_ico navbar-nav ml-auto"
+          *ngIf="
+            Headprivilage?.ID_WIM_CLR_CACHE || Headprivilage?.ID_DASH_LOG_VIEWER
+          "
+        >
+          <li
+            [ngClass]="'nav-item dropdown user_log user_manage'"
+            class="iconpos_bottom_ico navbar-nav ml-auto"
+          >
+            <a class="nav-link" data-bs-toggle="dropdown">
+              <span
+                class="inline_svg svg_highlight icon_size bottomicon"
+                ngbTooltip="{{ 'SAT_LBL_DIAGNO' | translate }}"
+              >
+                <img [src]="'./assets/svg_icons/diagnosis.svg?relVern'"
+              /></span>
+            </a>
+            <div class="dropdown-menu">
+              <a
+                *ngIf="isdesktop"
+                [ngClass]="
+                  Headprivilage?.ID_WIM_CLR_CACHE
+                    ? 'dropdown-item'
+                    : 'privlge_disable'
+                "
+                (click)="LoadWindowsmenu('CLEARCACHE')"
+                ngbTooltip="{{ 'ID_WIM_CLR_CACHE' | translate }}"
+              >
+                <span class="inline_svg svg_highlight"
+                  ><img
+                    id="FILE_BLUE"
+                    [src]="'./assets/svg_icons/file.svg?relVern'"
+                /></span>
+                <div class="drop_text">
+                  {{ "ID_WIM_CLR_CACHE" | translate }}
+                </div>
+              </a>
+              <a
+                *ngIf="isdesktop"
+                [ngClass]="
+                  Headprivilage?.ID_DASH_LOG_VIEWER
+                    ? 'dropdown-item'
+                    : 'privlge_disable'
+                "
+                (click)="LoadLogViewer()"
+                ngbTooltip="{{ 'ID_DASH_LOG_VIEWER' | translate }}"
+              >
+                <span class="inline_svg svg_highlight">
+                  <img
+                    id="LOGVIEW_BLUE"
+                    [src]="'./assets/svg_icons/logview.svg?relVern'"
+                /></span>
+                <div class="drop_text">
+                  {{ "ID_DASH_LOG_VIEWER" | translate }}
+                </div>
+              </a>
+            </div>
+          </li>
+        </ul>
+      </span>
+      <ul class="iconpos_bottom_ico navbar-nav ml-auto">
+        <li [ngClass]="'nav-item dropdown user_log user_manage'">
+          <a class="nav-link" data-bs-toggle="dropdown">
+            <span
+              class="inline_svg svg_highlight bottomicon"
+              ngbTooltip="{{ 'SAT_HOST_LBL_USER' | translate }}"
+              placement="right"
+              ><img [src]="'./assets/svg_icons/profile.svg?relVern'"
+            /></span>
+          </a>
+          <div class="dropdown-menu lang_search">
+            <a
+              *ngIf="userDetails != undefined && userDetails.users != null"
+              class="dropdown-item user_log"
+              ngbTooltip="{{ 'SAT_HOST_LBL_USER' | translate }}"
+            >
+              <span class="inline_svg svg_highlight"
+                ><img [src]="'./assets/svg_icons/profile_blue.svg?relVern'"
+              /></span>
+              <div class="drop_text">{{ userDetails.users.username }}</div>
+            </a>
+            <li class="dropdown-item languages" *ngIf="languages.length > 0">
+              <a
+                ><span class="inline_svg svg_highlight"
+                  ><img
+                    [src]="
+                      './assets/svg_icons/' + selectedLang.icon + '?+relVern'
+                    "
+                /></span>
+                <div class="drop_text">{{ selectedLang.name }}</div>
+                <span class="inline_svg right_arrow"
+                  ><img
+                    [src]="
+                      './assets/svg_icons/right_arrow_line_black.svg?relVern'
+                    "
+                /></span>
+              </a>
+              <div class="dropdown-menu submenu">
+                <li class="dropdown-submenu">
+                  <a class="dropdown-item lang_search">
+                    <input
+                      value=""
+                      [(ngModel)]="searchLangData"
+                      (ngModelChange)="searchLangFilter()"
+                      [ngClass]="
+                        searchLangData == ''
+                          ? 'search_side form-control'
+                          : 'form-control'
+                      "
+                      type="search"
+                    />
+                  </a>
+                  <a
+                    class="dropdown-item"
+                    *ngFor="let lang of languages"
+                    (click)="changeLang(lang, true)"
+                    [hidden]="lang.hide"
+                  >
+                    <span class="inline_svg icons"
+                      ><img
+                        [src]="'./assets/svg_icons/' + lang.icon + '?+relVern'"
+                    /></span>
+                    <span>{{ lang.name }}</span>
+                    <span class="englishText">({{ lang.translation }})</span>
+                  </a>
+                </li>
+              </div>
+            </li>
+            <li [ngClass]="showSwitchToHub ? '' : 'privlge_disable'">
+              <a
+                class="dropdown-item satellite_logo"
+                (click)="switchApp('hub')"
+                placement="bottom"
+                ngbTooltip="{{ 'Switch To Admin' | translate }}"
+              >
+                <span class="inline_svg svg_highlight">
+                  <img [src]="'./assets/images/qualis4.svg?relVern'" />
+                </span>
+                <div class="drop_text">
+                  {{ "SAT_TREE_SWITCHTOHUB" | translate }}
+                </div>
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item userlogout" (click)="logOut()">
+                <span class="inline_svg svg_highlight"
+                  ><img
+                    id="OUTPT_BLUE"
+                    [src]="'./assets/svg_icons/output.svg?relVern'"
+                /></span>
+                {{ "SAT_HED_LBL_LOGOUT" | translate }}
+              </a>
+            </li>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div> -->

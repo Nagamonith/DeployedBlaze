@@ -1,0 +1,234 @@
+<div class="gantt-editor">
+  <div class="top-bar-wrapper">
+    <form [formGroup]="ganttForm" class="top-bar" (ngSubmit)="showGanttChart()">
+      <!-- <div class="form-group">
+        <label for="projectName">Project Name:</label>
+        <select id="projectName" formControlName="projectName">
+          <option *ngFor="let name of projectNames" [value]="name">{{ name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="targetVersion">Target Version:</label>
+        <input id="targetVersion" name="targetVersion" formControlName="targetVersion" required />
+      </div> -->
+     <div class="form-group">
+  <label for="projectName">Project Name:</label>
+  <select id="projectName" formControlName="projectName" (change)="onProjectChange($any($event.target).value)">
+    <option *ngFor="let name of projectNames" [value]="name">{{ name }}</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="targetVersion">Target Version:</label>
+  <select id="targetVersion" formControlName="targetVersion" required>
+    <option *ngFor="let version of targetVersions" [value]="version">{{ version }}</option>
+  </select>
+</div>
+      <button class="custom-btn-primary" type="submit" [disabled]="ganttForm.invalid || ganttChartLoading">Load</button>
+      <button class="custom-btn-secondary" (click)="SyncMysql()"><span [innerHTML]="icons.Refresh"></span></button>
+
+      <div class="view-toggle">
+        <button type="button" (click)="toggleView()">
+          {{ showGrid ? 'Show Chart' : 'Show Grid' }}
+        </button>
+      </div>
+    </form>
+    <!-- <button class="btn custom-btn-secondary" (click)="goToPreviousPage()">Back</button> -->
+  </div>
+<!-- <div class="form-group">
+        <label for="startDate">Sprint Start Date:</label>
+        <input id="startDate" type="date" [(ngModel)]="sprintStartDate" name="startDate" /> 
+        <label for="originalMergeDate">Sprint Original Merge Date:</label>
+        <input id="originalMergeDate" type="date" [(ngModel)]="sprintOriginalMergeDate" name="originalMergeDate" />
+    
+        <label for="currentMergeDate">Sprint Current Merge Date:</label>
+        <input id="currentMergeDate" type="date" [(ngModel)]="sprintCurrentMergeDate" name="currentMergeDate" />
+
+
+      <button type="button" class="btn custom-btn-primary" (click)="setSprintDates()" >
+        <i class="bi bi-calendar"></i>
+      Set Sprint Dates
+      </button>
+    </div> -->
+    <!-- <div class="form-group">
+  <label for="startDate">Sprint Start Date:</label>
+  <input id="startDate" type="date" [(ngModel)]="sprintStartDate" name="startDate" />
+
+  <label for="originalMergeDate">Sprint Original Merge Date:</label>
+  <input id="originalMergeDate" type="date" [(ngModel)]="sprintOriginalMergeDate" name="originalMergeDate" />
+
+  <label for="currentMergeDate">Sprint Current Merge Date:</label>
+  <input id="currentMergeDate" type="date" [(ngModel)]="sprintCurrentMergeDate" name="currentMergeDate" />
+
+  <button type="button" class="btn custom-btn-primary" (click)="setSprintDates()">
+    <i class="bi bi-calendar"></i>
+    Set Sprint Dates
+  </button>
+</div> -->
+
+  <div class="gantt-editor-container">
+    <div *ngIf="showGrid" class="gantt-grid-section">
+      <h4>Task List</h4>
+
+      <div class="filters-container">
+        <div class="filter-item">
+          <label>Filter by Resource:</label>
+          <div class="multi-select-dropdown">
+            <div class="dropdown-toggle" (click)="toggleResourceDropdown()">
+              {{ getSelectedResourceText() }}
+              <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="dropdown-menu" *ngIf="resourceDropdownOpen" (click)="$event.stopPropagation()">
+              <div class="dropdown-controls" (click)="$event.stopPropagation()">
+                <button type="button" class="btn-link" (click)="selectAllResources(); $event.stopPropagation()">Select All</button>
+                <button type="button" class="btn-link" (click)="clearAllResourceFilters(); $event.stopPropagation()">Clear All</button>
+              </div>
+              <div class="dropdown-item" *ngFor="let resource of ganttResources" (click)="$event.stopPropagation()">
+                <div class="checkbox-wrapper" (click)="onResourceToggle(resource.id); $event.stopPropagation()">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isResourceSelected(resource.id)"
+                    readonly
+                  />
+                  <span class="status-text">{{ resource.text }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-item">
+          <label>Filter by Type:</label>
+          <div class="multi-select-dropdown">
+            <div class="dropdown-toggle" (click)="toggleTypeDropdown()">
+              {{ getSelectedTypeText() }}
+              <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="dropdown-menu" *ngIf="typeDropdownOpen" (click)="$event.stopPropagation()">
+              <div class="dropdown-controls" (click)="$event.stopPropagation()">
+                <button type="button" class="btn-link" (click)="selectAllTypes(); $event.stopPropagation()">Select All</button>
+                <button type="button" class="btn-link" (click)="clearAllTypeFilters(); $event.stopPropagation()">Clear All</button>
+              </div>
+              <div class="dropdown-item" *ngFor="let type of ganttTypes" (click)="$event.stopPropagation()">
+                <div class="checkbox-wrapper" (click)="onTypeToggle(type.id); $event.stopPropagation()">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isTypeSelected(type.id)"
+                    readonly
+                  />
+                  <span class="status-text">{{ type.text }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-item">
+          <label>Filter by Status:</label>
+          <div class="multi-select-dropdown">
+            <div class="dropdown-toggle" (click)="toggleStatusDropdown()">
+              {{ getSelectedStatusText() }}
+              <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="dropdown-menu" *ngIf="statusDropdownOpen" (click)="$event.stopPropagation()">
+              <div class="dropdown-controls" (click)="$event.stopPropagation()">
+                <button type="button" class="btn-link" (click)="selectAllStatuses(); $event.stopPropagation()">Select All</button>
+                <button type="button" class="btn-link" (click)="clearAllStatusFilters(); $event.stopPropagation()">Clear All</button>
+              </div>
+              <div class="dropdown-item" *ngFor="let status of ganttStatuses" (click)="$event.stopPropagation()">
+                <div class="checkbox-wrapper" (click)="onStatusToggle(status.id); $event.stopPropagation()">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isStatusSelected(status.id)"
+                    readonly
+                  />
+                  <span class="status-text">{{ status.text }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <table class="gantt-grid-table">
+  
+        <thead>
+  <tr>
+    <th>Bug ID</th>
+    <th>Summary</th>
+    <th>Type</th>
+            <th>Status</th>
+    <th>Resource</th>
+    <th>Start Date</th>
+    <th>Original Merge Date</th>
+    <th>Current Merge Date</th>
+    <th>Tester Release Date</th> 
+    <!-- <th>Due Date</th>              -->
+    <th style="width: 40px">Progress</th>
+
+    <th>Save</th>
+    <!-- <th>Loader</th> -->
+  </tr>
+</thead>
+<tbody>
+  <tr *ngFor="let task of filteredTasks" (dblclick)="onRowDblClick(task)">
+    <td>
+      <a [href]="'https://sprintlyzer.qualis40.io/mantisbt/view.php?id=' + task.realmantisid" target="_blank" rel="noopener noreferrer">{{ task.realmantisid }}</a>
+    </td>
+    <td>{{ task.title }}</td>
+    <td>{{ task.type }}</td>
+     <td>{{ task.status }} </td>
+
+    <td>{{ getResourceName(task.id) }}</td>
+    <!-- <td>{{ task.start }}</td> -->
+     <td> <input type="date" [(ngModel)]="task.start" [name]="'start-' + task.id" /></td>
+    <!-- <td>{{ getOriginalMergeDate(task.id) }}</td> -->
+     <td> 
+      <input type="date" [(ngModel)]="task.originalEnd" [name]="'originalEnd-' + task.id" />
+     </td>
+    <td>
+      <input type="date" [(ngModel)]="task.end" [name]="'end-' + task.id" />
+    </td>
+    <td>
+      <input type="date" [(ngModel)]="task.testerReleaseDate" [name]="'testerReleaseDate-' + task.id" />
+    </td>
+    <!-- <td>
+      <input type="date" [(ngModel)]="task.dueDate" [name]="'dueDate-' + task.id" />
+    </td> -->
+    <td>
+      <input type="text" style="width: 40px;" [(ngModel)]="task.progress" [name]="'progress-' + task.id" />
+
+    </td>
+   
+    <td>
+      <button class="custom-btn-secondary"  (click)="saveTask(task)"><span [innerHTML]="icons.Save"></span></button>
+    </td>
+    <!-- <td>
+      <button class="custom-btn-secondary"  (click)="showGanttChart()"><span [innerHTML]="icons.Refresh"></span></button>
+    </td> -->
+    
+  </tr>
+</tbody>
+
+      </table>
+    </div>
+
+    <div *ngIf="!showGrid" class="gantt-chart-section">
+      <dx-gantt
+        *ngIf="ganttChartReady"
+        [tasks]="{ dataSource: filteredTasks }"
+        [dependencies]="{ dataSource: ganttDependencies }"
+        [resources]="{ dataSource: ganttResources }"
+        [resourceAssignments]="{ dataSource: ganttAssignments }"
+        [height]="500"
+        [columns]="[
+          { dataField: 'realmantisid', caption: 'Bug ID' },
+          { dataField: 'title', caption: 'Summary' },
+          { dataField: 'type', caption: 'Type' },
+          { dataField: 'status', caption: 'Status' }        ]">
+      </dx-gantt>
+      <div *ngIf="ganttChartLoading" class="gantt-loading">Loading chart...</div>
+    </div>
+  </div>
+</div>

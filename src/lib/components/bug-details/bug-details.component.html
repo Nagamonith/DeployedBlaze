@@ -1,0 +1,71 @@
+<!-- No modal present in this file. No update needed. -->
+<div class="container mt-4 sprint-matrix-main-content">
+
+ <div><h5 class="ms-2">Bug Tasks Details</h5><button class="btn custom-btn-secondary mb-3" (click)="gotoprevious()">Back</button></div> 
+
+  <div *ngIf="loading">Loading bug details...</div>
+  <div *ngIf="error" class="text-danger">{{ error }}</div>
+
+  <div *ngIf="!loading && (bugTaskDetails.length || timeTracking.length)" class="sprint-matrix-bottom-row">
+
+    <!-- Bug Task Table: 80% -->
+    <div class="sprint-matrix-tasks-table">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover sticky-header-table">
+          <thead>
+            <tr>
+              <th>Parent Bug ID</th>
+              <th>Child Task ID</th>
+              <th>Target Version</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Resource Name</th>
+              <th>Task Resource Name</th>
+              <th>Relationship Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let task of bugTaskDetails">
+              <td>{{ task.bug_id }}</td>
+              <td>{{ task.task_id }}</td>
+              <td>{{ task.target_version }}</td>
+              <td>{{ task.start_date }}</td>
+              <td>{{ task.end_date }}</td>
+              <td>{{ task.resource_name }}</td>
+              <td>{{ task.task_resource_name }}</td>
+              <td>{{ task.relationship_type }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Time Tracking Table: 20% -->
+    <div class="sprint-matrix-tracking-table">
+      <h5 class="ms-2">Total Resource Hours</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover sticky-header-table">
+          <thead>
+            <tr>
+              <th>Resource Name</th>
+              <th>Total Spent Hours</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of timeTracking">
+              <td>{{ t.realname }}</td>
+              <td>{{ t.total_spent }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div *ngIf="!loading && !bugTaskDetails.length && !timeTracking.length">
+    No data found for this bug.
+  </div>
+
+</div>
+

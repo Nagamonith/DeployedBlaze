@@ -1,0 +1,139 @@
+/* --- Consistent Modal/Alert Dialog Styles --- */
+.modal-dialog { top: 280px; }
+.alertmodal .modal-body img, ::ng-deep .img_vert span img { width: 30px; height: 30px; }
+.alertmodal .modal-footer { padding: 5px 10px; }
+.alertmodal .modal-footer button:nth-child(even) { float: right; }
+.alertmodal .modal-footer .btnsingle { background: var(--qualbuttoncolordarkred); color: var(--qualiconfillwhitecolor); }
+.alertmodal .modal-footer .btnsingle:hover { color: var(--qualiconfillwhitecolor); background-color: var(--qualdisablebtnclr); }
+.alertmodal .modal-footer .btngrey { background-color: #bbbbbb; }
+.alertmodal .modal-header { background-color: #f7f7f7; padding: 0.5rem 1rem; font-weight: 500; }
+.alertmodal .modal-title { color: black; font-size: 16px; font-weight: 500; margin-top: 1.7px; }
+.alertmodal .modal-header button.close { background-color: #efefef; padding: 0.5rem; margin: -0.3rem -0.5rem -0.5rem auto; }
+.alertmodal .modal-body .img_vert { display: flex; align-items: center; padding-left: 10px; padding-right: 0px; }
+.active { display: block !important; background-color: rgb(0, 0, 0, 0.7); }
+button:disabled { background-color: rgb(47, 185, 239); cursor: not-allowed; }
+#alertmodal { z-index: 9999999 !important; }
+.alert_msg { color: black; margin-top: 2px; font-size: 14px; font-weight: 500; margin-left: 8px; }
+.overlay { z-index: 999; opacity: 0.1; position: absolute; }
+.alertmodal { white-space: pre-wrap; }
+.prompt { margin-top: 10px; width: 100%; }
+.close { background-color: transparent !important; color: #777777 !important; }
+.alertmodal .modal-body { max-height: 200px; overflow-y: auto; }
+.imgsize { width: 22px; height: 22px; }
+.btn { background: transparent; outline: 0; box-shadow: none; font-size: var(--qualfontsize14); font-weight: var(--qualfontweightavg); margin: 5px; }
+.alertmodal .modal-footer .otheractn { background: var(--qualbuttoncolor); color: var(--qualiconfillwhitecolor); }
+.alertmodal .modal-footer .otheractn:hover, .alertmodal .modal-footer .otheractn:focus { color: var(--qualbuttonhoverclr); background-color: var(--qualbuttonhoverbgclr); }
+.alertmodal .modal-footer .closeactn { color: var(--qualbuttoncolor); border-color: var(--qualbuttoncolor); }
+.alertmodal .modal-footer .closeactn:hover { color: var(--qualbuttonhoverbgclr); border-color: var(--qualbuttonhoverbgclr); }
+.hd_icon { display: flex; }
+.hd_title { margin-left: 10px; }
+.info_bg { background-color: #def6ff !important; border-left: 5px solid #30b9ef !important; }
+.error_bg { background-color: #fef6f6 !important; border-left: 5px solid #dc3545 !important; }
+.warning_bg { background-color: #fcf8e3 !important; border-left: 5px solid #ffe34b !important; }
+/* .alert-container {
+  background: #fff;
+  border: 1px solid #eee;
+  border-left: 4px solid #f44336;
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.alert-icon {
+  font-size: 24px;
+  color: #f44336;
+  margin-right: 10px;
+}
+
+.alert-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+}
+
+.alert-body {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.alert-actions {
+  text-align: right;
+}
+
+.ok-btn {
+  background-color: #f44336;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.ok-btn:hover {
+  background-color: #d32f2f;
+} */
+
+.alert-container {
+  background: #ffffff;
+  border-left: 4px solid #30b9ef;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
+}
+
+.alert-header {
+  background-color: #30b9ef;
+  color: white;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.alert-icon {
+  font-size: 20px;
+}
+
+.alert-title {
+  flex: 1;
+}
+
+.alert-body {
+  padding: 20px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.alert-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 20px 20px 20px;
+}
+
+.ok-btn {
+  background-color: #30b9ef;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.ok-btn:hover {
+  background-color: #23a7db;
+}
+

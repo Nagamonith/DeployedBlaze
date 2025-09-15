@@ -1,0 +1,187 @@
+/* Container for the whole module block */
+.module-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(270deg, #f7ffff, #daf2fe, #d5ecf7, #f7ffff);
+  background-size: 300% 300%;
+  animation: skySlide 8s ease infinite;
+  border-radius: 16px;
+}
+
+/* Card Layout */
+.selection-card, .action-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 25px;
+  padding: 25px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.selection-card:hover, .action-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Header Titles */
+.selection-header {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+}
+
+.selection-title {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.selection-title .icon {
+  margin-right: 12px;
+  font-size: 22px;
+  color: #3498db;
+}
+
+/* Form Group Styling */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  color: #34495e;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+/* Select Box Styling */
+.select-wrapper {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #f9f9f9;
+  appearance: none;
+  transition: all 0.3s ease;
+  color: #333;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  background-color: #fff;
+}
+
+/* Custom Arrow */
+.select-arrow {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+/* Button Styles */
+.btn-export {
+  background-color:  #0a58ca;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.btn-export:hover {
+  background-color: #9b59b6;
+  transform: translateY(-1px);
+}
+
+.btn-export:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-export .icon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+/* Primary Action Button */
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+  padding: 14px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(41, 128, 185, 0.2);
+}
+
+.btn-primary .icon {
+  font-size: 18px;
+}
+
+/* Animations */
+@keyframes skySlide {
+  0% { background-position: 100% 0%; }
+  50% { background-position: 0% 100%; }
+  100% { background-position: 100% 0%; }
+}
+
+/* Icons (you can replace with actual icon classes from your library) */
+.icon {
+  display: inline-block;
+}
+
+.icon-module:before {
+  content: "📦";
+}
+
+.icon-version:before {
+  content: "🔖";
+}
+
+.icon-export:before {
+  content: "📤";
+}
+
+.icon-edit:before {
+  content: "✏️";
+}

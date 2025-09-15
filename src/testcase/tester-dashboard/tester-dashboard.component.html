@@ -1,0 +1,102 @@
+<div class="dashboard-wrapper">
+  <!-- Sidebar Toggle Button (now just a simple bold arrow) -->
+  <button class="sidebar-toggle" (click)="toggleSidebar()">
+    <span class="bold-arrow">{{ sidebarOpen ? '«' : '»' }}</span>
+  </button>
+
+  <!-- Sidebar -->
+  <div class="sidebar" [class.closed]="!sidebarOpen">
+    <ul class="product-list">
+      <!-- Product Menu Items -->
+      <li *ngFor="let product of products">
+        <div class="product-title" (click)="toggleProduct(product.id)">
+          {{ product.name }}
+          <span class="bold-arrow">
+            {{ expandedProductId === product.id ? '«' : '»' }}
+          </span>
+        </div>
+
+        <ul *ngIf="expandedProductId === product.id" class="submenu">
+      <li>
+  <div class="submenu-toggle" (click)="toggleTestRunManagement(product.id)">
+    ‎ ‎‎➟ Test Design
+    <span class="bold-arrow">
+      {{ expandedTestRunManagementProductId === product.id ? '«' : '»' }}
+    </span>
+  </div>
+  <ul *ngIf="expandedTestRunManagementProductId === product.id" class="submenu">
+    <li>
+      <a [routerLink]="['/tester/test-suite']" [queryParams]="{ productId: product.id, productName: product.name }">
+        ➟ Test Suite
+      </a>
+    </li>
+    <li>
+      <a [routerLink]="['/tester/test-runs']" [queryParams]="{ productId: product.id, productName: product.name }">
+        ➟ Test Run
+      </a>
+    </li>
+    <li>
+            <a [routerLink]="['/tester/add-testcases']" [queryParams]="{ productId: product.id, productName: product.name }"> ➟  Test Cases</a>
+          </li>
+    <li>
+            <a [routerLink]="['/tester/summary']" [queryParams]="{ productId: product.id, productName: product.name }">➟  Summary</a>
+          </li>
+  </ul>
+</li>
+
+          <!-- <li>
+            <a [routerLink]="['/tester/add-testcases']" [queryParams]="{ productId: product.id, productName: product.name }"> ➟  Test Cases</a>
+          </li> -->
+          <li>
+  <a [routerLink]="['/tester/import-excel']" 
+     [state]="{ productId: product.id, productName: product.name }">
+    ➟ Import Excel
+  </a>
+</li>
+          <li>
+            <a [routerLink]="['/tester/modules']" [queryParams]="{ productId: product.id, productName: product.name }"> ➟  Test Execution</a>
+          </li>
+          <li>
+            <div class="submenu-toggle" (click)="toggleResults(product.id)">
+                 ‎ ‎ ➟  Results
+              <span class="bold-arrow">
+                {{ expandedResultsProductId === product.id ? '«' : '»' }}
+              </span>
+            </div>
+            <ul *ngIf="expandedResultsProductId === product.id" class="submenu">
+              <li>
+                <a [routerLink]="['/tester/results']" [queryParams]="{ productId: product.id, productName: product.name }">
+                   ➟ Manual Results
+                </a>
+              </li>
+              <li>
+                <!-- <a [routerLink]="['/tester/automation-result']" [queryParams]="{ productId: product.id, productName: product.name }">
+  ➟ Automation Results
+</a> -->
+
+              </li>
+            </ul>
+          </li>
+          <!-- <li>
+            <a [routerLink]="['/tester/summary']" [queryParams]="{ productId: product.id, productName: product.name }">➟  Summary</a>
+          </li> -->
+        </ul>
+      </li>
+
+      <!-- General Section -->
+      <li class="general-item">
+        <a [routerLink]="['/tester/extra-adds']" [queryParams]="{ productId: '', productName: 'General' }">
+          General
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div *ngIf="currentProductName" class="current-product">
+     Product: <strong>{{ currentProductName }}</strong>
+    </div>
+<router-outlet></router-outlet>
+  </div>
+</div>

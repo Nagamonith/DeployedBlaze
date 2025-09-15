@@ -1,0 +1,19 @@
+<div class="dialog-container">
+  <div class="left-border"></div>
+
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <span class="dialog-icon">⚠️</span>
+      <span class="dialog-title">Not Found</span>
+      <span class="dialog-close" (click)="onClose()">✕</span>
+    </div>
+
+    <div class="dialog-body">
+      {{ data.message || 'The requested item was not found.' }}
+    </div>
+
+    <div class="dialog-actions">
+      <button mat-flat-button color="primary" class="btn-close" (click)="onClose()">Close</button>
+    </div>
+  </div>
+</div>

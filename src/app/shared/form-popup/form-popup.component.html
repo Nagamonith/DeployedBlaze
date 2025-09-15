@@ -1,0 +1,24 @@
+<dx-popup
+    [showTitle]="true"
+    [title]="popupTitle"
+    [width]="width"
+    [dragEnabled]="false"
+    [(visible)]="popupVisible"
+    [hideOnOutsideClick]="false"
+    [wrapperAttr]="{ class: specialClassName }"
+    (onHiding)="onPopupHiding()"
+>
+    <form>
+        <div class="flex">
+            <ng-content></ng-content>
+        </div>
+        <div class="button-area">
+            @if(!enableOk) {
+                <button type="button" class="primary" (click)="save()">{{'IDS_SAVE' | translate}}</button>
+            } @else {
+                <button type="button" class="primary" (click)="save()">{{'IDS_OK' | translate}}</button>
+            }
+            <button type="button" class="secondary" (click)="cancel()">{{'IDS_CANCEL' | translate}}</button>
+        </div>
+    </form>
+</dx-popup>

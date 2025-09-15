@@ -1,0 +1,7 @@
+/* Raise z-index for Angular Material dialogs */
+.mat-dialog-container {
+  z-index: 2000 !important;
+}
+.cdk-overlay-container {
+  z-index: 1999 !important;
+}

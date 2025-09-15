@@ -1,0 +1,76 @@
+<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container-fluid p-0">
+  <nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <a class="navbar-brand fs-4 fw-bold d-flex align-items-center">
+        <img src="https://datalyzer.com/wp-content/uploads/2022/01/logo-3.png" width="60" height="60" class="me-2">
+        <span>ASSET MANAGEMENT SYSTEM</span>
+      </a>
+      <div>
+        <a class="nav-link text-white" href="#" (click)="goToLogin(); $event.preventDefault()">LOGIN</a>
+      </div>
+    </div>
+  </nav>
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+ 
+<div *ngIf="notFound">
+  <p>No asset found for this tag.</p>
+</div>
+<div *ngIf="!notFound && assetType" class="card shadow-sm" style="min-width: 350px; max-width: 500px;">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Asset Details</h5>
+    <p><strong>Company Name:</strong> Datalyzer International Pvt Ltd</p>
+              <p><strong>Asset Tag:</strong> {{ assetData.AssetId || 'N/A' }}</p>
+                  <p><strong>Employee ID:</strong> {{ assetData.EmployeeId || 'N/A' }}</p>
+
+    <ng-container *ngFor="let field of requiredFieldsMap[assetType]">
+          
+
+
+      <p>
+        <strong>{{ field }}:</strong>
+        {{ assetData[field] && assetData[field].trim() ? assetData[field] : 'N/A' }}
+      </p>
+    </ng-container>
+
+  </div>
+</div> -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container-fluid p-0">
+  <nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <a class="navbar-brand fs-4 fw-bold d-flex align-items-center">
+        <img src="https://datalyzer.com/wp-content/uploads/2022/01/logo-3.png" width="60" height="60" class="me-2">
+        <span>ASSET MANAGEMENT SYSTEM</span>
+      </a>
+      <div>
+        <a class="nav-link text-white" href="#" (click)="goToLogin(); $event.preventDefault()">LOGIN</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div *ngIf="notFound">
+      <p>No asset found for this tag.</p>
+    </div>
+
+    <div *ngIf="!notFound && assetType" class="card shadow-sm" style="min-width: 350px; max-width: 500px;">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Asset Details</h5>
+        <p><strong>Company Name:</strong> Datalyzer Technologies Pvt Ltd</p>
+        <p><strong>Asset Tag:</strong> {{ assetData.AssetId || 'N/A' }}</p>
+        <p><strong>Employee ID:</strong> {{ assetData.EmployeeId || 'N/A' }}</p>
+
+        <ng-container *ngFor="let field of requiredFields">
+          <p>
+            <strong>{{ field }}:</strong>
+            {{ assetData[field]?.trim() ? assetData[field] : 'N/A' }}
+          </p>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

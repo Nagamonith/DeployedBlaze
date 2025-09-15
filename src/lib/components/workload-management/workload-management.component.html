@@ -1,0 +1,83 @@
+<div class="workload-management-container">
+<div class="workload-management-container">
+  <div class="top-bar">
+    <div class="form-group">
+      <label for="workloadStartDate">Start Date</label>
+      <input type="date" class="form-control" [(ngModel)]="workloadStartDate" name="workloadStartDate">
+    </div>
+    <div class="form-group">
+      <label for="workloadEndDate">End Date</label>
+      <input type="date" class="form-control" [(ngModel)]="workloadEndDate" name="workloadEndDate">
+    </div>
+    <button class="custom-btn-primary" (click)="fetchWorkloadData()">Load Data</button>
+  </div>
+  <div *ngIf="workloadLoading">Loading workload data...</div>
+  <div *ngIf="workloadError" class="text-danger">{{ workloadError }}</div>
+  <!-- Resource Filter Dropdown -->
+  
+  <div class="filters-container" style="display: flex; align-items: center; gap: 16px;" *ngIf="resourceList.length > 0">
+    <div class="filter-item" style="display: flex; align-items: center;">
+      <label style="margin-right: 8px; min-width: 120px;">Filter by Resource</label>
+      <select class="form-control" [(ngModel)]="selectedResource" (change)="applyResourceFilter()">
+        <option value="">All Resources</option>
+        <option *ngFor="let res of resourceList" [value]="res">{{ res }}</option>
+      </select>
+    </div>
+    <div class="filter-item" style="display: flex; align-items: center;">
+      <label style="margin-right: 8px; min-width: 120px;">View Mode</label>
+      <select class="form-control" [(ngModel)]="viewMode">
+        <option value="gantt">Gantt Chart</option>
+        <option value="grid">Grid</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- DevExtreme Gantt Chart -->
+  <dx-gantt
+    *ngIf="viewMode === 'gantt' && filteredGanttTasks && filteredGanttTasks.length > 0"
+    [tasks]="{ dataSource: filteredGanttTasks }"
+    [resources]="{ dataSource: ganttResources }"
+    [resourceAssignments]="{ dataSource: ganttAssignments }"
+    [taskListWidth]="350"
+    [height]="550"
+    [columns]="[
+      { dataField: 'mantis_BugID', caption: 'Bug ID' },
+      { dataField: 'project_Name', caption: 'Project' },
+      { dataField: 'resource_Name', caption: 'Resource' },
+      { dataField: 'title', caption: 'Task' },
+      { dataField: 'total_Hoursd_Worked', caption: 'Hours' }
+      
+    ]"
+  >
+    
+  </dx-gantt>
+  <!-- DevExtreme Data Grid -->
+  <dx-data-grid
+
+    *ngIf="viewMode === 'grid' && filteredGanttTasks && filteredGanttTasks.length > 0"
+    [dataSource]="filteredGanttTasks"
+    [showBorders]="true"
+    [columnAutoWidth]="true"
+    [filterRow]="{ visible: false }"
+    [searchPanel]="{ visible: false }"
+    [paging]="{ pageSize: 10 }"
+    [allowColumnResizing]="true"
+    [columns]="[
+      { dataField: 'mantis_BugID', caption: 'Bug ID' },
+      { dataField: 'project_Name', caption: 'Project' },
+      { dataField: 'resource_Name', caption: 'Resource' },
+      { dataField: 'title', caption: 'Task' },
+      { dataField: 'total_Hoursd_Worked', caption: 'Hours' },
+      { dataField: 'actual_Start', caption: 'StartDate' },
+      { dataField: 'original_Merge_Date', caption: 'MergeDate' },
+      { dataField: 'current_Merge_Date', caption: 'Current MergeDate' },
+      { dataField: 'progress', caption: 'Progress' }
+    ]"
+    (onRowDblClick)="onBugRowDblClick($event)"
+  >
+  </dx-data-grid>
+  <div *ngIf="!workloadLoading && workloadData && workloadData.length === 0 && workloadStartDate && workloadEndDate && loadButtonClicked">
+    <strong>No workload data found for selected dates.</strong>
+  </div>
+</div>
+<!-- Note: Make sure FormsModule is imported in your module for ngModel to work. -->

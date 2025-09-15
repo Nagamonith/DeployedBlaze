@@ -1,0 +1,112 @@
+/* --- Consistent Modal/Alert Dialog Styles --- */
+.modal-dialog { top: 280px; }
+.alertmodal .modal-body img, ::ng-deep .img_vert span img { width: 30px; height: 30px; }
+.alertmodal .modal-footer { padding: 5px 10px; }
+.alertmodal .modal-footer button:nth-child(even) { float: right; }
+.alertmodal .modal-footer .btnsingle { background: var(--qualbuttoncolordarkred); color: var(--qualiconfillwhitecolor); }
+.alertmodal .modal-footer .btnsingle:hover { color: var(--qualiconfillwhitecolor); background-color: var(--qualdisablebtnclr); }
+.alertmodal .modal-footer .btngrey { background-color: #bbbbbb; }
+.alertmodal .modal-header { background-color: #f7f7f7; padding: 0.5rem 1rem; font-weight: 500; }
+.alertmodal .modal-title { color: black; font-size: 16px; font-weight: 500; margin-top: 1.7px; }
+.alertmodal .modal-header button.close { background-color: #efefef; padding: 0.5rem; margin: -0.3rem -0.5rem -0.5rem auto; }
+.alertmodal .modal-body .img_vert { display: flex; align-items: center; padding-left: 10px; padding-right: 0px; }
+.active { display: block !important; background-color: rgb(0, 0, 0, 0.7); }
+button:disabled { background-color: rgb(47, 185, 239); cursor: not-allowed; }
+#alertmodal { z-index: 9999999 !important; }
+.alert_msg { color: black; margin-top: 2px; font-size: 14px; font-weight: 500; margin-left: 8px; }
+.overlay { z-index: 999; opacity: 0.1; position: absolute; }
+.alertmodal { white-space: pre-wrap; }
+.prompt { margin-top: 10px; width: 100%; }
+.close { background-color: transparent !important; color: #777777 !important; }
+.alertmodal .modal-body { max-height: 200px; overflow-y: auto; }
+.imgsize { width: 22px; height: 22px; }
+.btn { background: transparent; outline: 0; box-shadow: none; font-size: var(--qualfontsize14); font-weight: var(--qualfontweightavg); margin: 5px; }
+.alertmodal .modal-footer .otheractn { background: var(--qualbuttoncolor); color: var(--qualiconfillwhitecolor); }
+.alertmodal .modal-footer .otheractn:hover, .alertmodal .modal-footer .otheractn:focus { color: var(--qualbuttonhoverclr); background-color: var(--qualbuttonhoverbgclr); }
+.alertmodal .modal-footer .closeactn { color: var(--qualbuttoncolor); border-color: var(--qualbuttoncolor); }
+.alertmodal .modal-footer .closeactn:hover { color: var(--qualbuttonhoverbgclr); border-color: var(--qualbuttonhoverbgclr); }
+.hd_icon { display: flex; }
+.hd_title { margin-left: 10px; }
+.info_bg { background-color: #def6ff !important; border-left: 5px solid #30b9ef !important; }
+.error_bg { background-color: #fef6f6 !important; border-left: 5px solid #dc3545 !important; }
+.warning_bg { background-color: #fcf8e3 !important; border-left: 5px solid #ffe34b !important; }
+.dialog-container {
+  display: flex;
+  background-color: white;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.left-border {
+  width: 4px;
+  background-color: #4caf50; /* Green for "Add" */
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.dialog-content {
+  flex: 1;
+  padding: 0;
+  border-radius: 0 10px 10px 0;
+}
+
+.dialog-header {
+  background-color: #4caf50;
+  color: white;
+  padding: 16px;
+  border-top-right-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog-icon {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.dialog-title {
+  font-weight: 600;
+  font-size: 16px;
+  flex: 1;
+}
+
+.dialog-close {
+  cursor: pointer;
+  font-size: 18px;
+  color: white;
+}
+
+.dialog-body {
+  padding: 20px;
+  font-size: 14px;
+  color: #333;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 20px 20px 20px;
+}
+
+.btn-add {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-add:hover {
+  background-color: #45a045;
+}
+
+.btn-close {
+  color: #4caf50;
+  border-color: #4caf50;
+}
+
+.btn-close:hover {
+  border-color: #45a045;
+  color: #45a045;
+}

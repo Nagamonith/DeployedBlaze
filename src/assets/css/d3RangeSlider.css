@@ -1,0 +1,156 @@
+#cchart{
+    position: relative;
+    overflow: hidden;
+}
+#cchart #scroll{
+    display: flex;
+    align-items: center;
+}
+
+#cchart #scroll .slider-container {
+    background-color: #f2f2f9;
+    height: 10px !important;
+    border-radius: 15px;
+}
+#cchart #scroll .cchart_scroll_container{
+    width: 100%;
+    padding: 0px 8px;
+}
+#cchart #scroll .slider {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    background: #d9d9d9;
+    height: 100%;
+    width: 58px;
+    top: 0px;
+    cursor: move;
+  
+}
+#cchart #scroll .slider:hover{
+    background: #a3a3a3;
+}
+#cchart #scroll .slider .handle {
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    border-radius: 25px;
+    border: 1px solid #aab;
+    background-color: #d9d9d9;
+    background-repeat: no-repeat;
+    background-position: calc(100% - 2.5px) center;
+    background-size: 9px;
+    background-image:  url(src/assets/svg_icons/drag.svg);
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+#cchart #scroll .slider .EE {
+    right: -9px;
+    cursor: e-resize;
+}
+
+#cchart #scroll .slider .WW {
+    cursor: w-resize;
+    left: -9px;
+}
+
+.slider .EE, .slider .WW {
+    top: 0px;
+    margin-top: -4px;
+}
+
+.play-container .button{
+    fill-opacity: 0.0;
+    stroke: #AAB;
+    stroke-width: 1.6;
+}
+
+.play-container .play, .play-container .stop {
+    fill: #BCE;
+    stroke: #AAB;
+    stroke-width: 1;
+}
+
+
+.srtooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+  }
+  
+  /* .scrtooltiptext {
+   width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    display:none;
+  } */
+  .EE .scrtooltiptext, .WW .scrtooltiptext{
+    background-color: #2fb9ef;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 999999 !important;
+    white-space: nowrap;
+    top: -33px;
+    /* left: 50%; */
+    display: none;
+  }
+  .EE .scrtooltiptext{
+    right: 0px;
+  }
+  .EE .scrtooltiptext.hide{
+    left: 0px;
+    right: unset;
+  }
+  .EE .scrtooltiptext.hide::after{
+    left:9px;
+    right: unset;
+}
+  .EE .scrtooltiptext::after{
+    right:5px;
+}
+  .EE .scrtooltiptext.overlap{
+    top: -64px;
+  }
+  .EE .scrtooltiptext.overlap::after{
+    border-width: 5px 1px 30px 1px;
+    border-color: #2fb9ef;
+  }
+  .WW .scrtooltiptext{
+    left: 0px;
+  }
+  .WW .scrtooltiptext::after{
+      left:9px;
+  }
+  .WW .scrtooltiptext.hide{
+    right: 0px;
+    left:unset;
+  }
+  .WW .scrtooltiptext.hide::after{
+      right:5px;
+      left:unset;
+  }
+  .tshow{
+    display:block !important;
+  }
+  .scrtooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #2fb9ef transparent transparent transparent;
+  }
+ 

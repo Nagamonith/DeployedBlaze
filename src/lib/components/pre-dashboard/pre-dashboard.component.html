@@ -1,0 +1,191 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  /* Modern modal styling */
+
+</style>
+<div class="pre-dashboard-container">
+
+  <div class="ribbon-nav">
+    <div class="ribbon-tabs">
+      <button class="ribbon-tab" [class.active]="activeTab==='add'" (click)="activeTab='add'">Add</button>
+      <button class="ribbon-tab" [class.active]="activeTab==='export'" (click)="activeTab='export'">Export</button>
+      <button class="ribbon-tab" [class.active]="activeTab==='goto'" (click)="activeTab='goto'">Goto</button>
+      <div class="ribbon-search">
+      </div>
+      <div class="asset-type-selector-ribbon ms-3">
+        <label for="assetType" class="asset-type-label">Asset Type:</label>
+        <div class="custom-select-wrapper">
+          <select id="assetType" [(ngModel)]="selectedAssetType" class="form-select custom-select">
+            <option value="" disabled>Select type</option>
+            <option *ngFor="let type of assetTypes" [value]="type">{{ type }}</option>
+          </select>
+          <span class="custom-select-arrow">&#9662;</span>
+        </div>
+        <div class="modal" *ngIf="showAddTypeModal">
+          <div class="modal-content">
+            <h5>Add New Asset Type</h5>
+
+            <input [(ngModel)]="newAssetType" class="form-control" placeholder="Asset Type Name" />
+
+            <div class="mt-3">
+              <h5 style="border-bottom: 20px;">Fields</h5>
+              <div *ngFor="let field of newTypeFields; let i = index" class="d-flex align-items-center mb-2">
+                <input [(ngModel)]="newTypeFields[i]" class="form-control me-2" placeholder="Field Name" />
+                <button class="btn btn-danger btn-sm" (click)="removeNewTypeField(i)">Remove</button>
+              </div>
+              <div class="d-flex align-items-center mb-3">
+                <input [(ngModel)]="newFieldInput" class="form-control me-2" placeholder="New Field Name" />
+                <button class="custom-btn-primary1" (click)="addNewTypeField()">Add Field</button>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <button class="custom-btn-primary" (click)="addAssetType()">Add</button>
+              <button class="custom-btn-secondary ms-2" (click)="showAddTypeModal = false">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="ribbon-toolbar ribbon-toolbar-icons">
+      <ng-container *ngIf="activeTab==='add'">
+        <div class="ribbon-action" (click)="openAddTypeModal()">
+          <i class="bi bi-folder-plus"></i>
+          <div class="ribbon-action-label">Add New Asset Type</div>
+        </div>
+        <div class="ribbon-action" [class.disabled]="!selectedAssetType" (click)="selectedAssetType && openAddAssetModal()">
+          <!-- <i class="bi bi-plus-circle"></i> -->
+          <span [innerHTML]="icons.Add"></span>
+          <div class="ribbon-action-label">Add New Asset</div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="activeTab==='export'">
+        <div class="ribbon-action" [class.disabled]="!selectedAssetType" (click)="selectedAssetType && exportReport()">
+          <!-- <i class="bi bi-file-earmark-arrow-up"></i> -->
+                      <span [innerHTML]="icons.Export"></span>
+          <div class="ribbon-action-label">Export Report</div>
+        </div>
+        <div class="ribbon-action" (click)="exportOverallReport()">
+          <!-- <i class="bi bi-archive"></i> -->
+           <span [innerHTML]="icons.Export"></span>
+          <div class="ribbon-action-label">Export Overall Report</div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="activeTab==='goto'">
+        <div class="ribbon-action" (click)="goToVendorDashboard()">
+          <i class="bi bi-truck"></i>
+          <div class="ribbon-action-label">Vendor Dashboard</div>
+        </div>
+        <div class="ribbon-action" (click)="goToAssetDashboard()">
+          <i class="bi bi-hdd-network"></i>
+          <div class="ribbon-action-label">Asset Dashboard</div>
+        </div>
+        <div class="ribbon-action" (click)="goToEmployeeDashboard()">
+          <i class="bi bi-person-badge"></i>
+          <div class="ribbon-action-label">Employee Dashboard</div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="ribbon-separator"></div>
+
+  <div class="total-assets-info ms-2">
+    <i class="bi bi-box-seam"></i>
+    <span class="total-assets-label">Total Assets in Inventory:</span>
+    <span class="total-assets-count">{{ totalAssetCount }}</span>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="showSearchModal"></div>
+  <div class="modal" *ngIf="showSearchModal">
+    <div class="search-modal-content" style="max-height: 80vh; overflow-y: auto; min-width: 400px;">
+      <button class="btn-close float-end" (click)="closeSearchModal()" aria-label="Close">Close</button>
+      <h5>Assets for Employee ID: {{ searchEmployeeId }}</h5>
+      <ng-container *ngIf="filteredAssets?.length; else noAssets">
+        <div *ngFor="let asset of filteredAssets; let idx = index" class="asset-json-card p-3 mb-3 border rounded bg-light">
+          <div class="fw-bold mb-2">Asset {{ idx + 1 }}</div>
+          <div *ngFor="let key of (asset | keyvalue)" class="d-flex mb-1">
+            <div class="me-2 text-secondary" style="min-width: 120px;">{{ key.key }}:</div>
+            <div class="fw-semibold">{{ key.value }}</div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #noAssets>
+        <div>No assets found for this employee.</div>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="asset-summary-cards">
+    <div class="summary-card ms-2" *ngFor="let summary of assetSummaries"
+         (dblclick)="goToAssetDashboardWithType(summary.type)"
+         style="cursor: pointer;" title="Double-click to view details">
+      <h4>
+        {{ summary.type }}
+        <button class="btn btn-sm btn-secondary ms-2" (click)="deleteAssetType(summary.type)" title="Delete Type">
+          <!-- <i class="bi bi-trash"></i> -->
+           <span [innerHTML]="icons.Delete"></span>
+        </button>
+      </h4>
+      <p>{{ summary.count }} assets</p>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="showAddAssetModal"></div>
+  <div class="modal" *ngIf="showAddAssetModal">
+    <div class="simple-form-header">
+      <span class="header-title">Add {{ selectedAssetType }} Asset</span>
+      <span class="close-icon" (click)="showAddAssetModal=false">
+        <i class="bi bi-x-lg"></i>
+      </span>
+    </div>
+    <div class="modal-content" style="max-height: 70vh; overflow-y: auto; padding-bottom: 2rem; max-width: 500px; margin: 0 auto;">
+      <div class="modal-field-row">
+        <label class="simple-form-label">AssetId</label>
+        <input [(ngModel)]="assetIdField" class="simple-form-input" placeholder="Asset ID" required />
+      </div>
+      <div *ngIf="!assetIdField" class="text-danger mb-2">AssetId is required.</div>
+
+      <div class="modal-field-row">
+        <label class="simple-form-label">EmployeeId</label>
+        <select [(ngModel)]="employeeIdField" class="simple-form-input">
+          <option value="">Select Employee</option>
+          <option *ngFor="let emp of employees" [value]="emp.employeeId">
+            {{ emp.name || emp.EmployeeId || emp.employeeId }}
+          </option>
+        </select>
+      </div>
+
+      <div class="modal-field-row">
+        <label class="simple-form-label">Vendor</label>
+        <select [(ngModel)]="selectedVendorId" class="simple-form-input" required>
+          <option value="" disabled selected>Select Vendor</option>
+          <option *ngFor="let vendor of vendors" [value]="vendor.Id">{{ vendor.Name }}</option>
+        </select>
+      </div>
+
+      <div *ngFor="let field of dynamicFields; let i = index" class="modal-field-row" style="display: flex; align-items: center; gap: 8px;">
+        <label class="simple-form-label" style="min-width: 110px;">{{ field.key }}</label>
+        <input [(ngModel)]="field.value" class="simple-form-input" placeholder="Value" style="flex: 1;" />
+        <button class="btn btn-danger btn-sm" (click)="removeField(i)">Remove</button>
+      </div>
+
+      <div class="modal-field-row" style="display: flex; align-items: center; gap: 8px;">
+        <input [(ngModel)]="newFieldName" class="simple-form-input" placeholder="New Field Name" style="flex: 1;" />
+        <button class="btn custom-btn-primary" (click)="addField()">Add Field</button>
+      </div>
+
+      <div>
+        <button class="btn custom-btn-primary" (click)="saveAsset()" [disabled]="!assetIdField || !selectedVendorId">Save Asset</button>
+        <button class="btn custom-btn-secondary ms-2" (click)="showAddAssetModal=false">Cancel</button>
+      </div>
+
+      <div *ngIf="errorMessage" style="color: red; font-weight: 500; margin-bottom: 10px;">
+        {{ errorMessage }}
+      </div>
+    </div>
+  </div>
+
+</div>

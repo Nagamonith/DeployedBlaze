@@ -1,0 +1,125 @@
+<div class="bug-metrics-editor">
+  <div class="simple-form-header">
+    <span class="header-title">Sprint Metrics Parameters</span>
+    <span class="close-icon" (click)="goBack()">
+      <i class="bi bi-x-lg"></i>
+    </span>
+  </div>
+  <form [formGroup]="metricsForm" class="top-bar" (ngSubmit)="loadData()">
+    <label class="simple-form-label" for="bugId">Bug ID</label>
+    <input id="bugId" type="text" formControlName="bugId" class="simple-form-input" required />
+    <label class="simple-form-label" for="version">Version</label>
+    <input id="version" type="text" formControlName="version" class="simple-form-input" required />
+    <div style="display: flex; gap: 12px; margin-top: 18px;">
+      <button type="submit" class="btn custom-btn-primary">Load</button>
+      <button type="button" class="btn custom-btn-secondary" (click)="goBack()">Back</button>
+    </div>
+  </form>
+
+  <div *ngIf="dataLoaded">
+   
+  <!-- Bug Summary Table -->
+   <div class="sprint-matrix-summary-table ms-2">
+    <h5 class="ms-2">Bug Time Summary</h5>
+    <div class="table-responsive stickey-table">
+      <table class="table table-bordered table-sm sticky-header-table">
+        <thead> 
+          <tr>
+            <th>Summary</th>
+            <!-- <th>Bug ID</th> -->
+            <!-- <th>Target Version</th> -->
+                <th>Actual Hours</th>
+            <th>Estimated Hours</th>
+            <th>Analysis</th>
+            <th>Design</th>
+            <th>Coding</th>
+            <th>Testing</th>
+            <th>Demo/Review</th>
+            <th>Release</th>
+            <th>Documentation</th>
+            <th>Training</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let summary of bugSummaries">
+            <td>{{ summary.Summary }}</td>
+            <!-- <td>{{ summary.bug_id }}</td> -->
+            <!-- <td>{{ summary.target_version }}</td> -->
+               <td>{{ summary.Actual_Hours }}</td>
+            <td>{{ summary.Estimates_Hours }}</td>
+          
+            <td>{{ summary.Analysis_hours }}</td>
+            <td>{{ summary.Design_hours }}</td>
+            <td>{{ summary.Coding_hours }}</td>
+            <td>{{ summary.Testing_hours }}</td>
+            <td>{{ summary.Demo_Review_hours }}</td>
+            <td>{{ summary.Release_hours }}</td>
+            <td>{{ summary.Documentation_hours }}</td>
+            <td>{{ summary.Training_hours }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bug Tasks Table -->
+<div class="sprint-matrix-bottom-row">
+    <!-- Bug Tasks Table (left, takes more space) -->
+    <div class="sprint-matrix-tasks-table ms-2">
+      <h5 class="ms-2">  Bug Tasks Details</h5>
+      <div class="table-responsive">
+      <table class="table table-bordered table-sm sticky-header-table">
+        <thead>
+          <tr>
+              <th>Parent Bug ID</th>
+            <th>Child Task ID</th>
+            <th>Target Version</th>
+               <th>Start Date</th>
+                <th>End Date</th>
+                 <th>Resource Name</th>
+            <th>Task Resource Name</th>
+                 <th>Relationship Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let task of bugTasks">
+            <td>{{ task.bug_id }}</td>
+            <td>{{ task.task_id }}</td>
+            <td>{{ task.target_version }}</td>
+            <td>{{ task.start_date }}</td>
+            <td>{{ task.end_date }}</td>
+            <td>{{ task.resource_name }}</td>
+            <td>{{ task.task_resource_name }}</td>
+            <td>{{ task.relationship_type }}</td>
+           
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Time Tracking Table -->
+    <div class="sprint-matrix-tracking-table ms-2">
+      <h5>  Total Resource Hours</h5>
+      <div class="table-responsive">
+      <table class="table table-bordered table-sm sticky-header-table">
+        <thead>
+          <tr>
+            <!-- <th>User ID</th> -->
+            <th>Resource Name</th>
+            <th>Total Spent Hours</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tracking of bugTrackings">
+            <!-- <td>{{ tracking.user_id }}</td> -->
+            <td>{{ tracking.realname }}</td>
+            <td>{{ tracking.total_spent }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  </div>
+</div>

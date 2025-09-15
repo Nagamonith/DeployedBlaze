@@ -1,0 +1,52 @@
+.workload-management-container {
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+a {
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+dx-data-grid a {
+  pointer-events: auto;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.form-group label {
+  margin-right: 8px;
+  min-width: 80px;
+}
+
+.form-group input[type="date"] {
+  min-width: 140px;
+}
+
+.custom-btn-primary {
+  margin-left: 8px;
+}
+
+.view-toggle {
+  margin-left: 16px;
+}
+
+.filters-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}

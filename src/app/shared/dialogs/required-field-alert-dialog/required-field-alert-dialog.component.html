@@ -1,0 +1,19 @@
+<div class="dialog-container">
+  <div class="left-border warning"></div>
+
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <span class="dialog-icon">⚠️</span>
+      <span class="dialog-title">Required Field</span>
+      <span class="dialog-close" (click)="onClose()">✕</span>
+    </div>
+
+    <div class="dialog-body">
+      {{ data.message || 'This field is required.' }}
+    </div>
+
+    <div class="dialog-actions">
+      <button mat-flat-button color="warn" class="btn-close" (click)="onClose()">Close</button>
+    </div>
+  </div>
+</div>

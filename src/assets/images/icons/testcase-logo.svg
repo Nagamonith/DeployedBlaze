@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Ornamental frame -->
+  <path d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2z" 
+        stroke="currentColor" 
+        stroke-width="1.5" 
+        stroke-linecap="round" 
+        stroke-dasharray="2 2"/>
+  
+  <!-- Premium document with subtle shadow -->
+  <path d="M22 9H10a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V11a2 2 0 0 0-2-2z" 
+        fill="currentColor" 
+        fill-opacity="0.05"/>
+  <path d="M22 9H10a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V11a2 2 0 0 0-2-2z" 
+        stroke="currentColor" 
+        stroke-width="1.5"/>
+  
+  <!-- Decorative corner accent -->
+  <path d="M22 9l-4 4h4V9z" 
+        fill="currentColor" 
+        fill-opacity="0.3"/>
+  
+  <!-- Elegant checkmark with flourish -->
+  <path d="M11 16l4 4 6-8" 
+        stroke="currentColor" 
+        stroke-width="2.5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- Subtle starburst detail -->
+  <path d="M24 6l2-2m-8 0l2 2m-14 20l-2 2m8 0l-2-2" 
+        stroke="currentColor" 
+        stroke-width="1" 
+        stroke-opacity="0.5"/>
+</svg>

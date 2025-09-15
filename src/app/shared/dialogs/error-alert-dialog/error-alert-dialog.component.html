@@ -1,0 +1,19 @@
+<div class="dialog-container">
+  <div class="left-border danger"></div>
+
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <span class="dialog-icon">❌</span>
+      <span class="dialog-title">Error</span>
+      <span class="dialog-close" (click)="onClose()">✕</span>
+    </div>
+
+    <div class="dialog-body">
+      {{ data.message || 'An unexpected error occurred.' }}
+    </div>
+
+    <div class="dialog-actions">
+      <button mat-flat-button color="warn" class="btn-close" (click)="onClose()">Close</button>
+    </div>
+  </div>
+</div>

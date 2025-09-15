@@ -1,0 +1,80 @@
+.dialog-container {
+  display: flex;
+  background-color: white;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.left-border {
+  width: 4px;
+  background-color: #30b9ef;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.dialog-content {
+  flex: 1;
+  padding: 0;
+  border-radius: 0 10px 10px 0;
+}
+
+.dialog-header {
+  background-color: #30b9ef;
+  color: white;
+  padding: 16px;
+  border-top-right-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog-icon {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.dialog-title {
+  font-weight: 600;
+  font-size: 16px;
+  flex: 1;
+}
+
+.dialog-close {
+  cursor: pointer;
+  font-size: 18px;
+  color: white;
+}
+
+.dialog-body {
+  padding: 20px;
+  font-size: 14px;
+  color: #333;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 20px 20px 20px;
+}
+
+.btn-delete {
+  background-color: #30b9ef;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #23a7db;
+}
+
+.btn-close {
+  color: #30b9ef;
+  border-color: #30b9ef;
+}
+
+.btn-close:hover {
+  border-color: #23a7db;
+  color: #23a7db;
+}

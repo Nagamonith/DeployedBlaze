@@ -1,0 +1,136 @@
+<div class="container">
+  <h2>Asset Dashboard</h2>
+
+    <div class="select-action-row">
+  <div class="custom-select-wrapper">
+    <select [(ngModel)]="selectedType" (change)="fetchAssets()" class="form-select custom-select">
+      <option value="" disabled>Select Asset Type</option>
+      <option *ngFor="let type of assetTypes" [value]="type">{{ type }}</option>
+    </select>
+    <span class="custom-select-arrow">&#9662;</span>
+  </div>
+
+  <button class="btn custom-btn-secondary" (click)="goToPreviousPage()">Back</button>
+  <button class="btn custom-btn-primary" (click)="viewAllAssets()">View All Assets</button>
+</div>
+
+   
+  
+
+  <!-- Table for selected type assets -->
+  <table class="table table-bordered sticky-table" *ngIf="assets.length && !showAllAssetsGrid">
+    <thead class="sticky-thead">
+      <tr>
+        <th>Asset ID</th>
+        <th>Employee ID</th>
+        <th>View</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody class="scrollable-tbody">
+      <tr *ngFor="let asset of assets">
+        <td>{{ asset.AssetId }}</td>
+        <td>{{ asset.EmployeeId }}</td>
+        <td>
+          <button class="custom-btn-secondary" (click)="openViewAsset(asset)"><span [innerHTML]="icons.Show"></span></button>
+          <button class="custom-btn-secondary ms-2" (click)="openQrModal(asset.AssetId)">QR</button>
+        </td>
+        <td>
+          <button class="custom-btn-secondary" (click)="openEditAsset(asset)"><span [innerHTML]="icons.Editfield"></span></button>
+          <button class="custom-btn-secondary ms-2" (click)="deleteAsset(asset.Id)"><span [innerHTML]="icons.Delete"></span></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!assets.length && selectedType && !showAllAssetsGrid">No assets found.</div>
+
+  <!-- All Assets Grid -->
+  <div *ngIf="showAllAssetsGrid">
+    <h4>All Assets</h4>
+    <table class="table table-bordered sticky-table">
+      <thead class="sticky-thead">
+        <tr>
+          <th>AssetId</th>
+          <th>Type</th>
+          <th>EmployeeId</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody class="scrollable-tbody">
+        <tr *ngFor="let asset of allAssets">
+          <td>{{ asset.AssetId }}</td>
+          <td>{{ asset.Type }}</td>
+          <td>{{ asset.EmployeeId }}</td>
+          <td>
+            <button class="custom-btn-secondary" (click)="openViewAsset(asset)"><span [innerHTML]="icons.Show"></span></button>
+            <button class="custom-btn-secondary ms-2" (click)="openQrModal(asset.AssetId)">QR</button>
+            <button class="custom-btn-secondary ms-2" (click)="openEditAsset(asset)"><span [innerHTML]="icons.Editfield"></span></button>
+            <button class="custom-btn-secondary ms-2" (click)="deleteAsset(asset.Id)"><span [innerHTML]="icons.Delete"></span></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="btn custom-btn-secondary" (click)="showAllAssetsGrid = false">Close</button>
+  </div>
+ 
+
+<div *ngIf="showQrModal" class="modal">
+  <div class="simple-form-header">
+    <span class="header-title">QR Code</span>
+    <span class="close-icon" (click)="closeQrModal()">
+      <i class="bi bi-x-lg"></i>
+    </span>
+  </div>
+  <div class="modal-content text-center">
+    <div id="qrCanvas">
+      <qrcode [qrdata]="qrUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+    </div>
+    <div class="mt-3">
+      <button class="btn custom-btn-primary" (click)="downloadQrCode()">Download QR</button>
+      <button class="btn custom-btn-secondary ms-2" (click)="closeQrModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+  <!-- View Asset Modal -->
+  <div class="modal-backdrop" *ngIf="showViewModal"></div>
+  <div class="modal" *ngIf="showViewModal">
+    <div class="modal-content">
+      <h5>Asset Details</h5>
+      <div *ngFor="let key of viewAssetKeys" class="asset-details-row">
+        <span class="asset-details-label">{{ key }}</span>
+        <span class="asset-details-value">{{ viewAsset[key] }}</span>
+      </div>
+      <div>
+        <button class="btn custom-btn-secondary" (click)="showViewModal=false">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Asset Modal -->
+  <div class="modal-backdrop" *ngIf="showEditModal"></div>
+  <div class="modal" *ngIf="showEditModal">
+    <div class="modal-content">
+      <h5>Edit Asset</h5>
+      <div *ngFor="let field of editFields; let i = index" class="mb-2">
+        <label class="form-label fw-bold">{{ field.key }}</label>
+        <ng-container *ngIf="field.key === 'EmployeeId'; else normalInput">
+          <select [(ngModel)]="editFields[i].value" class="form-control">
+            <option *ngFor="let emp of employees" [value]="emp.employeeId">
+              {{ emp.name || emp.EmployeeId || emp.employeeId }}
+            </option>
+          </select>
+        </ng-container>
+        <ng-template #normalInput>
+          <input [(ngModel)]="field.value" class="form-control" placeholder="Value" [required]="field.key === 'AssetId'" />
+        </ng-template>
+        <div *ngIf="field.key === 'AssetId' && !field.value" class="text-danger">
+          AssetId is required.
+        </div>
+      </div>
+      <div>
+        <button class="btn custom-btn-primary" (click)="saveEditAsset()">Save</button>
+        <button class="btn custom-btn-secondary ms-2" (click)="showEditModal=false">Cancel</button>
+      </div>
+    </div>

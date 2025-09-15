@@ -1,0 +1,257 @@
+/* --- Simple Form Consistent Styles (shared across all components) --- */
+.simple-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 16px 20px 0 20px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #313131;
+  border-radius: 10px 10px 0 0;
+}
+.simple-form-header .header-title {
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  color: #313131;
+  font-weight: 400;
+}
+.simple-form-header .close-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
+  color: #313131;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.simple-form-label {
+  display: block;
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
+  color: rgba(49,49,49,0.6);
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+.simple-form-input {
+  width: 100%;
+  height: 36px;
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
+  color: #313131;
+  border: 1px solid rgba(49,49,49,0.4);
+  border-radius: 6px;
+  padding: 0 12px;
+  background: #fff;
+  outline: none;
+  box-sizing: border-box;
+  transition: border 0.2s;
+}
+.simple-form-input:focus {
+  border: 1px solid rgba(49,49,49,0.4);
+  border-left: 4px solid #ff0000;
+}
+.simple-form-error {
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
+  color: rgba(255,0,0,0.6);
+  font-weight: 400;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+.simple-form-default-icon {
+  color: #313131;
+  opacity: 0.6;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-dialog {
+  top: 280px;
+}
+.alertmodal .modal-body img {
+  width: 30px;
+  height: 30px;
+}
+::ng-deep .img_vert span img {
+  width: 30px;
+  height: 30px;
+}
+.alertmodal .modal-footer {
+  /* display: inline; */
+  padding: 5px 10px;
+}
+.alertmodal .modal-footer button:nth-child(even) {
+  float: right;
+}
+.alertmodal .modal-footer .btnsingle {
+  /* transform: translate(-225%, 0%); */
+  background: var(--qualbuttoncolordarkred);
+  color: var(--qualiconfillwhitecolor);
+}
+.alertmodal .modal-footer .btnsingle:hover {
+  color: var(--qualiconfillwhitecolor);
+  background-color: var(--qualdisablebtnclr);
+}
+.alertmodal .modal-footer .btngrey {
+  background-color: #bbbbbb;
+}
+.alertmodal .modal-header {
+  background-color: #f7f7f7;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+}
+.alertmodal .modal-title {
+  color: black;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 1.7px;
+}
+.alertmodal .modal-header button.close {
+  background-color: #efefef;
+  padding: 0.5rem;
+  margin: -0.3rem -0.5rem -0.5rem auto;
+}
+
+.alertmodal .modal-body .img_vert {
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  padding-right: 0px;
+}
+.active {
+  display: block !important;
+  background-color: rgb(0, 0, 0, 0.7);
+  /* opacity: 0.7; */
+}
+
+/* .alertmodal .dl_alrt_msg .modal-footer #btn1:focus, button:focus{
+    outline: 0;
+    box-shadow: none;
+    background-color: rgb(47, 185, 239);
+    color:#FFFFFF;
+} */
+/* .alertmodal .dl_alrt_msg .modal-footer #btn1:hover, .alertmodal .dl_alrt_msg .modal-footer button:hover, .alertmodal .dl_alrt_msg .modal-footer button:focus{
+    color:#FFFFFF;
+    background-color: #f44336;
+} */
+button:disabled {
+  background-color: rgb(47, 185, 239);
+  cursor: not-allowed;
+}
+#alertmodal {
+  z-index: 9999999 !important;
+}
+.alert_msg {
+  color: black;
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+.overlay {
+  z-index: 999;
+  opacity: 0.1;
+  position: absolute;
+}
+.alertmodal {
+  white-space: pre-wrap;
+  /* top: 100px; */
+}
+.prompt {
+  margin-top: 10px;
+  width: 100%;
+}
+/* .btn{font-weight: bold !important;} */
+.close {
+  background-color: transparent !important;
+  color: #777777 !important;
+}
+.alertmodal .modal-body {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.imgsize {
+  width: 22px;
+  height: 22px;
+}
+.btn {
+  /* // border: 0; */
+  background: transparent;
+  /* // text-transform: uppercase; */
+  outline: 0;
+  box-shadow: none;
+  font-size: var(--qualfontsize14);
+  font-weight: var(--qualfontweightavg);
+  margin: 5px;
+}
+.alertmodal .modal-footer .otheractn {
+  background: var(--qualbuttoncolor);
+  color: var(--qualiconfillwhitecolor);
+}
+.alertmodal .modal-footer .otheractn:hover {
+  color: var(--qualbuttonhoverclr);
+  background-color: var(--qualbuttonhoverbgclr);
+}
+.alertmodal .modal-footer .otheractn:focus {
+  color: var(--qualbuttonhoverclr);
+  background-color: var(--qualbuttonhoverbgclr);
+}
+.alertmodal .modal-footer .closeactn {
+  color: var(--qualbuttoncolor);
+  border-color: var(--qualbuttoncolor);
+}
+.alertmodal .modal-footer .closeactn:hover {
+  color: var(--qualbuttonhoverbgclr);
+  border-color: var(--qualbuttonhoverbgclr);
+}
+.hd_icon {
+  display: flex;
+}
+.hd_title {
+  margin-left: 10px;
+}
+.info_bg {
+  background-color: #def6ff !important;
+  border-left: 5px solid #30b9ef !important;
+}
+.error_bg {
+  background-color: #fef6f6 !important;
+  border-left: 5px solid #dc3545 !important;
+}
+.warning_bg {
+  background-color: #fcf8e3 !important;
+  border-left: 5px solid #ffe34b !important;
+}
+/* .confirm_bg     {
+    background-color: lightgreen !important;
+    border-left: 7px solid #b8ecb8 !important;
+} */
+
+/* .alertmodal .dl_alrt_msg{
+    background-color: rgba(0,0,0,0.5);
+}
+
+.alertmodal .dl_alrt_msg .modal-header{
+    border-bottom: 0px solid;
+}
+.alertmodal .dl_alrt_msg .modal-footer{
+    border-top: 0px solid;
+    padding-top: 0px;
+}
+.alertmodal .dl_alrt_msg .modal-footer #btn1{
+    background-color: white;
+    border: 3px solid rgb(47, 185, 239);
+    color: rgb(47, 185, 239);
+    padding: 6px 24px;
+}
+.alertmodal .dl_alrt_msg .modal-footer #btn1:disabled{
+    cursor: not-allowed;
+}
+.alertmodal .dl_alrt_msg .modal-footer #btn1:focus, .alertmodal .dl_alrt_msg .modal-footer #btn1:hover{
+    border: 3px solid #f44336;
+} */

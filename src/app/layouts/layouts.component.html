@@ -1,0 +1,15 @@
+<div class="app-wrapper">
+  <app-header></app-header>
+
+  <div class="flex full-height-minus-header">
+    <div class="app-sidebar">
+      <lib-leftnavbartree (showHideTreeemit)="showHideTree($event)"></lib-leftnavbartree>
+    </div>
+
+    <div class="app-content-holder">
+      <div class="main-scroll">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

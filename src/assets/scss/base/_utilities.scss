@@ -1,0 +1,130 @@
+@use 'variables' as *;
+
+$font-weights: (
+  regular: 400,
+  medium: 500,
+  bold: 700,
+  black: 900,
+);
+
+@mixin font-weight($name) {
+  font-weight: map-get($map: $font-weights, $key: $name);
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+$card-sizes: (
+  xs: 200px,
+  sm: 300px,
+  md: 400px,
+  lg: 500px,
+  full: 100%,
+  auto: auto
+);
+
+@mixin card-size($name) {
+  width: map-get($map: $card-sizes, $key: $name);
+}
+
+// Define a loop to generate classes with dynamic padding & margin
+@for $i from 0 through 50 {
+  .mt-#{$i} {
+    margin-top: $i * 1px !important;
+  }
+  .mb-#{$i} {
+    margin-bottom: $i * 1px !important;
+  }
+  .ml-#{$i} {
+    margin-left: $i * 1px !important;
+  }
+  .mr-#{$i} {
+    margin-right: $i * 1px !important;
+  }
+  .m-#{$i} {
+    margin: $i * 1px !important;
+  }
+
+  .pt-#{$i} {
+    padding-top: $i * 1px !important;
+  }
+  .pb-#{$i} {
+    padding-bottom: $i * 1px !important;
+  }
+  .pl-#{$i} {
+    padding-left: $i * 1px !important;
+  }
+  .pr-#{$i} {
+    padding-right: $i * 1px !important;
+  }
+  .p-#{$i} {
+    padding: $i * 1px !important;
+  }
+}
+
+// loop to generate classes with dynamic width in %
+@for $i from 1 through 100 {
+  .w-#{$i} {
+    width: $i * 1% !important;
+  }
+}
+
+// loop to generate classes with dynamic width in px
+@for $i from 50 through 900 {
+  @if $i % 50 == 0 {
+    .w-#{$i}-px {
+      width: #{$i}px !important;
+    }
+  }
+}
+
+// loop to generate classes with dynamic flex gap
+@for $i from 1 through 50 {
+  .gap-#{$i} {
+    gap: $i * 1px;
+  }
+}
+
+.width-auto {
+  width: auto !important;
+}
+
+.m-minus-15{
+  margin-left: -15px !important;
+  margin-right: -15px !important;
+}
+
+.border-dash-right{
+  border-right: 1px dashed lighten($fullDarkColor, 80.7%);
+}
+
+.border-dash-top{
+  border-top: 1px dashed lighten($fullDarkColor, 80.7%);
+}
+
+.border-dash-left{
+  border-left: 1px dashed lighten($fullDarkColor, 80.7%);
+}
+
+.border-dash-bottom{
+  border-bottom: 1px dashed lighten($fullDarkColor, 80.7%);
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-danger {
+  color: $textDanger;
+}

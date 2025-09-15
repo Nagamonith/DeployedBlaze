@@ -1,0 +1,243 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<div class="container-fluid p-0">
+
+  <nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container-fluid d-flex justify-content-between align-items-center position-relative">
+      <!-- Navigation links group -->
+      <div class="nav-actions-group d-flex align-items-center flex-wrap">
+        <a class="nav-link text-black me-3" href="#" role="button"
+           [class.fw-bold]="isCardView"
+           (click)="setCardView(true); $event.preventDefault()">CARD VIEW</a>
+        <a class="nav-link text-black me-3" href="#" role="button"
+           [class.fw-bold]="!isCardView"
+           (click)="setCardView(false); $event.preventDefault()">GRID VIEW</a>
+        <a class="nav-link text-black me-3" href="#" role="button" (click)="addLaptop(); $event.preventDefault()">ADD NEW DEVICE</a>
+
+        <a class="nav-link text-black me-3" href="#" role="button" (click)="exportToExcel(); $event.preventDefault()">
+          EXPORT OVERALL REPORT
+        </a>
+        <a class="nav-link text-black me-3" href="#" role="button" (click)="exportAllHistoryToExcel(); $event.preventDefault()">
+          EXPORT ALL LAPTOP HISTORY
+        </a>
+        <a class="nav-link text-black me-3" href="#" role="button" (click)="gotoPreDashboard(); $event.preventDefault()">
+          DASHBOARD
+        </a>
+      </div>
+      <!-- Search icon and form absolutely positioned to the right -->
+      <div class="search-container d-flex align-items-center"
+           #searchContainer
+           [class.expanded]="searchExpanded"
+           style="position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+        <span class="search-icon" (click)="toggleSearch()">
+          <i class="bi bi-search"></i>
+        </span>
+        <form *ngIf="searchExpanded" class="search-form-animated" (submit)="onSearch($event)">
+          <input class="form-control" type="search" placeholder="Search by Employee ID"
+                 [(ngModel)]="searchEmployeeId" name="searchEmployeeId" autofocus>
+          <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+          <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()"><i class="bi bi-x-lg"></i></button>
+        </form>
+      </div>
+    </div>
+  </nav>
+  <div class="card-section">
+    <div *ngIf="isCardView; else tableView" class="card-container">
+      <div *ngFor="let laptop of laptops" class="card shadow-sm">
+        <div class="card-body d-flex flex-column justify-content-between align-items-stretch">
+          <div class="card-details flex-grow-1">
+            <h5 class="card-title">{{ laptop.deviceDetails.employeeId }}</h5>
+            <p><strong>Asset Tag:</strong> {{ laptop.deviceDetails.assetTag }}</p>
+            <p><strong>Employee ID:</strong> {{ laptop.deviceDetails.employeeId }}</p>
+            <p><strong>Employee Name:</strong> {{ laptop.deviceDetails.empName }}</p>
+            <p><strong>Manufacturer:</strong> {{ laptop.deviceDetails.make }}</p>
+          </div>
+          <div class="icon-group-horizontal mt-3">
+            <span class="icon-action" title="View" (click)="openModal(laptop)">
+              <i class="bi bi-eye"></i>
+            </span>
+            <span class="icon-action" title="Edit" (click)="editLaptop(laptop.id)">
+              <i class="bi bi-pencil-square"></i>
+            </span>
+            <span class="icon-action" title="Delete" (click)="deleteLaptop(laptop.id)">
+              <i class="bi bi-trash"></i>
+            </span>
+            <span class="icon-action" title="History" (click)="openHistory(laptop)">
+              <i class="bi bi-clock-history"></i>
+            </span>
+            <span class="icon-action" title="QR Code" (click)="openQrModal(laptop.deviceDetails.assetTag)">
+              <i class="bi bi-qr-code"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-backdrop" *ngIf="selectedLaptop" (click)="closeModal()"></div>
+    <div class="modal" *ngIf="selectedLaptop" tabindex="-1" role="dialog" style="display: block;">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Device Details - {{ selectedLaptop.deviceDetails.assetTag }}</h5>
+          </div>
+          <div class="modal-body">
+            <p><strong>Company Name:</strong> {{ selectedLaptop.deviceDetails.company }}</p>
+            <p><strong>Asset Tag:</strong> {{ selectedLaptop.deviceDetails.assetTag }}</p>
+            <p><strong>Employee ID:</strong> {{ selectedLaptop.deviceDetails.employeeId }}</p>
+            <p><strong>Employee Name:</strong> {{ selectedLaptop.deviceDetails.empName }}</p>
+            <p><strong>Phone:</strong> {{ selectedLaptop.deviceDetails.phone }}</p>
+            <p><strong>Email:</strong> {{ selectedLaptop.deviceDetails.email }}</p>
+            <p><strong>Manufacturer:</strong> {{ selectedLaptop.deviceDetails.make }}</p>
+            <p><strong>Model:</strong> {{ selectedLaptop.deviceDetails.model }}</p>
+            <p><strong>CPU:</strong> {{ selectedLaptop.deviceDetails.cpu }}</p>
+            <p><strong>Operating System:</strong> {{ selectedLaptop.deviceDetails.os }}</p>
+            <p><strong>RAM:</strong> {{ selectedLaptop.deviceDetails.ram }}</p>
+            <p><strong>HDD:</strong> {{ selectedLaptop.deviceDetails.hdd }}</p>
+            <p><strong>SSD:</strong> {{ selectedLaptop.deviceDetails.ssd }}</p>
+            <p><strong>Mouse provided:</strong> {{ selectedLaptop.deviceDetails.mouse }}</p>
+            <p><strong>Comments:</strong> {{ selectedLaptop.deviceDetails.comments }}</p>
+            <p><strong>Issued Date:</strong> {{ selectedLaptop.deviceDetails.invoiceDate }}</p>
+            <p><strong>Physical IP Address:</strong> {{ selectedLaptop.deviceDetails.physicalIPAddress }}</p>
+            <p><strong>Host Name:</strong> {{ selectedLaptop.deviceDetails.hostName }}</p>
+            <p><strong>Other Items:</strong> {{ selectedLaptop.deviceDetails.otherItems }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #tableView>
+      <div class="table-responsive ">
+        <table class="table table-bordered table-hover table-striped align-middle sticky-header-table">
+          <thead class="text-center">
+            <tr>
+              <th>Asset Tag</th>
+              <th>Employee ID</th>
+              <th>Employee Name</th>
+              <th>Manufacturer</th>
+              <th>Model</th>
+              <th>CPU</th>
+              <th>Operating System</th>
+              <th>RAM</th>
+              <th>HDD</th>
+              <th>SSD</th>
+              <th>Mouse provided</th>
+              <th>Company provided</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Comments</th>
+              <th>Issued Date</th>
+              <th>Physical IP Address</th>
+              <th>Host Name</th>
+              <th>Other Items</th>
+              <th class="sticky-actions-col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let laptop of laptops">
+              <td>{{ laptop.deviceDetails.assetTag }}</td>
+              <td>{{ laptop.deviceDetails.employeeId }}</td>
+              <td>{{laptop.deviceDetails.empName }}</td>
+              <td>{{ laptop.deviceDetails.make }}</td>
+              <td>{{ laptop.deviceDetails.model }}</td>
+              <td>{{ laptop.deviceDetails.cpu }}</td>
+              <td>{{ laptop.deviceDetails.os }}</td>
+              <td>{{ laptop.deviceDetails.ram }}</td>
+              <td>{{ laptop.deviceDetails.hdd }}</td>
+              <td>{{ laptop.deviceDetails.ssd }}</td>
+              <td>{{ laptop.deviceDetails.mouse }}</td>
+              <td>{{ laptop.deviceDetails.company }}</td>
+              <td>{{ laptop.deviceDetails.phone }}</td>
+              <td>{{ laptop.deviceDetails.email }}</td>
+              <td>{{ laptop.deviceDetails.comments }}</td>
+              <td>{{ laptop.deviceDetails.invoiceDate }}</td>
+              <td>{{ laptop.deviceDetails.physicalIPAddress }}</td>
+              <td>{{ laptop.deviceDetails.hostName }}</td>
+              <td>{{ laptop.deviceDetails.otherItems }}</td>
+              <td class="sticky-actions-col">
+                <div class="d-flex justify-content-center gap-2">
+                  <span class="icon-action" title="Edit" (click)="editLaptop(laptop.id)">
+                    <i class="bi bi-pencil-square"></i>
+                  </span>
+                  <span class="icon-action" title="Delete" (click)="deleteLaptop(laptop.id)">
+                    <i class="bi bi-trash"></i>
+                  </span>
+                  <span class="icon-action " title="History" (click)="openHistory(laptop)">
+                    <i class="bi bi-clock-history"></i>
+                  </span>
+                  <span class="icon-action" title="QR Code" (click)="openQrModal(laptop.deviceDetails.assetTag)">
+                    <i class="bi bi-qr-code"></i>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-template>
+  </div>
+  <div class="modal-backdrop" *ngIf="showHistoryModal" (click)="closeHistory()"></div>
+  <div class="modal" *ngIf="showHistoryModal" tabindex="-1" role="dialog" style="display: block;">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            History for Asset Tag: {{ historyLaptop?.deviceDetails?.assetTag || '' }}
+          </h5>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="historyLoading">Loading...</div>
+          <div *ngIf="historyError" class="text-danger">{{ historyError }}</div>
+          <div *ngIf="!historyLoading && !historyError && historyData.length === 0">
+            No history found.
+          </div>
+          <div *ngIf="historyData.length > 0">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Commentor</th>
+                  <th>Comment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let h of historyData">
+                  <td>{{ h.date | date:'short' }}</td>
+                  <td>{{ h.commentor }}</td>
+                  <td>{{ h.comment }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeHistory()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QR Code Modal -->
+<div class="modal-backdrop" *ngIf="showQrModal" (click)="closeQrModal()"></div>
+<div class="modal" *ngIf="showQrModal" tabindex="-1" role="dialog" style="display: block;">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" id="qrCanvas">
+      <div class="modal-header">
+        <h5 class="modal-title">QR Code for Asset Tag: {{ qrAssetTag }}</h5>
+      </div>
+      <div class="modal-body text-center">
+        <qrcode [qrdata]="qrUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+        <!-- <p class="mt-2"><small>{{ qrUrl }}</small></p> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="downloadQrCode()">Download QR</button>
+        <button type="button" class="btn btn-secondary" (click)="closeQrModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

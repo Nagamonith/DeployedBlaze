@@ -1,0 +1,100 @@
+<div class="alertmodal" (keydown)="keyEvent($event)">
+  <input type="text" #hide style="position: absolute; top: -10000px" />
+  <div
+    class="modal dl_alrt_msg"
+    id="alertmodal"
+    [ngClass]="open ? 'active' : ''"
+    data-bs-backdrop="static"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div
+          class="modal-header"
+          [ngClass]="
+            _alert.servity.toLowerCase() == 'info'
+              ? 'info_bg'
+              : '' || _alert.servity.toLowerCase() == 'error'
+                ? 'error_bg'
+                : '' || _alert.servity.toLowerCase() == 'warning'
+                  ? 'warning_bg'
+                  : '' || _alert.servity.toLowerCase() == 'confirm'
+                    ? 'confirm_bg'
+                    : ''
+          "
+        >
+          <span class="hd_icon">
+            <div class="row">
+              <div class="col-1 img_vert">
+                <span *ngIf="_alert && _alert.servity.toLowerCase() == 'info'">
+                  <img
+                    class="imgsize"
+                    [src]="'./assets/svg_icons/Question_mark_blue.svg?relVern'"
+                  />
+                </span>
+
+                <span *ngIf="_alert && _alert.servity.toLowerCase() == 'warning'">
+                  <img class="imgsize" [src]="'./assets/svg_icons/warning.svg?relVern'" />
+                </span>
+
+                <span *ngIf="_alert && _alert.servity.toLowerCase() == 'error'">
+                  <img class="imgsize" [src]="'./assets/svg_icons/error_alrt.svg?relVern'" />
+                </span>
+
+                <span *ngIf="_alert && _alert.servity.toLowerCase() == 'confirm'">
+                  <img class="imgsize" [src]="'./assets/svg_icons/confirm.svg?relVern'" />
+                </span>
+              </div>
+            </div>
+            <span class="hd_title">
+              <h5 class="modal-title">{{ _alert.title }}</h5>
+            </span>
+          </span>
+          <span
+            *ngIf="_alert && _alert.close"
+            class="close"
+            data-dismiss="modal"
+            (click)="callBtnEvent('close')"
+          >
+            <img [src]="'./assets/images/cross.svg?relVern'" />
+          </span>
+          <!-- <button  *ngIf="_alert  && _alert.close" type="button" class="close" data-dismiss="modal" (click)="callBtnEvent('close')" >&times;</button> -->
+        </div>
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="row" style="align-items: center">
+            <div class="col-11">
+              <div #msg class="alert_msg" id="alertmsg"></div>
+
+              <div *ngIf="_alert.prompt" class="prompt">
+                <input
+                  id="prompt"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="_alert.promptValue"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button
+            *ngFor="let btn of _alert.action; let inc = index"
+            [id]="'btn' + inc"
+            [attr.trigger]="inc"
+            [tabindex]="'0'"
+            [ngClass]="
+              _alert.servity === 'error' ? 'btnsingle' : btn !== 'Close' ? 'otheractn' : 'closeactn'
+            "
+            type="button"
+            class="btn"
+            (click)="callBtnEvent(inc)"
+          >
+            {{ btn }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

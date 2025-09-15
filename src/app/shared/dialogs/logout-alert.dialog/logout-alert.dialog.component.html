@@ -1,0 +1,18 @@
+<div class="alert-container">
+  <div class="alert-header">
+    <span class="alert-icon">🔒</span>
+    <span class="alert-title">{{ data.title || 'Logout Confirmation' }}</span>
+  </div>
+
+  <div class="alert-body">
+    {{ data.message }}
+  </div>
+
+  <div class="alert-actions">
+   <div class="alert-actions d-flex justify-content-end">
+  <button class="ok-btn me-2" (click)="onConfirm()">Logout</button>
+  <button class="ok-btn cancel" (click)="onCancel()">Cancel</button>
+</div>
+
+  </div>
+</div>

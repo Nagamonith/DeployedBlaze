@@ -1,0 +1,81 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<!-- Ribbon Navigation for Sprint Matrix -->
+<div class="ribbon-nav sprint-matrix-ribbon">
+  <div class="ribbon-tabs">
+    <button class="ribbon-tab active"  >
+      Sprint Metrics
+    </button>
+    <!-- <button class="ribbon-tab onclick" (click)="gotoProjectDetails()">
+      Projects
+    </button> -->
+    <!-- <button class="ribbon-tab" >Gantt Chart</button>
+    <button class="ribbon-tab" >Releases</button> -->
+  </div>
+  <div class="ribbon-toolbar ribbon-toolbar-icons">
+    <!-- <div class="ribbon-action" (click)="openSprintMatrixModal()">
+      <i class="bi bi-grid"></i>
+      <div class="ribbon-action-label">Open Metrics</div> -->
+
+    <!-- </div> -->
+     <!-- <div class="ribbon-action" (click)="goToBugMetricsEditor()">
+  <i class="bi bi-grid"></i>
+  <div class="ribbon-action-label">Open Metrics</div>
+</div>
+     <div class="ribbon-action" (click)="openGanttChartModal()">
+      <i class="bi bi-graph-up "></i>
+      <div class="ribbon-action-label">Gantt Chart</div>
+    </div> -->
+      <div class="ribbon-action" (click)="gotoProjectDetails()">
+  <i class="bi bi-grid"></i>
+  <div class="ribbon-action-label">Sprint Dashboard</div>
+</div>
+     <div class="ribbon-action" (click)="openGanttChartModal()">
+      <i class="bi bi-graph-up"></i>
+      <div class="ribbon-action-label">Sprint Data Entry</div>
+    </div>
+   
+</div>
+<div class="ribbon-separator"></div>
+
+
+<!-- Modal for parameter entry (Consistent Simple Form) -->
+<div class="modal-backdrop" *ngIf="showSprintMatrixModal"></div>
+<div class="modal" *ngIf="showSprintMatrixModal">
+  <div class="simple-form-header">
+    <span class="header-title">Sprint Metrics Parameters</span>
+    <span class="close-icon" (click)="closeSprintMatrixModal()">
+      <i class="bi bi-x-lg"></i>
+    </span>
+  </div>
+  <div class="modal-content">
+    <form (ngSubmit)="loadData()">
+      <label class="simple-form-label" for="bugId">Bug ID</label>
+      <input id="bugId" type="number" class="simple-form-input" [(ngModel)]="bugId" name="bugId" placeholder="Enter Bug ID" />
+      <label class="simple-form-label" for="version">Version</label>
+      <input id="version" type="text" class="simple-form-input" [(ngModel)]="version" name="version" placeholder="Enter Version" />
+      <div style="display: flex; gap: 12px; margin-top: 18px;">
+        <button type="submit" class="btn custom-btn-primary">Load</button>
+        <button type="button" class="btn custom-btn-secondary" (click)="closeSprintMatrixModal()">Close</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<!-- Not Found Modal (Consistent Simple Form) -->
+<div class="modal-backdrop" *ngIf="notFound"></div>
+<div class="modal" *ngIf="notFound">
+  <div class="simple-form-header">
+    <span class="header-title">No Results Found</span>
+    <span class="close-icon" (click)="closeNotFoundModal()">
+      <i class="bi bi-x-lg"></i>
+    </span>
+  </div>
+  <div class="modal-content">
+    <p style="font-size:12px; color:#313131; margin: 18px 0;">No data matched your parameters. Please try again.</p>
+    <button class="btn custom-btn-secondary" (click)="closeNotFoundModal()">Back</button>
+  </div>
+</div>
+

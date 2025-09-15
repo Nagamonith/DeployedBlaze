@@ -1,0 +1,46 @@
+<h2>Select a Product</h2>
+
+<!-- ➕ Add Product -->
+<div class="add-form">
+  <button (click)="toggleAddProduct()">Add Product</button>
+</div>
+
+<!-- Add Product Form -->
+<div class="add-form" *ngIf="showAddForm">
+  <input [(ngModel)]="newProductName" placeholder="Enter new product name" />
+  <button (click)="saveProduct()">💾 Save</button>
+  <button (click)="clearForm()">🧹 Clear</button>
+</div>
+
+<!-- 🧱 Product Grid -->
+<div class="product-grid">
+  <div
+    class="product-card"
+    *ngFor="let product of products; let i = index"
+    (click)="selectProduct(product)"
+    (contextmenu)="onRightClick($event, i)"
+  >
+    <!-- If editing this product, show editable input -->
+    <div *ngIf="editingIndex === i; else productView">
+      <input [(ngModel)]="editedProductName" (click)="$event.stopPropagation()" />
+      <button (click)="saveEdit(i); $event.stopPropagation()">✅</button>
+      <button (click)="cancelEdit(); $event.stopPropagation()">❌</button>
+    </div>
+
+    <!-- Normal display -->
+    <ng-template #productView>
+      {{ product.name }}
+    </ng-template>
+
+    <!-- Right-click context menu -->
+    <div
+      *ngIf="contextMenuIndex === i"
+      class="options-menu"
+      [style.left.px]="menuX"
+      [style.top.px]="menuY"
+    >
+      <button (click)="startEdit(i); $event.stopPropagation()">✏️ Edit</button>
+      <button (click)="deleteProduct(i); $event.stopPropagation()">🗑️ Delete</button>
+    </div>
+  </div>
+</div>

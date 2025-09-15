@@ -1,0 +1,165 @@
+<!-- <div class="container mt-4">
+  <h2>Project Summary</h2>
+  <p><strong>Project:</strong> {{ projectName }}</p>
+  <p><strong>Target Version:</strong> {{ version || '(unspecified)' }}</p>
+
+  <div class="mt-4">
+    <button class="btn btn-primary me-2" (click)="showOverallMetrics()">Overall Metrics</button>
+    <button class="btn btn-outline-secondary" (click)="showGanttChart()">Gantt Chart</button>
+  </div>
+</div> -->
+
+<!-- <div class="container mt-4">
+  <h2>Project Summary</h2>
+  <p><strong>Project:</strong> {{ projectName }}</p>
+  <p><strong>Target Version:</strong> {{ version || '(unspecified)' }}</p>
+
+  <div class="mt-4">
+    <button class="btn btn-primary me-2" (click)="showOverallMetrics()">Overall Metrics</button>
+    <button class="btn btn-outline-secondary" (click)="showGanttChart()">Gantt Chart</button>
+  </div>
+
+  <div class="mt-4" *ngIf="showGantt">
+    <app-gantt-editor
+      [projectNameFromParent]="projectName"
+      [targetVersionFromParent]="version">
+    </app-gantt-editor>
+  </div>
+</div> -->
+
+
+
+<div class="container mt-4 sprint-matrix-main-content">
+  <!-- Section Title and Tabs -->
+  <div class="sprint-matrix-ribbon">
+    <div class="ribbon-tabs">
+      <ng-container *ngFor="let tab of tabs; let i = index">
+        <button class="ribbon-tab" [class.active]="activeTabIndex === i" (click)="activeTabIndex = i">
+          {{ tab.label }}
+          <span *ngIf="i > 0" (click)="$event.stopPropagation(); closeTab(i)" style="margin-left:8px; color:#888; cursor:pointer;">&times;</span>
+        </button>
+      </ng-container>
+    </div>
+    <div class="ribbon-toolbar">
+      <div>
+        <strong>Project:</strong> {{ projectName }}
+      </div>
+      <div class="ms-4">
+        <strong>Target Version:</strong> {{ version || '(unspecified)' }}
+      </div>
+    </div>
+  </div>
+  <hr class="ribbon-separator" />
+
+  <!-- Action Buttons (only on main tab) -->
+  <div class="d-flex flex-wrap gap-2 mb-4" *ngIf="activeTabIndex === 0">
+    <button class="btn btn-primary me-2" (click)="showOverallMetrics()"> Overall Metrics</button>
+    <button class="btn btn-secondary" (click)="showGanttChart()"> Gantt Chart</button>
+  </div>
+
+  <!-- Tab Content -->
+  <div [ngSwitch]="tabs[activeTabIndex]?.type">
+    <!-- Project Summary Tab (default) -->
+    <div *ngSwitchCase="'summary'">
+      <div *ngIf="bugSummaryLoading">Loading summary...</div>
+      <div *ngIf="bugSummaryError" class="text-danger">{{ bugSummaryError }}</div>
+      <table *ngIf="bugSummary.length > 0" class="table table-bordered table-hover mt-3">
+        <thead>
+          <tr>
+            <th *ngFor="let key of bugSummaryDisplayOrder">{{ key }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bug of bugSummary" (dblclick)="openBugDetails(bug.bug_id)">
+            <td *ngFor="let key of bugSummaryDisplayOrder">
+              {{ bug[key] }}
+            </td>
+          </tr>
+          <!-- Total Row -->
+          <tr class="table-success fw-bold">
+            <td *ngFor="let key of bugSummaryDisplayOrder; let i = index">
+              <ng-container *ngIf="i < 3"></ng-container>
+              <ng-container *ngIf="i >= 3">
+                {{ getTotalForColumn(key) }}
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="!bugSummaryLoading && bugSummary.length === 0">No data found.</div>
+    </div>
+
+    <!-- Gantt Chart Tab -->
+    <div *ngSwitchCase="'gantt'">
+      <app-gantt-editor
+        [projectNameFromParent]="projectName"
+        [targetVersionFromParent]="version">
+      </app-gantt-editor>
+    </div>
+
+    <!-- Bug Details Tab -->
+    <div *ngSwitchCase="'bug-details'">
+      <div *ngIf="bugDetailsLoading">Loading bug details...</div>
+      <div *ngIf="bugDetailsError" class="text-danger">{{ bugDetailsError }}</div>
+      <div *ngIf="!bugDetailsLoading && (bugTaskDetails.length || timeTracking.length)" class="sprint-matrix-bottom-row">
+        <!-- Bug Task Table -->
+        <div class="sprint-matrix-tasks-table">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover sticky-header-table">
+              <thead>
+                <tr>
+                  <th>Parent Bug ID</th>
+                  <th>Child Task ID</th>
+                  <th>Target Version</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Resource Name</th>
+                  <th>Task Resource Name</th>
+                  <th>Relationship Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let task of bugTaskDetails">
+                  <td>{{ task.bug_id }}</td>
+                  <td>{{ task.task_id }}</td>
+                  <td>{{ task.target_version }}</td>
+                  <td>{{ task.start_date }}</td>
+                  <td>{{ task.end_date }}</td>
+                  <td>{{ task.resource_name }}</td>
+                  <td>{{ task.task_resource_name }}</td>
+                  <td>{{ task.relationship_type }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Time Tracking Table -->
+        <div class="sprint-matrix-tracking-table">
+          <h5 class="ms-2">Total Resource Hours</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover sticky-header-table">
+              <thead>
+                <tr>
+                  <th>Resource Name</th>
+                  <th>Total Spent Hours</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let t of timeTracking">
+                  <td>{{ t.realname }}</td>
+                  <td>{{ t.total_spent }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!bugDetailsLoading && !bugTaskDetails.length && !timeTracking.length">
+        No data found for this bug.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

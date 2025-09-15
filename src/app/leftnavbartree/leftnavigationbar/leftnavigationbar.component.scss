@@ -1,0 +1,23 @@
+span {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  transition: background 0.18s, color 0.18s;
+  border-radius: 6px; /* Slightly curved edges */
+}
+
+span.active {
+  background: #30b9ef;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(34, 34, 59, 0.12);
+  border-radius: 6px;
+}
+
+span:hover {
+  background: #30b9ef;
+  color: #274690;
+  border-radius: 6px;
+  cursor: pointer;
+}

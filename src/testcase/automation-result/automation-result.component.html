@@ -1,0 +1,28 @@
+<div class="container">
+  <h2>Automation Test Results</h2>
+  <h4>Product: Qualis SPC</h4>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading report...</span>
+  </div>
+
+  <div *ngIf="error && !showDummyData" class="error-state">
+    <pre>{{ error }}</pre>
+    <div class="debug-tips">
+      <p>Since the API works in browser but not in Angular:</p>
+      <ol>
+        <li>Try <a href="http://localhost:5090/api/azure/report" target="_blank">opening in new tab</a></li>
+        <li>Test in Incognito mode (no extensions)</li>
+        <li>Check browser console for CORS errors</li>
+      </ol>
+      <button class="retry-btn" (click)="loadAutomationResults()">Retry Connection</button>
+    </div>
+  </div>
+
+  <!-- Show either real data or dummy data -->
+  <div *ngIf="!isLoading" class="report-container">
+    <div *ngIf="!error" [innerHTML]="sanitizedHtml"></div>
+    <div *ngIf="showDummyData" [innerHTML]="sanitizedHtml"></div>
+  </div>
+</div>

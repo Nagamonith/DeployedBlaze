@@ -1,0 +1,41 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container-fluid p-0">
+  <nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <a class="navbar-brand fs-4 fw-bold d-flex align-items-center">
+        <img src="https://datalyzer.com/wp-content/uploads/2022/01/logo-3.png" width="60" height="60" class="me-2">
+        <span>ASSET MANAGEMENT SYSTEM</span>
+      </a>
+      <div>
+        <a class="nav-link text-white" href="#" (click)="goToLogin(); $event.preventDefault()">LOGIN</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div *ngIf="loading">
+      <p>Loading asset details...</p>
+    </div>
+    <div *ngIf="asset && !loading" class="card shadow-sm" style="min-width: 350px; max-width: 500px;">
+      <div class="card-body">
+       <!-- <h5 class="card-title mb-3">Asset Details - {{ asset.deviceDetails.assetTag }}</h5> -->
+        <h5 class="card-title mb-3">Asset Details</h5> 
+       <p><strong>Company Name:</strong> {{ asset.deviceDetails.company }}</p>
+<p><strong>Asset Tag:</strong> {{ asset.deviceDetails.assetTag }}</p>
+<p><strong>Employee ID:</strong> {{ asset.deviceDetails.employeeId }}</p>
+
+ <!-- <p><strong>Phone:</strong> {{ asset.deviceDetails.phone }}</p> -->
+<p><strong>Email:</strong> {{ asset.deviceDetails.email }}</p>
+
+<p><strong>Manufacturer:</strong> {{ asset.deviceDetails.make }}</p>
+<p><strong>Model:</strong> {{ asset.deviceDetails.model }}</p>
+<p><strong>CPU:</strong> {{ asset.deviceDetails.cpu }}</p>
+<p><strong>Operating System:</strong> {{ asset.deviceDetails.os }}</p>
+<p><strong>RAM:</strong> {{ asset.deviceDetails.ram }}</p>
+<p><strong>HDD:</strong> {{ asset.deviceDetails.hdd }}</p>
+<p><strong>SSD:</strong> {{ asset.deviceDetails.ssd }}</p>
+      </div>
+    </div>
+  </div>
+</div>

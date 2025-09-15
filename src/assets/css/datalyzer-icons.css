@@ -1,0 +1,183 @@
+@font-face {
+  font-family: 'DataLyzer-Fmea';
+  src:  url('../fonts/DataLyzer-Fmea.eot?um488z');
+  src:  url('../fonts/DataLyzer-Fmea.eot?um488z#iefix') format('embedded-opentype'),
+    url('../fonts/DataLyzer-Fmea.ttf?um488z') format('truetype'),
+    url('../fonts/DataLyzer-Fmea.woff?um488z') format('woff'),
+    url('../fonts/DataLyzer-Fmea.svg?um488z#DataLyzer-Fmea') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'DataLyzer-Fmea' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-decision .path1:before {
+  content: "\e92e";
+  color: rgb(0, 0, 0);
+}
+.icon-decision .path2:before {
+  content: "\e92f";
+  margin-left: -1em;
+  color: rgb(24, 255, 0);
+}
+.icon-rectangle_1 .path1:before {
+  content: "\e930";
+  color: rgb(0, 0, 0);
+}
+.icon-rectangle_1 .path2:before {
+  content: "\e931";
+  margin-left: -1.2626953125em;
+  color: rgb(255, 222, 0);
+}
+.icon-significant-characteristic:before {
+  content: "\e925";
+}
+.icon-technical-regulations:before {
+  content: "\e926";
+}
+.icon-critical-process:before {
+  content: "\e927";
+}
+.icon-critical-product:before {
+  content: "\e928";
+}
+.icon-mandatory-seq:before {
+  content: "\e929";
+}
+.icon-operator:before {
+  content: "\e92a";
+}
+.icon-product-safety:before {
+  content: "\e92b";
+}
+.icon-quality-check:before {
+  content: "\e92c";
+}
+.icon-safety-for-operator:before {
+  content: "\e92d";
+}
+.icon-class_mc:before {
+  content: "\e921";
+}
+.icon-class_mcstar:before {
+  content: "\e922";
+}
+.icon-class_rc:before {
+  content: "\e923";
+}
+.icon-class_rcf:before {
+  content: "\e924";
+}
+.icon-class_kpc1:before {
+  content: "\e91c";
+}
+.icon-class_kpc2:before {
+  content: "\e91d";
+}
+.icon-class_kpca:before {
+  content: "\e91e";
+}
+.icon-class_kpcd:before {
+  content: "\e91f";
+}
+.icon-class_kpcm:before {
+  content: "\e920";
+}
+.icon-checkbox_tick:before {
+  content: "\e91a";
+}
+.icon-checkbox:before {
+  content: "\e91b";
+}
+.icon-class_a:before {
+  content: "\e900";
+}
+.icon-class_b:before {
+  content: "\e901";
+}
+.icon-class_cc:before {
+  content: "\e902";
+}
+.icon-class_ccp:before {
+  content: "\e903";
+}
+.icon-class_d:before {
+  content: "\e904";
+}
+.icon-class_e:before {
+  content: "\e905";
+}
+.icon-class_hi:before {
+  content: "\e906";
+}
+.icon-class_oprp:before {
+  content: "\e907";
+}
+.icon-class_oprp1:before {
+  content: "\e908";
+}
+.icon-class_os:before {
+  content: "\e909";
+}
+.icon-class_ptc:before {
+  content: "\e90a";
+}
+.icon-class_s:before {
+  content: "\e90b";
+}
+.icon-class_safety:before {
+  content: "\e90c";
+}
+.icon-class_sc:before {
+  content: "\e90d";
+}
+.icon-class_scc:before {
+  content: "\e90e";
+}
+.icon-class_yc:before {
+  content: "\e90f";
+}
+.icon-class_ys:before {
+  content: "\e910";
+}
+.icon-decision1:before {
+  content: "\e911";
+}
+.icon-delay:before {
+  content: "\e912";
+}
+.icon-fulltime-operator:before {
+  content: "\e913";
+}
+.icon-inspection:before {
+  content: "\e914";
+}
+.icon-Operation-with-inspection-without-operator:before {
+  content: "\e915";
+}
+.icon-Operation-without-operator:before {
+  content: "\e916";
+}
+.icon-parttime-operator:before {
+  content: "\e917";
+}
+.icon-Storage:before {
+  content: "\e918";
+}
+.icon-transport:before {
+  content: "\e919";
+}

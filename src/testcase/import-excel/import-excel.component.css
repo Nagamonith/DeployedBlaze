@@ -1,0 +1,86 @@
+/* Container styling */
+.container-fluid {
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 20px;
+ background: linear-gradient(270deg, #f7ffff, #daf2fe, #d5ecf7, #f7ffff);
+background-size: 300% 300%;
+animation: skySlide 8s ease infinite;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Headings */
+h2 {
+  margin-bottom: 20px;
+  color: #2d2d2d;
+}
+
+h4 {
+  margin-top: 20px;
+  color: #333;
+}
+
+h5 {
+  color: #555;
+}
+
+/* Upload input */
+.form-group {
+  margin-bottom: 20px;
+}
+
+input[type='file'] {
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #eef1f7;
+  border: 1px solid #ccc;
+  width: 100%;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Sheet name list */
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li {
+  background-color: #eaf4ff;
+  border-left: 5px solid #007bff;
+  padding: 10px 15px;
+  margin: 8px 0;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Button */
+button {
+  background-color: #2885e8;
+  color: #fff;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 20px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+@keyframes aquaFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes skySlide {
+  0% { background-position: 100% 0%; }
+  50% { background-position: 0% 100%; }
+  100% { background-position: 100% 0%; }
+}

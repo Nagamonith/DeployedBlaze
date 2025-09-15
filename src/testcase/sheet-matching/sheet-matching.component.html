@@ -1,0 +1,438 @@
+<div class="sheet-matching-container">
+  <div class="sheet-header">
+    <h2 class="sheet-title">
+      <mat-icon>description</mat-icon>
+      Mapping Sheet:
+      <input
+        class="editable-sheet-name"
+        type="text"
+        [ngModel]="sheetName()"
+        (ngModelChange)="sheetName.set($event)"
+        style="font-weight:bold; font-size:1.1em; border:none; border-bottom:1px solid #ccc; background:transparent; width: 220px; margin-left: 8px;"
+        maxlength="50"
+        title="Edit sheet name before saving"
+      />
+    </h2>
+    <div class="product-context-banner" *ngIf="currentProduct()">
+      <mat-icon>category</mat-icon>
+      <span>Importing to: <strong>{{ currentProduct()?.name }}</strong></span>
+    </div>
+    <button (click)="goBack()" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Import
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage()" class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  <!-- Step 1: Module Selection/Creation -->
+  <div class="workflow-step module-step" [class.completed]="moduleCreated()">
+    <div class="step-header">
+      <div class="step-number" [class.completed]="moduleCreated()">
+        <mat-icon *ngIf="moduleCreated()">check</mat-icon>
+        <span *ngIf="!moduleCreated()">1</span>
+      </div>
+      <h3 class="step-title">
+        {{ moduleCreated() ? 'Module Ready' : 'Select or Create Module' }}
+        <span *ngIf="moduleCreated()" class="module-name">({{ createdModuleName() }})</span>
+      </h3>
+      <div class="module-actions" style="display: flex; gap: 12px; align-items: center;">
+        <button 
+          *ngIf="!moduleCreated()"
+          (click)="openModuleForm()" 
+          class="step-action-btn">
+          <mat-icon>add</mat-icon>
+          Create Module
+        </button>
+        <select
+          *ngIf="!moduleCreated() && existingModules().length > 0"
+          class="step-action-btn"
+          (change)="onExistingModuleSelect(getSelectValue($event))"
+          [value]="selectedExistingModule()?.id || ''"
+        >
+          <option value="" disabled selected>Select Existing Module</option>
+          <option *ngFor="let m of existingModules()" [value]="m.id">
+            {{ m.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Module Creation Form -->
+    <div *ngIf="showModuleForm() && !moduleCreated()" class="step-content module-form-wrapper">
+      <div class="module-form">
+        <h4>Create New Module</h4>
+        <!-- ...existing code for module form... -->
+        <div class="form-group">
+          <label for="module-name">Module Name <span class="required">*</span></label>
+          <input 
+            id="module-name"
+            type="text" 
+            [(ngModel)]="moduleForm.name" 
+            placeholder="Enter module name"
+            required 
+            maxlength="100" />
+        </div>
+        <div class="form-group">
+          <label for="module-description">Description</label>
+          <textarea 
+            id="module-description"
+            [(ngModel)]="moduleForm.description" 
+            placeholder="Optional description"
+            rows="3"
+            maxlength="500"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="module-version">Version</label>
+          <select
+            id="module-version"
+            [(ngModel)]="moduleForm.version"
+            required
+          >
+            <option *ngFor="let v of productVersions" [value]="v.version">
+              {{ v.version }}
+            </option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button 
+            (click)="createModule()" 
+            [disabled]="!moduleForm.name.trim() || isProcessing()"
+            class="btn-save">
+            <mat-icon *ngIf="!isProcessing()">save</mat-icon>
+            <mat-icon *ngIf="isProcessing()" class="spinner">hourglass_top</mat-icon>
+            {{ isProcessing() ? 'Creating...' : 'Create Module' }}
+          </button>
+          <button (click)="closeModuleForm()" class="btn-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module summary after creation/selection -->
+    <div *ngIf="moduleCreated() && !showModuleForm()" class="module-summary" style="display: flex; align-items: center; gap: 16px;">
+      <mat-icon color="primary">folder</mat-icon>
+      <span class="summary-label">Selected Module:</span>
+      <span class="summary-value">{{ createdModuleName() }}</span>
+      <button (click)="resetModuleSelection()" class="btn-cancel-module" style="margin-left: 16px;">
+        <mat-icon>cancel</mat-icon>
+        Change Module
+      </button>
+    </div>
+  </div>
+
+  <!-- Divider between steps -->
+  <div class="step-divider"></div>
+
+  <!-- Step 2: Module Attributes (Optional) -->
+  <div class="workflow-step" [class.disabled]="!moduleCreated()">
+    <div class="step-header">
+      <div class="step-number" [class.disabled]="!moduleCreated()">2</div>
+      <h3 class="step-title">Add Custom Attributes (Optional)</h3>
+      <button 
+        *ngIf="moduleCreated()"
+        (click)="openModuleAttributesForm()" 
+        class="step-action-btn">
+        <mat-icon>add_circle</mat-icon>
+        Manage Attributes
+      </button>
+    </div>
+
+    <!-- Current Attributes Display -->
+    <div *ngIf="moduleCreated() && moduleAttributes().length > 0" class="current-attributes">
+      <div class="attributes-list">
+        <div *ngFor="let attr of moduleAttributes()" class="attribute-chip">
+          <span class="attribute-name">{{ attr.name }}</span>
+          <span class="attribute-type">({{ attr.type }})</span>
+          <span *ngIf="attr.isRequired" class="required-badge">Required</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module Attributes Management Modal -->
+    <div *ngIf="showModuleAttributesForm()" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Manage Module Attributes</h4>
+          <button (click)="closeModuleAttributesForm()" class="close-btn">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Existing Attributes List -->
+          <div class="existing-attributes">
+            <h5>Current Attributes</h5>
+            <div *ngIf="moduleAttributes().length === 0" class="empty-state">
+              <p>No custom attributes created yet.</p>
+            </div>
+            <div *ngFor="let attr of moduleAttributes()" class="attribute-item">
+              <div class="attribute-info">
+                <span class="attr-name">{{ attr.name }}</span>
+                <span class="attr-key">({{ attr.key }})</span>
+                <span class="attr-type">{{ attr.type }}</span>
+                <span *ngIf="attr.isRequired" class="required-badge">Required</span>
+              </div>
+              <div class="attribute-actions">
+                <button (click)="editModuleAttribute(attr)" class="btn-edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button (click)="deleteModuleAttribute(attr.id!)" class="btn-delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add New Attribute Button -->
+          <div class="add-attribute-section">
+            <button (click)="addModuleAttribute()" class="btn-add-attribute">
+              <mat-icon>add</mat-icon>
+              Add New Attribute
+            </button>
+          </div>
+
+          <!-- Attribute Form -->
+          <div *ngIf="currentModuleAttribute()" class="attribute-form">
+            <h5>{{ currentModuleAttribute()!.id ? 'Edit' : 'Add' }} Attribute</h5>
+            
+            <div class="form-group">
+              <label>Name <span class="required">*</span></label>
+              <input 
+                type="text" 
+                [(ngModel)]="currentModuleAttribute()!.name"
+                placeholder="Enter attribute name"
+                required 
+                maxlength="100" />
+            </div>
+            
+            <div class="form-group">
+              <label>Key <span class="required">*</span></label>
+              <input 
+                type="text" 
+                [(ngModel)]="currentModuleAttribute()!.key"
+                placeholder="e.g., priority_level, test_environment"
+                required 
+                pattern="^[a-z_][a-z0-9_]*$"
+                maxlength="50" />
+              <small class="help-text">Use lowercase letters, numbers, and underscores only</small>
+            </div>
+            
+            <div class="form-group">
+              <label>Type</label>
+              <select [(ngModel)]="currentModuleAttribute()!.type">
+                <option value="text">Text</option>
+                <option value="number">Number</option>
+                <option value="checkbox">Checkbox</option>
+                <option value="date">Date</option>
+                <option value="select">Select (Dropdown)</option>
+              </select>
+            </div>
+            
+            <div class="form-group" *ngIf="currentModuleAttribute()!.type === 'select'">
+              <label>Options</label>
+              <textarea 
+                [(ngModel)]="currentModuleAttribute()!.options" 
+                placeholder="Enter comma-separated values: Low, Medium, High"
+                rows="3"></textarea>
+              <small class="help-text">For dropdown options. Use comma-separated values</small>
+            </div>
+            
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  [(ngModel)]="currentModuleAttribute()!.isRequired" />
+                <span class="checkbox-text">Required field</span>
+              </label>
+            </div>
+            
+            <div class="form-actions">
+              <button 
+                (click)="saveModuleAttribute()" 
+                [disabled]="!currentModuleAttribute()?.name?.trim() || !currentModuleAttribute()?.key?.trim() || isProcessing()"
+                class="btn-save">
+                <mat-icon *ngIf="!isProcessing()">save</mat-icon>
+                <mat-icon *ngIf="isProcessing()" class="spinner">hourglass_top</mat-icon>
+                {{ isProcessing() ? 'Saving...' : (currentModuleAttribute()!.id ? 'Update' : 'Save') }}
+              </button>
+              <button (click)="currentModuleAttribute.set(null)" class="btn-cancel">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Column Mapping -->
+  <div class="workflow-step" [class.disabled]="!moduleCreated()">
+    <div class="step-header">
+      <div class="step-number" [class.disabled]="!moduleCreated()">3</div>
+      <h3 class="step-title">Map Columns</h3>
+    </div>
+
+    <div *ngIf="moduleCreated()" class="step-content">
+      <div class="mapping-grid">
+        <!-- Test Case Fields Column -->
+        <div class="mapping-column">
+          <div class="column-header">
+            <h4 class="column-title">
+              <mat-icon>label</mat-icon>
+              Test Case Fields
+            </h4>
+            <span class="column-subtitle">{{ sheetColumns().length }} columns detected</span>
+          </div>
+          
+          <div *ngFor="let field of coreMappings()" class="field-item" [class.mapped]="field.mappedTo">
+            <div class="field-header">
+              <div>
+                <span class="field-name">{{ field.label }}</span>
+                <span *ngIf="field.required" class="field-required">(required)</span>
+                <span *ngIf="!field.required" class="field-optional">(optional)</span>
+              </div>
+              <span *ngIf="field.mappedTo" class="mapped-badge">Mapped</span>
+            </div>
+            
+           <ng-container *ngIf="field.field === 'version'; else testTypeOrNormalField">
+  <select
+    class="field-select"
+    [ngModel]="versionMapping"
+    (ngModelChange)="onVersionMappingChange($event)"
+  >
+    <option value="">-- Select Version Column or Product Version --</option>
+    <option *ngFor="let col of sheetColumns()" [value]="col">Column: {{ col }}</option>
+    <option *ngFor="let v of productVersions" [value]="'__pv__' + v.version">
+      Product Version: {{ v.version }} {{ v.isActive ? '' : '(Inactive)' }}
+    </option>
+  </select>
+</ng-container>
+            
+            <ng-template #testTypeOrNormalField>
+              <ng-container *ngIf="field.field === 'testType'; else normalField">
+                <select class="field-select" disabled>
+                  <option value="Manual" selected>Manual</option>
+                </select>
+              </ng-container>
+              <ng-template #normalField>
+                <select
+                  class="field-select"
+                  [ngModel]="field.mappedTo"
+                  (ngModelChange)="updateMapping(field.field, $event)"
+                >
+                  <option value="">-- Select Column --</option>
+                  <option *ngFor="let col of sheetColumns()" [value]="col">{{ col }}</option>
+                </select>
+              </ng-template>
+            </ng-template>
+          </div>
+
+          <!-- Custom Attributes Mapping -->
+          <div class="custom-attributes" *ngIf="moduleAttributes().length > 0">
+            <h5 class="section-title">
+              <mat-icon>extension</mat-icon>
+              Custom Attributes Mapping
+            </h5>
+            <div *ngFor="let attr of moduleAttributes()" class="custom-attribute-item">
+              <div class="attribute-info">
+                <span class="attribute-name">{{ attr.name }}</span>
+                <span class="attribute-key">({{ attr.key }})</span>
+                <span *ngIf="attr.isRequired" class="required-badge">Required</span>
+              </div>
+              <select
+                class="field-select"
+                [ngModel]="getAttributeMapping(attr.key)"
+                (ngModelChange)="updateAttributeMapping(attr.key, $event)"
+              >
+                <option value="">-- Select Column --</option>
+                <option *ngFor="let col of sheetColumns()" [value]="col">{{ col }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sheet Columns Column -->
+        <div class="mapping-column">
+          <h4 class="column-title">
+            <mat-icon>grid_on</mat-icon>
+            Sheet Columns
+          </h4>
+          <div class="columns-list">
+            <div *ngFor="let col of sheetColumns()" class="sheet-column-item">
+              <mat-icon>drag_indicator</mat-icon>
+              {{ col }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview Column -->
+        <div class="mapping-column">
+          <h4 class="column-title">
+            <mat-icon>preview</mat-icon>
+            Preview (First 3 Rows)
+          </h4>
+          
+          <div *ngIf="sheetData() && sheetData().length > 0" class="preview-table-container">
+            <table class="preview-table">
+              <thead>
+                <tr>
+                  <th *ngFor="let field of coreMappings()" [class.mapped]="field.mappedTo">
+                    {{ field.label }}
+                  </th>
+                  <th *ngFor="let attr of moduleAttributes()">
+                    {{ attr.name }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of sheetData().slice(0, 3)">
+                  <td *ngFor="let field of coreMappings()">
+                    {{ getRowValue(row, field.field) || '-' }}
+                  </td>
+                  <td *ngFor="let attr of moduleAttributes()">
+                    {{ getAttributeMapping(attr.key) ? row[getAttributeMapping(attr.key)] : '-' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div *ngIf="sheetData().length === 0" class="empty-preview">
+            <mat-icon>info</mat-icon>
+            <p>No preview available</p>
+            <p>Map some fields to see a preview</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Action -->
+  <div class="action-section">
+    <div class="import-summary" *ngIf="moduleCreated()">
+      <div class="summary-item">
+        <mat-icon>folder</mat-icon>
+        <span>Module: <strong>{{ createdModuleName() }}</strong></span>
+      </div>
+      <div class="summary-item">
+        <mat-icon>grid_on</mat-icon>
+        <span>Rows to import: <strong>{{ sheetData().length }}</strong></span>
+      </div>
+      <div class="summary-item" *ngIf="moduleAttributes().length > 0">
+        <mat-icon>extension</mat-icon>
+        <span>Custom attributes: <strong>{{ moduleAttributes().length }}</strong></span>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button
+        (click)="importTestCases()"
+        [disabled]="!moduleCreated() || isProcessing()"
+        class="import-btn"
+      >
+        <mat-icon *ngIf="!isProcessing()">upload</mat-icon>
+        <mat-icon *ngIf="isProcessing()" class="spinner">hourglass_top</mat-icon>
+        {{ isProcessing() ? 'Importing...' : 'Import Test Cases' }}
+      </button>
+    </div>
+  </div>

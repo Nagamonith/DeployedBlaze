@@ -1,0 +1,40 @@
+<div class="custom-dropdown-holder">
+    @if(!multiSelectDropdown) {
+        <div class="p-10">
+            <div class="search-area">
+                <input 
+                    type="text" 
+                    class="simple-form-input" 
+                    #customDropdownFilter 
+                    id="customDropdownFilter"
+                    (input)="filterResList()" 
+                    placeholder="{{'IDS_SEARCH' | translate}}" 
+                />
+            </div>
+            <div class="custom-dropdown-list">
+                <select class="simple-form-input" multiple (change)="onSelectionChange($event)">
+                    @for(dataList of filterArrayList; track dataList) {
+                        <option [value]="dataList.name">{{dataList.name}}</option>
+                    }
+                </select>
+            </div>
+            <div class="action">
+                <button type="button" class="btn btn-secondary" (click)="clearDropdown()">{{'IDS_CLEAR' | translate}}</button>
+            </div>
+        </div>
+    } @else {
+        <div>
+            @for(chk of chkList; track chk) {
+                <div class="chk-box">
+                    <dx-check-box
+                        text="{{chk.text}}"
+                        [(value)]="chk.val"
+                        [enableThreeStateBehavior]="false"
+                        (onValueChanged)="onChkChange(chk)"
+                    >
+                    </dx-check-box>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,96 @@
+<div class="container">
+  <div class="header">
+    <button mat-icon-button (click)="navigateBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2>Viewing Test Case</h2>
+    <button mat-raised-button color="primary" (click)="navigateToEdit()">
+      <mat-icon>edit</mat-icon>
+      Edit
+    </button>
+  </div>
+
+  <mat-spinner *ngIf="isLoading()" diameter="40"></mat-spinner>
+
+  <div *ngIf="error()" class="error-message">
+    <p>{{ error() }}</p>
+  </div>
+
+  <div *ngIf="testCase() && !isLoading()" class="table-container">
+    <table class="resizable-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ID</strong></td>
+          <td>{{ testCase()?.id || '—' }}</td>
+        </tr>
+        <tr>
+          <td><strong>Test Case ID</strong></td>
+          <td>{{ testCase()?.testCaseId || '—' }}</td>
+        </tr>
+        <tr>
+          <td><strong>Use Case</strong></td>
+          <td class="wrap-text">{{ testCase()?.useCase || '—' }}</td>
+        </tr>
+        <tr>
+          <td><strong>Scenario</strong></td>
+          <td class="wrap-text">{{ testCase()?.scenario || '—' }}</td>
+        </tr>
+        <tr>
+          <td><strong>Test Type</strong></td>
+          <td>{{ testCase()?.testType || '—' }}</td>
+        </tr>
+        <tr *ngIf="testCase()?.testTool as testTool">
+          <td><strong>Test Tool</strong></td>
+          <td>{{ testTool }}</td>
+        </tr>
+        <tr>
+          <td><strong>Result</strong></td>
+          <td>{{ formatResult(testCase()?.result) }}</td>
+        </tr>
+        <!-- <tr>
+          <td><strong>Actual</strong></td>
+          <td class="wrap-text">
+            {{ (testCase()?.actual || (testCase()?.executionDetails?.actual)) || '—' }}
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Remarks</strong></td>
+          <td class="wrap-text">
+            {{ (testCase()?.remarks || (testCase()?.executionDetails?.remarks)) || '—' }}
+          </td>
+        </tr> -->
+        <ng-container *ngIf="testCase()?.steps as steps">
+          <tr *ngIf="steps && steps.length > 0">
+            <td><strong>Steps</strong></td>
+            <td>
+              <div *ngFor="let step of steps" class="step-container">
+                <div class="step-content">
+                  <strong>Step:</strong> {{ step.steps || '—' }}
+                </div>
+                <div class="expected-result">
+                  <strong>Expected:</strong> {{ step.expectedResult || '—' }}
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="testCase()?.attributes as attributes">
+          <tr *ngIf="attributes && attributes.length > 0">
+            <td><strong>Attributes</strong></td>
+            <td>
+              <div *ngFor="let attr of attributes" class="attribute-container">
+                <strong>{{ attr.key }}:</strong> {{ attr.value || '—' }}
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

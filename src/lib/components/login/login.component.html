@@ -1,0 +1,64 @@
+<!-- 
+<form (submit)="onSubmit(); $event.preventDefault()" class="login-form">
+  <h2>Login</h2>
+
+  <input 
+    type="text" 
+    [(ngModel)]="username" 
+    name="username" 
+    placeholder="Username" 
+    required 
+    class="input-field" 
+  />
+
+  <input 
+    type="password" 
+    [(ngModel)]="password" 
+    name="password" 
+    placeholder="Password" 
+    required 
+    class="input-field" 
+  />
+
+  <button type="submit" class="btn-login">Login</button>
+
+  <p class="message" *ngIf="message">{{ message }}</p>
+</form> -->
+
+<div class="login-background">
+  <div class="login-container">
+  
+
+    <form (submit)="onSubmit(); $event.preventDefault()" class="login-form" >
+      <!-- <h2>Login</h2> -->
+ <h1><img src="https://datalyzer.com/wp-content/uploads/2022/01/logo-3.png" class="login-logo" /></h1>
+ 
+      <label for="password" class="login-label"><strong>User Name</strong></label>
+      <input 
+        type="text" 
+        [(ngModel)]="username" 
+        name="username" 
+        placeholder="Username" 
+        required 
+        class="input-field" 
+      />
+
+       <label for="password" class="login-label"><strong>Password</strong></label>
+      <input 
+        type="password" 
+        [(ngModel)]="password" 
+        name="password" 
+        placeholder="Password" 
+        required 
+        class="input-field" 
+      />
+
+      <button type="submit" class="btn-login">Login</button>
+      <!-- <button type="button" class="btn-login" (click)="loginWithMicrosoft()">Login with Microsoft</button> -->
+
+      <p class="message" *ngIf="message">{{ message }}</p>
+    </form>
+  </div>
+</div>
+
+

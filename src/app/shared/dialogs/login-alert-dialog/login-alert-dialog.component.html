@@ -1,0 +1,12 @@
+<div class="alert-container">
+  <div class="alert-header">
+    <span class="alert-icon">✅</span>
+    <span class="alert-title">{{ data.title || 'Login Alert' }}</span>
+  </div>
+  <div class="alert-body">
+    {{ data.message || 'Invalid login attempt or user already logged in on another device.' }}
+  </div>
+  <div class="alert-actions">
+    <button mat-button (click)="close()" class="ok-btn">OK</button>
+  </div>
+</div>

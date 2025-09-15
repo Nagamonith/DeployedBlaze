@@ -1,0 +1,50 @@
+@use 'variables' as *;
+@use 'utilities' as *;
+
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+
+    &:after, &:before {
+        pointer-events: none;
+    }
+}
+
+body {
+    font-family: $primaryFont;
+    @include font-weight(regular);
+    height: 100%;
+    overflow-y: hidden;
+}
+
+ul, ol {
+    list-style: none;
+    margin: 0px;
+}
+
+a {
+    cursor: pointer;
+    user-select: none;
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+button {
+    @extend a;
+}
+
+.dx-widget,
+dx-data-grid,
+.dx-overlay-wrapper {
+    font-family: $primaryFont;
+    @include font-weight(regular);
+}
+
+// .main-scroll {
+//     height: calc(100vh - 10px);
+//     overflow-y: auto;
+//     overflow-x: hidden;
+// }

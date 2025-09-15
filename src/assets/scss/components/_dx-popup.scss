@@ -1,0 +1,369 @@
+@use '../base/variables' as *;
+@use '../base/utilities' as *;
+
+.dx-overlay-wrapper {
+    &.dx-overlay-shader {
+        background-color: rgba($fullDarkColor, 40%);
+    }
+    
+    &.dx-popup-auto-height {
+        .dx-overlay-content {
+            height: auto !important;
+    
+            .dx-popup-content {
+                height: auto !important;
+            }
+        }
+    }
+
+    &.dx-popup-min-height {
+        .dx-overlay-content {
+            height: auto !important;
+    
+            .dx-popup-content {
+                height: auto !important;
+                min-height: 360px !important;
+
+                form {
+                    min-height: inherit;
+                    position: relative;
+                    padding-bottom: 70px;
+
+                    .button-area {
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        width: calc(100% + 30px);
+                    }
+                }
+            }
+        }
+    }
+
+    .dx-state-focused {
+        &.dx-overlay-content {
+            border: none;
+        }
+    }
+
+    .dx-popup-title {
+        background-color: rgba($fullDarkColor, 15%);
+        height: 50px;
+
+        .dx-toolbar-label {
+            font-size: 16px;
+            color: $darkColor;
+            @include font-weight(medium);
+            max-width: none !important;
+        }
+    }
+
+    .dx-popup-content {
+        padding: 15px;
+
+        // select {
+        //     &[size] {
+        //         height: 200px;
+        //     }
+        // }
+
+        .dx-calendar {
+            margin: 0px;
+        }
+
+        textarea {
+            height: 200px;
+        }
+
+        input[type=text]{
+            font-family: Roboto;
+        }
+
+        .multiple-textarea {
+            textarea {
+                height: 120px;
+            }
+        }
+
+        .flex {
+            > div {
+                flex: 1;
+
+                &.flex-auto {
+                    flex: auto;
+                }
+
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
+            }
+
+            &.flex-column {
+                > div {
+                    margin-right: 0px;
+                    + div {
+                        margin-top: 15px;
+                    }
+                }
+            }
+
+            &.picklist-flex {
+                select {
+                    &[size] {
+                        height: 300px;
+                        margin-top: 10px;
+                    }
+                }
+            }
+            .help_holder{
+                background-color: $gridLeftColor;
+                border: 1px solid $gridHeader;
+                padding: 10px;
+                margin-bottom: 15px;
+                font-size: 12px;
+                @include font-weight(regular);
+                font-family: Roboto;
+            }
+
+        }
+    
+        .picklist-controls {
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+    
+            button {
+                font-size: 22px;
+                width: 50px;
+    
+                + button {
+                    margin-top: 15px;
+                }
+            }
+        }
+
+        .button-area {
+            border-top: solid 1px $lightBorder;
+            margin: 15px -15px -15px;
+            padding: 15px;
+            text-align: right;
+
+            button + button {
+                margin-left: 10px;
+            }
+        }
+
+        .aditional-footer-action {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+        }
+    }
+    
+    &.custom-dx-dialog {
+        > .dx-overlay-content {
+            border: none;
+            width: 450px;
+            height: auto !important;
+
+            .dx-dialog-content {
+                padding: 15px 20px;
+                min-height: 50px !important;
+                height: auto !important;
+
+                .dialog-title {
+                    position: absolute;
+                    top: 0px;
+                    left: 0px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    width: 100%;
+                    height: 50px;
+                    padding: 0px 5px 0px 25px;
+
+                    p {
+                        font-size: 16px;
+                        font-weight: 500;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 10px;
+
+                        [class^=dl-] {
+                            font-size: 24px;
+                        }
+                    }
+
+                    .close-btn {
+                        background-color: transparent;
+                        
+                        [class^=dl-] {
+                            font-size: 12px;
+                        }
+                    }
+                }
+
+                p {
+                    font-size: 16px;
+                }
+            }
+
+            .dx-dialog-buttons {
+                border-top: solid 1px rgba($fullDarkColor, 10%);
+                padding: 15px;
+
+                .dx-toolbar-center {
+                    display: flex;
+                    justify-content: flex-end;
+
+                    .dx-button {
+                        min-width: auto;
+                        border-radius: 6px;
+                        height: 36px;
+                        padding: 0px 15px;
+
+                        &.primary {
+                            background-color: $primaryColor;
+                            border-color: $primaryColor;
+                            color: $lightColor;
+
+                            &:hover {
+                                background-color: darken($primaryColor, 10%);
+                            }
+                        }
+
+                        &.secondary {
+                            background-color: transparent;
+                            border: solid 2px $primaryColor;
+                            color: $primaryColor;
+                    
+                            &:hover {
+                                background-color: lighten($primaryColor, 35%);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        &.custom-dx-dialog-info {
+            .dx-overlay-content {
+                .dx-popup-title {
+                    background-color: #DEF6FF;
+                    border-left: solid 6px #30B9EF;
+                }
+
+                .dx-dialog-content {
+                    .dialog-title {
+                        p {
+                            [class^=dl-] {
+                                color: $primaryColor;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        &.custom-dx-dialog-warning {
+            .dx-overlay-content {
+                .dx-popup-title {
+                    background-color: #FDF8DC;
+                    border-left: solid 6px #DBC138;
+                }
+
+                .dx-dialog-content {
+                    .dialog-title {
+                        p {
+                            [class^=dl-] {
+                                color: #DBC138;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        &.custom-dx-dialog-danger {
+            .dx-overlay-content {
+                .dx-popup-title {
+                    background-color: #FEF6F6;
+                    border-left: solid 6px #D20505;
+                }
+
+                .dx-dialog-content {
+                    .dialog-title {
+                        p {
+                            [class^=dl-] {
+                                color: #D20505;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.criteria-heading {
+    font-size: 16px;
+    @include font-weight(regular);
+}
+
+.grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 0px !important;
+
+    h4 {
+        @extend .criteria-heading;  
+    }
+
+    .grid-control {
+        .icon {
+            margin-left: 5px;
+
+            [class^=dl-], [class*=" dl-"] {
+                opacity: 0.6;
+                &:before {
+                    color: $fullDarkColor;
+                }
+
+                [class^="path"] {
+                    &:before {
+                        color: $fullDarkColor;
+                    }
+                }
+            }
+            
+        }
+    }
+}
+
+.popup-section-heading {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.action-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 25px;
+
+    a {
+        font-size: 20px;
+    }
+}
+
+.help_holder {
+    background-color: $gridLeftColor;
+    border: 1px solid $gridHeader;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 12px;
+    @include font-weight(regular);
+    font-family: Roboto;
+}

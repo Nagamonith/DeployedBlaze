@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- White circle with transparency -->
+  <circle cx="100" cy="100" r="80" fill="white" opacity="0.9"/>
+  
+  <!-- White geometric design -->
+  <path d="M70,70 L130,70 L130,130 L70,130 Z" fill="none" stroke="white" stroke-width="8"/>
+  <circle cx="100" cy="100" r="30" fill="none" stroke="white" stroke-width="8"/>
+  
+  <!-- White accent elements -->
+  <path d="M85,85 L115,85 L115,115 L85,115 Z" fill="none" stroke="white" stroke-width="4"/>
+</svg>
