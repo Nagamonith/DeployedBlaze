@@ -1,21 +1,25 @@
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
 
-# production
-/dist
-/build
+# Angular build
+dist/
+out-tsc/
+.angular/
+coverage/
 
-# misc
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS files
 .DS_Store
 Thumbs.db
 
-# environment files
+# Environment
 .env
-.env.local
-
-# IDE/editor
-.vscode/
-.idea/
-*.swp
