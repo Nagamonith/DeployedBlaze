@@ -71,37 +71,54 @@ export class TestRunComponent implements OnInit {
     });
   }
 
-  filterTestSuites(): void {
-    const searchTerm = this.suiteSearchTerm().toLowerCase();
-    if (!searchTerm) {
-      this.filteredTestSuites.set(this.testSuites());
-      return;
+filterTestSuites(): void {
+  const searchTerm = this.suiteSearchTerm().toLowerCase();
+  if (!searchTerm) {
+    this.filteredTestSuites.set(this.testSuites());
+    return;
+  }
+  
+  const filtered = this.testSuites().filter(suite => 
+    suite.name.toLowerCase().includes(searchTerm) ||
+    (suite.description && suite.description.toLowerCase().includes(searchTerm))
+  );
+  
+  // Maintain the sorted order even when filtering
+  this.filteredTestSuites.set(this.sortTestSuites(filtered));
+}
+private sortTestRuns(runs: TestRunResponse[]): TestRunResponse[] {
+  return [...runs].sort((a, b) => {
+    // Sort by creation date (newest first) or by name
+    if (a.createdAt && b.createdAt) {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      return dateB.getTime() - dateA.getTime(); // Newest first
     }
     
-    this.filteredTestSuites.set(
-      this.testSuites().filter(suite => 
-        suite.name.toLowerCase().includes(searchTerm) ||
-        (suite.description && suite.description.toLowerCase().includes(searchTerm))
-    ));
-  }
+    // Fallback to name comparison
+    return a.name.localeCompare(b.name);
+  });
+}
 
-  private loadTestRuns(): void {
-    if (!this.currentProductId()) return;
+private loadTestRuns(): void {
+  if (!this.currentProductId()) return;
 
-    this.isLoadingRuns.set(true);
-    this.testRunService.getTestRuns(this.currentProductId()).pipe(
-      tap((runs) => {
-        this.testRuns.set(runs);
-        this.isLoadingRuns.set(false);
-      }),
-      catchError(err => {
-        console.error('Failed to load test runs:', err);
-        this.showAlertMessage('Failed to load test runs', 'error');
-        this.isLoadingRuns.set(false);
-        return of([]);
-      })
-    ).subscribe();
-  }
+  this.isLoadingRuns.set(true);
+  this.testRunService.getTestRuns(this.currentProductId()).pipe(
+    tap((runs) => {
+      // Sort the test runs before setting them
+      const sortedRuns = this.sortTestRuns(runs);
+      this.testRuns.set(sortedRuns);
+      this.isLoadingRuns.set(false);
+    }),
+    catchError(err => {
+      console.error('Failed to load test runs:', err);
+      this.showAlertMessage('Failed to load test runs', 'error');
+      this.isLoadingRuns.set(false);
+      return of([]);
+    })
+  ).subscribe();
+}
 
 // In your test-run.component.ts
 private loadTestSuites(): void {
@@ -127,8 +144,10 @@ private loadTestSuites(): void {
       return forkJoin(suiteRequests);
     }),
     tap(suitesWithCases => {
-      this.testSuites.set(suitesWithCases);
-      this.filteredTestSuites.set(suitesWithCases);
+      // Sort the test suites before setting them
+      const sortedSuites = this.sortTestSuites(suitesWithCases);
+      this.testSuites.set(sortedSuites);
+      this.filteredTestSuites.set(sortedSuites);
     }),
     catchError(err => {
       console.error('Failed to load test suites:', err);
@@ -349,6 +368,45 @@ testRunsWithCounts = computed(() =>
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
+  });
+}
+
+private sortTestSuites(suites: TestSuiteResponse[]): TestSuiteResponse[] {
+  return [...suites].sort((a, b) => {
+    // Extract numerical parts from suite names for proper sorting
+    const extractNumbers = (str: string): number[] => {
+      return (str.match(/\d+/g) || []).map(Number);
+    };
+    
+    const aNumbers = extractNumbers(a.name);
+    const bNumbers = extractNumbers(b.name);
+    
+    // If both have numbers, compare numerically
+    if (aNumbers.length > 0 && bNumbers.length > 0) {
+      // Compare the first number in each name
+      if (aNumbers[0] !== bNumbers[0]) {
+        return aNumbers[0] - bNumbers[0];
+      }
+      
+      // If first numbers are equal, compare subsequent numbers
+      for (let i = 1; i < Math.min(aNumbers.length, bNumbers.length); i++) {
+        if (aNumbers[i] !== bNumbers[i]) {
+          return aNumbers[i] - bNumbers[i];
+        }
+      }
+      
+      // If all numbers are equal, shorter array comes first
+      if (aNumbers.length !== bNumbers.length) {
+        return aNumbers.length - bNumbers.length;
+      }
+    }
+    
+    // If only one has numbers, it comes first
+    if (aNumbers.length > 0 && bNumbers.length === 0) return -1;
+    if (bNumbers.length > 0 && aNumbers.length === 0) return 1;
+    
+    // Fallback to alphabetical comparison
+    return a.name.localeCompare(b.name);
   });
 }
 }

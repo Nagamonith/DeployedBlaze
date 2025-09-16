@@ -762,14 +762,21 @@ private loadTestCasesForSuite(suiteId: string): void {
             catchError(() => of(null as unknown as TestCase))
           )
         );
-        return forkJoin(detailRequests).pipe(
-          map(cases => ({ response, cases: (cases || []).filter(Boolean) as TestCase[] }))
-        );
+        return detailRequests.length ? forkJoin(detailRequests) : of([] as TestCase[]);
       }),
-      map(({ cases }) => cases)
+      map(allCases => {
+        let validCases: TestCase[] = [];
+        if (Array.isArray(allCases)) {
+          validCases = (allCases || []).filter(Boolean) as TestCase[];
+        } else if (allCases && 'cases' in allCases && Array.isArray(allCases.cases)) {
+          validCases = (allCases.cases || []).filter(Boolean) as TestCase[];
+        }
+        // Group and sort test cases by module and numerical ID
+        return this.groupAndSortTestCasesByModule(validCases);
+      })
     )
     .subscribe(responseCases => {
-      console.log('Suite test cases loaded:', responseCases.length);
+      console.log('Suite test cases loaded and sorted:', responseCases.length);
       this.versionTestCases.set(responseCases);
       this.ensureStepsForCases();
       
@@ -1064,7 +1071,11 @@ viewAllSelectedCases(): void {
             )
           )
         ).pipe(
-          map((cases: (TestCase | null)[]) => (cases || []).filter(Boolean) as TestCase[])
+          map((cases: (TestCase | null)[]) => {
+            const validCases = (cases || []).filter(Boolean) as TestCase[];
+            // Group and sort test cases by module and numerical ID
+            return this.groupAndSortTestCasesByModule(validCases);
+          })
         );
       }),
       finalize(() => this.isLoading.set(false))
@@ -1131,7 +1142,11 @@ startTestingSelected(): void {
             )
           )
         ).pipe(
-          map((cases: (TestCase | null)[]) => (cases || []).filter(Boolean) as TestCase[])
+          map((cases: (TestCase | null)[]) => {
+            const validCases = (cases || []).filter(Boolean) as TestCase[];
+            // Group and sort test cases by module and numerical ID
+            return this.groupAndSortTestCasesByModule(validCases);
+          })
         );
       }),
       finalize(() => this.isLoading.set(false))
@@ -1151,7 +1166,6 @@ startTestingSelected(): void {
       }
     });
 }
-
 // viewAllSelectedCases(): void {
 //   const selectedRun = this.selectedTestRun();
 //   if (!selectedRun) {
@@ -2318,5 +2332,47 @@ deleteSuiteUpload(rowIndex: number, fileIndex: number, uploadId: string): void {
     console.log('  - Component Uploads:', this.uploads[index]);
   });
   console.log('=== END UPLOADS DEBUG ===');
+}
+private groupAndSortTestCasesByModule(testCases: TestCase[]): TestCase[] {
+  // Group test cases by moduleId
+  const groupedByModule: { [moduleId: string]: TestCase[] } = {};
+  
+  testCases.forEach(testCase => {
+    const moduleId = testCase.moduleId || 'unknown';
+    if (!groupedByModule[moduleId]) {
+      groupedByModule[moduleId] = [];
+    }
+    groupedByModule[moduleId].push(testCase);
+  });
+
+  // Sort each module group numerically by testCaseId
+  Object.keys(groupedByModule).forEach(moduleId => {
+    groupedByModule[moduleId].sort((a, b) => {
+      const extractNumber = (testCaseId: string | undefined): number => {
+        if (!testCaseId) return 0;
+        const match = testCaseId.match(/\d+/);
+        return match ? parseInt(match[0], 10) : 0;
+      };
+
+      const numA = extractNumber(a.testCaseId);
+      const numB = extractNumber(b.testCaseId);
+      return numA - numB;
+    });
+  });
+
+  // Get module names for sorting (sort modules alphabetically)
+  const sortedModules = Object.keys(groupedByModule).sort((a, b) => {
+    const moduleA = this.getModuleName(a);
+    const moduleB = this.getModuleName(b);
+    return moduleA.localeCompare(moduleB);
+  });
+
+  // Flatten the grouped array back to single array
+  const result: TestCase[] = [];
+  sortedModules.forEach(moduleId => {
+    result.push(...groupedByModule[moduleId]);
+  });
+
+  return result;
 }
 }

@@ -319,40 +319,28 @@ private groupAndSortTestCasesByModule(testCases: TestCaseDetailResponse[]): Test
     }
   }
 
- private loadTestCasesForModule(moduleId: string): void {
-  if (!moduleId) return;
+  private loadTestCasesForModule(moduleId: string): void {
+    if (!moduleId) return;
 
-  this.isLoadingTestCases.set(true);
-  this.availableTestCases.set([]);
+    this.isLoadingTestCases.set(true);
+    this.availableTestCases.set([]);
 
-  this.testCaseService.getTestCaseDetailByModule(moduleId, this.currentProductId()).pipe(
-    tap(testCases => {
-      console.log('Loaded test cases for module:', testCases);
-      
-      // Sort test cases by numerical Test Case ID
-      const sortedTestCases = (testCases || []).sort((a, b) => {
-        const extractNumber = (testCaseId: string | undefined): number => {
-          if (!testCaseId) return 0;
-          const match = testCaseId.match(/\d+/);
-          return match ? parseInt(match[0], 10) : 0;
-        };
-
-        const numA = extractNumber(a.testCaseId);
-        const numB = extractNumber(b.testCaseId);
-        return numA - numB;
-      });
-      
-      this.availableTestCases.set(sortedTestCases);
-    }),
-    catchError(err => {
-      console.error('Failed to load test cases:', err);
-      this.showAlertMessage('Failed to load test cases: ' + (err.message || 'Unknown error'), 'error');
-      this.availableTestCases.set([]);
-      return of([]);
-    }),
-    finalize(() => this.isLoadingTestCases.set(false))
-  ).subscribe();
-}
+    this.testCaseService.getTestCaseDetailByModule(moduleId, this.currentProductId()).pipe(
+      tap(testCases => {
+        console.log('Loaded test cases for module:', testCases);
+        // Group and sort test cases by module and numeric order
+        const groupedAndSorted = this.groupAndSortTestCasesByModule(testCases || []);
+        this.availableTestCases.set(groupedAndSorted);
+      }),
+      catchError(err => {
+        console.error('Failed to load test cases:', err);
+        this.showAlertMessage('Failed to load test cases: ' + (err.message || 'Unknown error'), 'error');
+        this.availableTestCases.set([]);
+        return of([]);
+      }),
+      finalize(() => this.isLoadingTestCases.set(false))
+    ).subscribe();
+  }
 private getSortedSelectedTestCaseIds(): string[] {
   // Sort selected test cases by numerical Test Case ID
   const sortedTestCases = [...this.selectedTestCases()].sort((a, b) => {
