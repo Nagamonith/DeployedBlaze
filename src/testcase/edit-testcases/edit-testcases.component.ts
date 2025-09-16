@@ -9,7 +9,7 @@ import { VersionOption } from '../../app/shared/modles/product.model';
 import { AlertComponent } from "../../app/shared/alert/alert.component";
 import { ChangeDetectorRef } from '@angular/core';
 import { ModuleService } from '../../app/shared/services/module.service';
-import { catchError, forkJoin, map, Observable, of, switchMap, tap, throwError, Subject, takeUntil } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of, switchMap, tap, throwError, Subject, takeUntil, finalize } from 'rxjs';
 import { IdResponse } from '../../app/shared/modles/product.model';
 import { LeftnavIcon } from '../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum';
 
@@ -70,12 +70,12 @@ export class EditTestcasesComponent implements OnInit, OnDestroy {
   currentModuleAttribute = signal<ModuleAttribute | null>(null);
 
   // Form definition - FIXED: Only use productVersionId (the GUID)
- form = this.fb.group({
+form = this.fb.group({
   id: [''],
   moduleId: ['', Validators.required],
-  productVersionId: ['', Validators.required], // This is the GUID that goes to backend
+  productVersionId: ['', Validators.required],
   testCaseId: ['', [Validators.required]], // Removed Validators.pattern(/^TC\d+/)
-  useCase: ['', [Validators.required, Validators.minLength(5)]],
+  useCase: ['', [Validators.minLength(2)]], // Removed Validators.required
   scenario: ['', [Validators.required, Validators.minLength(10)]],
   testType: ['Manual', Validators.required],
   testTool: [''],
@@ -481,7 +481,7 @@ saveTestCase(): void {
       key: attrGroup.get('key')?.value || '',
       value: attrGroup.get('value')?.value || ''
     }))
-    .filter(attr => attr.key); // Only include attributes with keys
+    .filter(attr => attr.key);
 
   this.loading.set(true);
 
@@ -493,29 +493,12 @@ saveTestCase(): void {
 }
 
   // FIXED: Simplified validation with better version handling
-  private validateFormValues(formValue: any): boolean {
+private validateFormValues(formValue: any): boolean {
   // Validate productVersionId (the GUID)
   if (!formValue.productVersionId) {
     this.showAlertMessage('Please select a version', 'error');
     return false;
   }
-
-  // For new test cases, validate that the selected productVersionId exists in our options
-  if (!formValue.id) {
-    console.log('Validating new test case version:', formValue.productVersionId);
-    console.log('Available version options:', this.versionOptions());
-    
-    // Check if the selected version ID is valid and not undefined
-    const selectedVersion = this.versionOptions().find(v => v.id === formValue.productVersionId);
-    console.log('Selected version:', selectedVersion);
-    
-    if (!selectedVersion || !selectedVersion.id) {
-      this.showAlertMessage('Please select a valid version. The current selection is invalid.', 'error');
-      return false;
-    }
-  }
-  // For existing test cases, we allow the existing productVersionId even if not in current options
-  // (it might be a deactivated version or options might not be fully loaded)
 
   // Validate module ID
   if (!formValue.moduleId) {
@@ -529,25 +512,13 @@ saveTestCase(): void {
     return false;
   }
 
-  // REMOVED: Test case ID format validation (TC pattern)
-  // if (formValue.testCaseId && !/^TC\d+/.test(formValue.testCaseId)) {
-  //   this.showAlertMessage('Test Case ID must start with TC followed by numbers', 'error');
-  //   return false;
-  // }
-
-  // Validate required fields - use case is handled in saveTestCase() by setting to "NA"
-  // if (!formValue.useCase) {
-  //   this.showAlertMessage('Use Case is required', 'error');
-  //   return false;
-  // }
-
+  // Validate scenario
   if (!formValue.scenario) {
     this.showAlertMessage('Scenario is required', 'error');
     return false;
   }
 
   // Validate minimum lengths
-  // Use case minimum length validation only applies if it's not empty (not "NA")
   if (formValue.useCase && formValue.useCase !== 'NA' && formValue.useCase.length < 5) {
     this.showAlertMessage('Use Case must be at least 5 characters', 'error');
     return false;
@@ -683,159 +654,148 @@ saveTestCase(): void {
   }
 
   private handleUpdateOperation(
-    
-    formValue: any,
-    stepsData: ManualTestCaseStep[],
-    attributesData: TestCaseAttributeRequest[]
-  ): void {
-    // Validate that we have a valid productVersionId before sending to API
-    if (!formValue.productVersionId) {
-      this.showAlertMessage('Cannot update test case: No valid version selected', 'error');
-      this.loading.set(false);
-      return;
-    }
-
-    const updatePayload: UpdateTestCaseRequest = {
-      productVersionId: formValue.productVersionId, // Send the GUID to backend
-  testCaseId: formValue.testCaseId, // Ensure testCaseId is sent
-  useCase: formValue.useCase,
-  scenario: formValue.scenario,
-  testType: formValue.testType,
-  testTool: formValue.testTool,
-  result: formValue.result,
-  actual: formValue.actual,
-  remarks: formValue.remarks
-    };
-
-    console.log('Sending update payload:', updatePayload);
-
-    this.testCaseService.updateTestCase(formValue.moduleId, formValue.id, updatePayload).pipe(
-      switchMap(() => {
-        const operations: Observable<any>[] = [];
-        console.log('Update payload:', updatePayload);
-        
-        // Replace steps if any exist
-        if (stepsData.length > 0) {
-          operations.push(
-            this.testCaseService.replaceTestCaseSteps(formValue.id, stepsData).pipe(
-              catchError(error => {
-                console.error('Error replacing steps:', error);
-                console.log('Update payload:', updatePayload);
-                return of(null);
-              })
-            )
-          );
-        }
-        
-        // Update attributes if they exist
-        if (attributesData.length > 0) {
-          operations.push(
-            this.testCaseService.updateTestCaseAttributes(
-              formValue.moduleId,
-              formValue.id,
-              attributesData
-            ).pipe(
-              catchError(error => {
-                console.error('Error updating attributes:', error);
-                console.log('Update payload:', updatePayload);
-                return of(null);
-              })
-            )
-          );
-        }
-        
-        return operations.length > 0 ? forkJoin(operations) : of([]);
-      }),
-      takeUntil(this.destroy$)
-    ).subscribe({
-      next: () => {
-        this.showAlertMessage('Test case updated successfully', 'success');
-        console.log('Update payload:', updatePayload);
-        this.loadTestCases(formValue.moduleId);
-        this.cancelEditing();
-        this.loading.set(false);
-      },
-      error: (error) => this.handleOperationError(error, 'update')
-    });
+  formValue: any,
+  stepsData: ManualTestCaseStep[],
+  attributesData: TestCaseAttributeRequest[]
+): void {
+  if (!formValue.productVersionId) {
+    this.showAlertMessage('Cannot update test case: No valid version selected', 'error');
+    this.loading.set(false);
+    return;
   }
 
-  private handleCreateOperation(
-    formValue: any,
-    stepsData: ManualTestCaseStep[],
-    attributesData: TestCaseAttributeRequest[]
-  ): void {
-    // Validate that we have a valid productVersionId before sending to API
-    if (!formValue.productVersionId) {
-      this.showAlertMessage('Cannot create test case: No valid version selected', 'error');
+  const updatePayload: UpdateTestCaseRequest = {
+    productVersionId: formValue.productVersionId,
+    testCaseId: formValue.testCaseId,
+    useCase: formValue.useCase,
+    scenario: formValue.scenario,
+    testType: formValue.testType,
+    testTool: formValue.testTool,
+    result: formValue.result,
+    actual: formValue.actual,
+    remarks: formValue.remarks
+  };
+
+  this.testCaseService.updateTestCase(formValue.moduleId, formValue.id, updatePayload).pipe(
+    switchMap(() => {
+      const operations: Observable<any>[] = [];
+      
+      if (stepsData.length > 0) {
+        operations.push(
+          this.testCaseService.replaceTestCaseSteps(formValue.id, stepsData).pipe(
+            catchError(error => {
+              console.error('Error replacing steps:', error);
+              return of(null);
+            })
+          )
+        );
+      }
+      
+      if (attributesData.length > 0) {
+        operations.push(
+          this.testCaseService.updateTestCaseAttributes(
+            formValue.moduleId,
+            formValue.id,
+            attributesData
+          ).pipe(
+            catchError(error => {
+              console.error('Error updating attributes:', error);
+              return of(null);
+            })
+          )
+        );
+      }
+      
+      return operations.length > 0 ? forkJoin(operations) : of([]);
+    }),
+    takeUntil(this.destroy$),
+    finalize(() => {
       this.loading.set(false);
-      return;
-    }
+      this.cdr.detectChanges(); // Trigger change detection
+    })
+  ).subscribe({
+    next: () => {
+      this.showAlertMessage('Test case updated successfully', 'success');
+      this.loadTestCases(formValue.moduleId);
+      this.cancelEditing();
+      this.cdr.detectChanges(); // Ensure UI updates immediately
+    },
+    error: (error) => this.handleOperationError(error, 'update')
+  });
+}
 
-    const createPayload: CreateTestCaseRequest = {
-      moduleId: formValue.moduleId,
-      productVersionId: formValue.productVersionId, // Send the GUID to backend
-      testCaseId: formValue.testCaseId,
-      useCase: formValue.useCase,
-      scenario: formValue.scenario,
-      testType: formValue.testType,
-      testTool: formValue.testTool
-    };
-
-    console.log('Sending create payload:', createPayload);
-
-    this.testCaseService.createTestCase(formValue.moduleId, createPayload).pipe(
-      switchMap((response: IdResponse) => {
-        if (!response.id) {
-          console.log('Create payload:', createPayload);
-          throw new Error('Test case created but no ID returned');
-          console.log('Create payload:', createPayload);
-        }
-
-        const operations: Observable<any>[] = [];
-        
-        // Add steps if they exist
-        if (stepsData.length > 0) {
-          operations.push(
-            this.testCaseService.replaceTestCaseSteps(response.id, stepsData).pipe(
-              catchError(error => {
-                console.error('Error adding steps:', error);
-                console.log('Create payload:', createPayload);
-                return of(null);
-              })
-            )
-          );
-        }
-
-        // Add attributes if they exist
-        if (attributesData.length > 0) {
-          operations.push(
-            this.testCaseService.updateTestCaseAttributes(
-              formValue.moduleId,
-              response.id,
-              attributesData
-            ).pipe(
-              catchError(error => {
-                console.error('Error adding attributes:', error);
-                console.log('Create payload:', createPayload);
-                return of(null);
-              })
-            )
-          );
-        }
-
-        return operations.length > 0 ? forkJoin(operations) : of(response);
-      }),
-      takeUntil(this.destroy$)
-    ).subscribe({
-      next: () => {
-        this.showAlertMessage('Test case created successfully', 'success');
-        this.loadTestCases(formValue.moduleId);
-        this.cancelEditing();
-        this.loading.set(false);
-      },
-      error: (error) => this.handleOperationError(error, 'create')
-    });
+private handleCreateOperation(
+  formValue: any,
+  stepsData: ManualTestCaseStep[],
+  attributesData: TestCaseAttributeRequest[]
+): void {
+  if (!formValue.productVersionId) {
+    this.showAlertMessage('Cannot create test case: No valid version selected', 'error');
+    this.loading.set(false);
+    return;
   }
+
+  const createPayload: CreateTestCaseRequest = {
+    moduleId: formValue.moduleId,
+    productVersionId: formValue.productVersionId,
+    testCaseId: formValue.testCaseId,
+    useCase: formValue.useCase,
+    scenario: formValue.scenario,
+    testType: formValue.testType,
+    testTool: formValue.testTool
+  };
+
+  this.testCaseService.createTestCase(formValue.moduleId, createPayload).pipe(
+    switchMap((response: IdResponse) => {
+      if (!response.id) {
+        throw new Error('Test case created but no ID returned');
+      }
+
+      const operations: Observable<any>[] = [];
+      
+      if (stepsData.length > 0) {
+        operations.push(
+          this.testCaseService.replaceTestCaseSteps(response.id, stepsData).pipe(
+            catchError(error => {
+              console.error('Error adding steps:', error);
+              return of(null);
+            })
+          )
+        );
+      }
+
+      if (attributesData.length > 0) {
+        operations.push(
+          this.testCaseService.updateTestCaseAttributes(
+            formValue.moduleId,
+            response.id,
+            attributesData
+          ).pipe(
+            catchError(error => {
+              console.error('Error adding attributes:', error);
+              return of(null);
+            })
+          )
+        );
+      }
+
+      return operations.length > 0 ? forkJoin(operations) : of(response);
+    }),
+    takeUntil(this.destroy$),
+    finalize(() => {
+      this.loading.set(false);
+      this.cdr.detectChanges(); // Trigger change detection
+    })
+  ).subscribe({
+    next: () => {
+      this.showAlertMessage('Test case created successfully', 'success');
+      this.loadTestCases(formValue.moduleId);
+      this.cancelEditing();
+      this.cdr.detectChanges(); // Ensure UI updates immediately
+    },
+    error: (error) => this.handleOperationError(error, 'create')
+  });
+}
 
   private handleOperationError(error: any, operation: 'create' | 'update'): void {
     console.error(`Error ${operation}ing test case:`, error);

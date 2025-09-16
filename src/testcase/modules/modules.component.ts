@@ -1352,16 +1352,34 @@ private initializeFormForTestCases(): void {
 
   onVersionChange(): void {
     const mod = this.selectedModule();
-    if (mod && !this.showTestSuites && !this.showTestRuns) {
+    if (mod) {
       if (!this.selectedVersion) {
         this.versionTestCases.set([]);
         this.formArray.clear();
         return;
       }
       if (this.selectedVersion === 'all') {
-        // Load all cases across versions for the module
-        this.versionTestCases.set(this.testCasePool().filter(tc => tc.moduleId === mod));
-        this.initializeFormForTestCases();
+        // Fetch all test cases for the selected module from backend
+        this.testCaseService.getTestCasesByModule(mod)
+          .pipe(
+            catchError(() => of([])),
+            switchMap(list => {
+              if (!list || !list.length) return of([]);
+              // Fetch details for each test case
+              const detailRequests = list.map(tc =>
+                this.testCaseService.getTestCaseDetail(tc.moduleId, tc.id).pipe(
+                  map(detail => this.convertTestCaseDetailToTestCase(detail)),
+                  catchError(() => of(null as unknown as TestCase))
+                )
+              );
+              return detailRequests.length ? forkJoin(detailRequests) : of([] as TestCase[]);
+            })
+          )
+          .subscribe(casesDetail => {
+            this.versionTestCases.set((casesDetail || []).filter(Boolean) as TestCase[]);
+            this.ensureStepsForCases();
+            this.initializeFormForTestCases();
+          });
       } else {
         this.loadTestCasesForModule(mod, this.selectedVersion);
       }

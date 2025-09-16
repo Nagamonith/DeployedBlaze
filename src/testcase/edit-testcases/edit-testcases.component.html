@@ -164,14 +164,13 @@
 </div>
 
       <div class="form-group">
-        <label>Use Case:</label>
-        <input type="text" formControlName="useCase" required />
-        <div *ngIf="form.get('useCase')?.invalid && (form.get('useCase')?.dirty || form.get('useCase')?.touched)" 
-            class="error-message">
-          <span *ngIf="form.get('useCase')?.errors?.['required']">Use Case is required</span>
-          <span *ngIf="form.get('useCase')?.errors?.['minlength']">Minimum 5 characters required</span>
-        </div>
-      </div>
+  <label>Use Case:</label>
+  <input type="text" formControlName="useCase" />
+  <div *ngIf="form.get('useCase')?.invalid && (form.get('useCase')?.dirty || form.get('useCase')?.touched)" 
+      class="error-message">
+    <span *ngIf="form.get('useCase')?.errors?.['minlength']">Minimum 2 characters required</span>
+  </div>
+</div>
 
       <div class="form-group">
         <label>Scenario:</label>

@@ -411,10 +411,6 @@ export class ResultsComponent implements OnInit {
     const summaryData = [
       ['Test Run Name', stats.runName],
       ['Description', stats.metadata.description],
-      ['Created By', stats.metadata.createdBy],
-      ['Created At', stats.metadata.createdAt],
-      ['Updated At', stats.metadata.updatedAt],
-      ['Status', stats.metadata.status],
       [],
       ['Total Test Cases', stats.total],
       ['Passed', stats.passed],

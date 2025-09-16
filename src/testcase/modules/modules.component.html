@@ -64,16 +64,20 @@
 </div>
 
 <!-- Action buttons - Updated -->
-<div class="action-buttons" *ngIf="(selectedModule() && !showTestRuns) || (selectedTestRunId() && showTestRuns)">
+<!-- Action buttons - Updated -->
+<div class="action-buttons" *ngIf="(selectedModule() && !showTestRuns && showTestSuites) || (selectedTestRunId() && showTestRuns)">
   <button class="btn-view"
           (click)="handleViewAction()"
           [disabled]="!hasTestCasesToView()">
     {{ showTestRuns ? 'View Test Run Cases' :
        (showTestSuites ? 'View Suite Cases' : 'View Module Cases') }}
   </button>
+  
+  <!-- Only show Start Testing button for Test Suites or Test Runs, not for Modules -->
   <button class="btn-start"
           (click)="handleStartTesting()"
-          [disabled]="!hasTestCasesToView()">
+          [disabled]="!hasTestCasesToView()"
+          *ngIf="showTestSuites || showTestRuns">
     {{ showTestRuns ? 'Start Test Execution' : 'Start Testing' }}
   </button>
 </div>

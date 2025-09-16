@@ -234,10 +234,14 @@ startEditSuite(suiteId: string): void {
           } as TestCaseDetailResponse;
         });
 
-        console.log('Mapped test cases:', mappedTestCases);
-        this.selectedTestCases.set(mappedTestCases);
+        // Group test cases by module and sort within each module
+        const groupedAndSortedTestCases = this.groupAndSortTestCasesByModule(mappedTestCases);
+        
+        console.log('Grouped and sorted test cases:', groupedAndSortedTestCases);
+        this.selectedTestCases.set(groupedAndSortedTestCases);
 
-        const firstTestCase = mappedTestCases[0];
+        // Set the first module as selected (or keep existing logic)
+        const firstTestCase = groupedAndSortedTestCases[0];
         if (firstTestCase?.moduleId) {
           this.selectedModuleId = firstTestCase.moduleId;
           this.loadTestCasesForModule(this.selectedModuleId);
@@ -256,6 +260,49 @@ startEditSuite(suiteId: string): void {
   ).subscribe();
 }
 
+// Add this helper method to group and sort test cases by module
+private groupAndSortTestCasesByModule(testCases: TestCaseDetailResponse[]): TestCaseDetailResponse[] {
+  // Group test cases by moduleId
+  const groupedByModule: { [moduleId: string]: TestCaseDetailResponse[] } = {};
+  
+  testCases.forEach(testCase => {
+    const moduleId = testCase.moduleId || 'unknown';
+    if (!groupedByModule[moduleId]) {
+      groupedByModule[moduleId] = [];
+    }
+    groupedByModule[moduleId].push(testCase);
+  });
+
+  // Sort each module group numerically by testCaseId
+  Object.keys(groupedByModule).forEach(moduleId => {
+    groupedByModule[moduleId].sort((a, b) => {
+      const extractNumber = (testCaseId: string | undefined): number => {
+        if (!testCaseId) return 0;
+        const match = testCaseId.match(/\d+/);
+        return match ? parseInt(match[0], 10) : 0;
+      };
+
+      const numA = extractNumber(a.testCaseId);
+      const numB = extractNumber(b.testCaseId);
+      return numA - numB;
+    });
+  });
+
+  // Get module names for sorting (optional: sort modules alphabetically)
+  const sortedModules = Object.keys(groupedByModule).sort((a, b) => {
+    const moduleA = this.getModuleName(a);
+    const moduleB = this.getModuleName(b);
+    return moduleA.localeCompare(moduleB);
+  });
+
+  // Flatten the grouped array back to single array
+  const result: TestCaseDetailResponse[] = [];
+  sortedModules.forEach(moduleId => {
+    result.push(...groupedByModule[moduleId]);
+  });
+
+  return result;
+}
   cancelEdit(): void {
     this.mode.set('list');
     this.resetForm();
@@ -272,27 +319,58 @@ startEditSuite(suiteId: string): void {
     }
   }
 
-  private loadTestCasesForModule(moduleId: string): void {
-    if (!moduleId) return;
+ private loadTestCasesForModule(moduleId: string): void {
+  if (!moduleId) return;
 
-    this.isLoadingTestCases.set(true);
-    this.availableTestCases.set([]);
+  this.isLoadingTestCases.set(true);
+  this.availableTestCases.set([]);
 
-    this.testCaseService.getTestCaseDetailByModule(moduleId, this.currentProductId()).pipe(
-      tap(testCases => {
-        console.log('Loaded test cases for module:', testCases);
-        this.availableTestCases.set(testCases || []);
-      }),
-      catchError(err => {
-        console.error('Failed to load test cases:', err);
-        this.showAlertMessage('Failed to load test cases: ' + (err.message || 'Unknown error'), 'error');
-        this.availableTestCases.set([]);
-        return of([]);
-      }),
-      finalize(() => this.isLoadingTestCases.set(false))
-    ).subscribe();
-  }
+  this.testCaseService.getTestCaseDetailByModule(moduleId, this.currentProductId()).pipe(
+    tap(testCases => {
+      console.log('Loaded test cases for module:', testCases);
+      
+      // Sort test cases by numerical Test Case ID
+      const sortedTestCases = (testCases || []).sort((a, b) => {
+        const extractNumber = (testCaseId: string | undefined): number => {
+          if (!testCaseId) return 0;
+          const match = testCaseId.match(/\d+/);
+          return match ? parseInt(match[0], 10) : 0;
+        };
 
+        const numA = extractNumber(a.testCaseId);
+        const numB = extractNumber(b.testCaseId);
+        return numA - numB;
+      });
+      
+      this.availableTestCases.set(sortedTestCases);
+    }),
+    catchError(err => {
+      console.error('Failed to load test cases:', err);
+      this.showAlertMessage('Failed to load test cases: ' + (err.message || 'Unknown error'), 'error');
+      this.availableTestCases.set([]);
+      return of([]);
+    }),
+    finalize(() => this.isLoadingTestCases.set(false))
+  ).subscribe();
+}
+private getSortedSelectedTestCaseIds(): string[] {
+  // Sort selected test cases by numerical Test Case ID
+  const sortedTestCases = [...this.selectedTestCases()].sort((a, b) => {
+    const extractNumber = (testCaseId: string | undefined): number => {
+      if (!testCaseId) return 0;
+      const match = testCaseId.match(/\d+/);
+      return match ? parseInt(match[0], 10) : 0;
+    };
+
+    const numA = extractNumber(a.testCaseId);
+    const numB = extractNumber(b.testCaseId);
+    return numA - numB;
+  });
+
+  return sortedTestCases
+    .map(tc => tc.id)
+    .filter(id => id && id.trim() !== '') as string[];
+}
   // Track functions
   trackBySuiteId(index: number, suite: TestSuiteResponse): string {
     return suite.id || index.toString();
@@ -446,63 +524,56 @@ startEditSuite(suiteId: string): void {
       finalize(() => this.isSaving.set(false))
     ).subscribe();
   }
+private updateTestSuite(): void {
+  const suiteId = this.selectedSuiteId();
+  if (!suiteId) return;
 
-  private updateTestSuite(): void {
-    const suiteId = this.selectedSuiteId();
-    if (!suiteId) return;
+  const request: CreateTestSuiteRequest = {
+    name: this.suiteName.trim(),
+    description: this.suiteDescription.trim() || undefined,
+    isActive: true
+  };
 
-    const request: CreateTestSuiteRequest = {
-      name: this.suiteName.trim(),
-      description: this.suiteDescription.trim() || undefined,
-      isActive: true
-    };
-
-    // First update the suite info
-    this.testSuiteService.updateTestSuite(this.currentProductId(), suiteId, request).pipe(
-      switchMap(() => {
-        // Then handle test case assignments
-        const testCaseIds = this.selectedTestCases()
-          .map(tc => tc.id)
-          .filter(id => id && id.trim() !== '') as string[];
-        
-        console.log('Updating test suite with test case IDs:', testCaseIds);
-        
-        return this.testSuiteService.updateTestSuiteTestCases(suiteId, testCaseIds);
-      }),
-      tap(() => {
-        this.showAlertMessage('Test suite updated successfully', 'success');
-        this.loadTestSuites();
-        setTimeout(() => this.cancelEdit(), 1500);
-      }),
-      catchError(err => {
-        console.error('Failed to update test suite:', err);
-        this.showAlertMessage('Failed to update test suite: ' + (err.message || 'Unknown error'), 'error');
-        return of(null);
-      }),
-      finalize(() => this.isSaving.set(false))
-    ).subscribe();
+  // First update the suite info
+  this.testSuiteService.updateTestSuite(this.currentProductId(), suiteId, request).pipe(
+    switchMap(() => {
+      // Get sorted test case IDs
+      const testCaseIds = this.getSortedSelectedTestCaseIds();
+      
+      console.log('Updating test suite with sorted test case IDs:', testCaseIds);
+      
+      return this.testSuiteService.updateTestSuiteTestCases(suiteId, testCaseIds);
+    }),
+    tap(() => {
+      this.showAlertMessage('Test suite updated successfully', 'success');
+      this.loadTestSuites();
+      setTimeout(() => this.cancelEdit(), 1500);
+    }),
+    catchError(err => {
+      console.error('Failed to update test suite:', err);
+      this.showAlertMessage('Failed to update test suite: ' + (err.message || 'Unknown error'), 'error');
+      return of(null);
+    }),
+    finalize(() => this.isSaving.set(false))
+  ).subscribe();
+}
+private assignTestCasesToSuite(suiteId: string): Observable<void> {
+  if (!suiteId) {
+    return throwError(() => new Error('Suite ID is required for test case assignment'));
   }
 
-  private assignTestCasesToSuite(suiteId: string): Observable<void> {
-    if (!suiteId) {
-      return throwError(() => new Error('Suite ID is required for test case assignment'));
-    }
-
-    const testCaseIds = this.selectedTestCases()
-      .map(tc => tc.id)
-      .filter(id => id && id.trim() !== '') as string[];
-    
-    if (testCaseIds.length === 0) {
-      return of(void 0);
-    }
-
-    const request: AssignTestCasesRequest = {
-      testCaseIds: testCaseIds
-    };
-
-    return this.testSuiteService.assignTestCasesToSuite(suiteId, request);
+  const testCaseIds = this.getSortedSelectedTestCaseIds();
+  
+  if (testCaseIds.length === 0) {
+    return of(void 0);
   }
 
+  const request: AssignTestCasesRequest = {
+    testCaseIds: testCaseIds
+  };
+
+  return this.testSuiteService.assignTestCasesToSuite(suiteId, request);
+}
   // Delete functionality
   confirmDeleteSuite(suiteId: string): void {
     if (!suiteId) {
@@ -578,11 +649,10 @@ startEditSuite(suiteId: string): void {
   }
 
   getModuleName(moduleId: string): string {
-    if (!moduleId) return 'Unknown Module';
-    const module = this.modules().find(m => m.id === moduleId);
-    return module?.name || 'Unknown Module';
-  }
-
+  if (!moduleId) return 'Unknown Module';
+  const module = this.modules().find(m => m.id === moduleId);
+  return module?.name || `Module ${moduleId}`; // Fallback to module ID if name not found
+}
   getTestCaseCount(suite: TestSuiteResponse): number {
     // Use the enhanced data with counts if available
     const suiteWithCount = this.testSuitesWithCounts().find(s => s.id === suite.id);

@@ -108,3 +108,16 @@ animation: skySlide 8s ease infinite;
   50% { background-position: 0% 100%; }
   100% { background-position: 100% 0%; }
 }
+ .slno-header {
+    width: 50px; /* Adjust width as needed */
+  }
+  
+  .slno-cell {
+    background-color: #f8f9fa;
+    font-weight: 500;
+  }
+  
+  /* Ensure proper column spacing */
+  .matrix-table th, .matrix-table td {
+    padding: 8px 12px;
+  }

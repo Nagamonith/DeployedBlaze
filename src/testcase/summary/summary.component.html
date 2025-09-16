@@ -9,16 +9,18 @@
     <table class="matrix-table table table-bordered table-hover">
       <thead class="table-primary">
         <tr>
+          <th class="slno-header">Slno</th> <!-- Added serial number column header -->
           <th class="module-header">Module</th>
           <th *ngFor="let ver of versions()" class="text-center version-header">{{ ver }}</th>
         </tr>
       </thead>
 
       <tbody>
-        <tr *ngFor="let mod of modules()">
+        <tr *ngFor="let mod of modules(); let i = index"> <!-- Added index tracking -->
+          <td class="slno-cell text-center">{{ i + 1 }}</td> <!-- Added serial number cell -->
           <td class="module-name">
             <a class="fw-bold text-decoration-none" 
-               [routerLink]="['/tester/modules', mod.id]" 
+               [routerLink]="['/tester/edit-testcases', mod.id]" 
                [queryParams]="{ productId: selectedProductId(), loadAllVersions: true }">
               {{ mod.name }}
             </a>
@@ -31,7 +33,7 @@
 
       <tfoot class="table-secondary">
         <tr>
-          <th class="total-header">Total</th>
+          <th class="total-header" colspan="2">Total</th> <!-- Added colspan to account for new column -->
           <td *ngFor="let ver of versions()" class="text-center fw-bold total-count">
             {{ getVersionTotal(ver) }}
           </td>
