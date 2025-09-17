@@ -94,12 +94,14 @@
         <td class="wrap-text">{{ testCase.scenario }}</td>
         <td class="wrap-text">
           <div *ngFor="let step of testCase.steps; let i = index">
-            <strong>{{i+1}}.</strong> {{step.steps}}
+            <!-- <strong>{{i+1}}.</strong> -->
+             {{step.steps}}
           </div>
         </td>
         <td class="wrap-text">
           <div *ngFor="let step of testCase.steps; let i = index">
-            <strong>{{i+1}}.</strong> {{step.expectedResult}}
+            <!-- <strong>{{i+1}}.</strong>  -->
+            {{step.expectedResult}}
           </div>
         </td>
         <!-- Dynamic attribute values -->
@@ -188,7 +190,7 @@
     <!-- This should render steps in the correct order (0, 1, 2, ...) -->
     <div *ngFor="let step of steps.controls; let i = index" [formGroupName]="i" class="step-item">
       <div class="step-header">
-        <span>Step {{i + 1}}</span>
+              <!-- <span>Step {{i + 1}}</span> -->
         <button type="button" class="btn-small-danger" (click)="removeStep(i)" *ngIf="steps.length > 1">
           Remove
         </button>
@@ -205,7 +207,7 @@
       </div>
     </div>
   </div>
-  <button type="button" class="btn-small" (click)="addStep()">Add Step</button>
+        <!-- <button type="button" class="btn-small" (click)="addStep()">Add Step</button> -->
 </div>
       <!-- Dynamic Attributes -->
       <div class="attributes-section" *ngIf="moduleAttributes().length > 0">

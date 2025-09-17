@@ -272,7 +272,20 @@
           <tbody>
             <tr *ngFor="let tc of versionTestCases(); let i = index">
               <td *ngFor="let col of viewColumns" class="wrap-text" [style.width.px]="col.width">
-                {{ getCellValue(tc, col.field, i) }}
+                <!-- Step number commented out below -->
+                <ng-container *ngIf="col.field === 'steps'">
+                  <div *ngFor="let step of tc.steps" class="step-item">
+                    <!-- <strong>Step {{ step.id }}:</strong> --> {{ step.steps }}
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="col.field === 'expectedResult'">
+                  <div *ngFor="let step of tc.steps" class="expected-item">
+                    <!-- <strong>Expected {{ step.id }}:</strong> --> {{ step.expectedResult }}
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="col.field !== 'steps' && col.field !== 'expectedResult'">
+                  {{ getCellValue(tc, col.field, i) }}
+                </ng-container>
               </td>
               <td *ngFor="let col of attributeColumns" class="wrap-text" [style.width.px]="col.width">
                 {{ getCellValue(tc, col.field) }}

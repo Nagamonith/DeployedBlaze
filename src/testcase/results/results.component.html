@@ -122,7 +122,7 @@
                 <td class="steps-cell">
                   <div *ngIf="testCase.steps && testCase.steps.length > 0; else noSteps">
                     <div *ngFor="let step of testCase.steps" class="step-item">
-                      <div><strong>Step {{ step.id }}:</strong> {{ step.steps }}</div>
+                      <div><!-- <strong>Step {{ step.id }}:</strong> --> {{ step.steps }}</div>
                     </div>
                   </div>
                   <ng-template #noSteps>
@@ -132,7 +132,7 @@
                 <td>
                   <div *ngIf="testCase.steps && testCase.steps.length > 0; else noExpected">
                     <div *ngFor="let step of testCase.steps" class="expected-item">
-                      <div><strong>Expected {{ step.id }}:</strong> {{ step.expectedResult }}</div>
+                      <div><!-- <strong>Expected {{ step.id }}:</strong> --> {{ step.expectedResult }}</div>
                     </div>
                   </div>
                   <ng-template #noExpected>
