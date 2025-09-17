@@ -21,28 +21,29 @@ import { AddTestcasesComponent } from '../testcase/add-testcases/add-testcases.c
 import { ModulesComponent } from '../testcase/modules/modules.component';
 import { ResultsComponent } from '../testcase/results/results.component';
 import { SummaryComponent } from '../testcase/summary/summary.component';
+import { WorklogComponent } from '../lib/components/worklog/worklog.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   // { path: 'asset-view/:assetTag', component: AssetViewComponent }, 
   { path: 'asset/:assetTag', component: AssetViewerComponent },
-
+ { path: 'worklog',component: WorklogComponent },
   { path:"assets", component :LayoutsComponent,canActivate: [AuthGuard],
     
     children: [
 
-  { path: 'pre-dashboard', component: PreDashboardComponent, canActivate: [AuthGuard] },
-   {path: 'asset-dashboard', component: AssetDashboardComponent, canActivate: [AuthGuard] },
+    { path: 'pre-dashboard', component: PreDashboardComponent, canActivate: [AuthGuard] },
+    {path: 'asset-dashboard', component: AssetDashboardComponent, canActivate: [AuthGuard] },
     { path: 'vendor-dashboard', component: VendorDashboardComponent, canActivate: [AuthGuard] },
     { path: 'employee-dashboard', component: EmployeeDashboardComponent, canActivate: [AuthGuard] },
     { path: 'bug', component: BugComponent, canActivate: [AuthGuard] },
     { path: 'gantt-editor', component: GanttEditorComponent, canActivate: [AuthGuard] },
     { path: 'bug-metrics-editor', component: BugMetricsEditorComponent, canActivate: [AuthGuard] },
-       { path: 'project-details', component: ProjectsDetailsComponent, canActivate: [AuthGuard] },
-       { path: 'project-summary', component: ProjectSummaryComponent, canActivate: [AuthGuard] },
-       { path: 'bug-time-summary', component: BugTimeSummaryComponent, canActivate: [AuthGuard] },
-       { path: 'bug-details', component: BugDetailsComponent, canActivate: [AuthGuard] }
+    { path: 'project-details', component: ProjectsDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'project-summary', component: ProjectSummaryComponent, canActivate: [AuthGuard] },
+    { path: 'bug-time-summary', component: BugTimeSummaryComponent, canActivate: [AuthGuard] },
+    { path: 'bug-details', component: BugDetailsComponent, canActivate: [AuthGuard] }
 
     ]
 },
