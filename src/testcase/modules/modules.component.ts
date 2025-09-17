@@ -193,7 +193,10 @@ export class ModulesComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   ngOnInit(): void {
-    this.initializeData();
+  // Select Test Suites by default when page loads
+  this.showTestSuites = true;
+  this.showTestRuns = false;
+  this.initializeData();
     
     this.route.queryParamMap.subscribe(queryParams => {
       const productId = queryParams.get('productId');
