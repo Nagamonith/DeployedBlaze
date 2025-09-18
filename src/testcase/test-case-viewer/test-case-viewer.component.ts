@@ -95,4 +95,7 @@ export class TestCaseViewerComponent implements OnInit {
     if (!result) return '—';
     return result.charAt(0).toUpperCase() + result.slice(1).toLowerCase();
   }
+    goToLogin() {
+    this.router.navigate(['/login']);
+  }
 }

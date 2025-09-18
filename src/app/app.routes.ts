@@ -130,7 +130,10 @@ export const routes: Routes = [
       ]
     },
 
-    /* 🌍 Public testcase viewer routes */
+    
+  ]
+},
+/* 🌍 Public testcase viewer routes */
     {
       path: 'tester/public-view/:moduleId/:testCaseId',
       loadComponent: () =>
@@ -143,7 +146,6 @@ export const routes: Routes = [
         import('../testcase/test-case-viewer/test-case-viewer.component')
           .then(m => m.TestCaseViewerComponent)
     }
-  ]
-}
+
 
 ];
