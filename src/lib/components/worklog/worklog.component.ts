@@ -89,11 +89,7 @@ export class WorklogComponent implements OnInit {
   
 this.apiBaseUrl = 'https://blazebackend.qualis40.io'; // replace with your backend
 
-  if (!this.apiBaseUrl) {
-    console.warn('[Worklog] API Base URL not found in sessionStorage["config"]');
-    this.showMessage('⚠️ API URL not configured. Check sessionStorage config.');
-    return; // Stop further execution
-  }
+
 
   console.log('[Worklog] API Base URL:', this.apiBaseUrl);
 
@@ -102,21 +98,63 @@ this.apiBaseUrl = 'https://blazebackend.qualis40.io'; // replace with your backe
 }
 
 
-  initializeTeams() {
-    console.log('[Worklog] Initializing Teams SDK...');
-   microsoftTeams.app.initialize()
-  .then(() => microsoftTeams.app.getContext())
-  .then((context: any) => {
-    console.log('[Worklog] Teams context:', context);
-    this.userId = context.userPrincipalName || context.userObjectId || context.user.id || 'test.user@company.com';
-    console.log('[Worklog] Extracted UserId:', this.userId);
-  })
-  .catch(err => {
-    console.error('[Worklog] Teams init error:', err);
-    this.userId = 'test.user@company.com'; // fallback
-  });
+  // initializeTeams() {
+  //   console.log('[Worklog] Initializing Teams SDK...');
+  //  microsoftTeams.app.initialize()
+  // .then(() => microsoftTeams.app.getContext())
+  // .then((context: any) => {
+  //   console.log('[Worklog] Teams context:', context);
+  //   this.userId = context.userPrincipalName || context.userObjectId || context.user.id;
+    
+  //   console.log('[Worklog] Extracted UserId:', this.userId);
+  // })
+  // .catch(err => {
+  //   console.error('[Worklog] Teams init error:', err);
+  //   this.userId = 'test.user@company.com'; // fallback
+  // });
 
-  }
+  // }
+  initializeTeams() {
+  console.log('[Worklog] Initializing Teams SDK...');
+  microsoftTeams.app.initialize()
+    .then(() => microsoftTeams.app.getContext())
+    .then((context: any) => {
+      // Dump the full context object
+      console.log('[Worklog] Full Teams context:', context);
+
+      // Log user-related info
+      console.log('[Worklog] context.user:', context.user);
+      console.log('[Worklog] context.userPrincipalName:', context.userPrincipalName);
+      console.log('[Worklog] context.userObjectId:', context.userObjectId);
+
+      if (context.user) {
+        console.log('[Worklog] context.user.id:', context.user.id);
+        console.log('[Worklog] context.user.displayName:', context.user.displayName);
+        console.log('[Worklog] context.user.licenseType:', context.user.licenseType);
+      }
+
+      // Log app-related info
+      console.log('[Worklog] context.app:', context.app);
+      console.log('[Worklog] context.page:', context.page);
+
+      // Pick UserId with fallbacks
+      this.userId = context.user?.userPrincipalName
+                 || context.userPrincipalName
+                 || context.user?.id
+                 || context.userObjectId ;
+
+      console.log('[Worklog] Final Extracted UserId:', this.userId);
+
+      if (!this.userId) {
+        this.showMessage('⚠️ Could not extract UserId from Teams context');
+      }
+    })
+    .catch(err => {
+      console.error('[Worklog] Teams init error:', err);
+      this.showMessage('⚠️ Teams initialization failed');
+    });
+}
+
 
   logAction(actionType: 'Login' | 'Logout') {
     console.log(`[Worklog] logAction called: ${actionType}`);
