@@ -1,5 +1,4 @@
-
-<div class="adaptiveCard">
+<!-- <div class="adaptiveCard">
   <div class="ac-header">Work From Home Tracker</div>
   <div class="ac-body">
     <p>User: {{ userId }}</p>
@@ -7,5 +6,32 @@
   <div class="ac-actions">
     <button class="ac-button login" (click)="logAction('Login')">Login</button>
     <button class="ac-button logout" (click)="logAction('Logout')">Logout</button>
+  </div>
+</div> -->
+
+
+<div class="adaptiveCard">
+  <div class="ac-header">Work From Home Tracker</div>
+  
+  <!-- Current IST Time -->
+  <div class="ac-current-time">{{ currentTime }}</div>
+
+  <!-- Login/Logout section -->
+  <div class="ac-body">
+    <p>User: {{ userId }}</p>
+
+    <!-- Session info div (shown only after login) -->
+    <div *ngIf="sessionActive" class="session-div">
+      <p>Login Time: {{ loginTime }}</p>
+      <p>Current Session: {{ sessionDuration }}</p>
+    </div>
+  </div>
+
+  <div class="ac-actions">
+    <!-- Show login button only if session not active -->
+    <button class="ac-button login" *ngIf="!sessionActive" (click)="logAction('Login')">Login</button>
+
+    <!-- Show logout button only if session active -->
+    <button class="ac-button logout" *ngIf="sessionActive" [disabled]="logoutClicked" (click)="logAction('Logout')">Logout</button>
   </div>
 </div>
