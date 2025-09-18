@@ -31,25 +31,6 @@ export const routes: Routes = [
   { path: 'asset/:assetTag', component: AssetViewerComponent },
   { path: 'worklog', component: WorklogComponent },
 
-<<<<<<< HEAD
-=======
-    { path: 'pre-dashboard', component: PreDashboardComponent, canActivate: [AuthGuard] },
-    {path: 'asset-dashboard', component: AssetDashboardComponent, canActivate: [AuthGuard] },
-    { path: 'vendor-dashboard', component: VendorDashboardComponent, canActivate: [AuthGuard] },
-    { path: 'employee-dashboard', component: EmployeeDashboardComponent, canActivate: [AuthGuard] },
-    { path: 'bug', component: BugComponent, canActivate: [AuthGuard] },
-    { path: 'gantt-editor', component: GanttEditorComponent, canActivate: [AuthGuard] },
-    { path: 'bug-metrics-editor', component: BugMetricsEditorComponent, canActivate: [AuthGuard] },
-    { path: 'project-details', component: ProjectsDetailsComponent, canActivate: [AuthGuard] },
-    { path: 'project-summary', component: ProjectSummaryComponent, canActivate: [AuthGuard] },
-    { path: 'bug-time-summary', component: BugTimeSummaryComponent, canActivate: [AuthGuard] },
-    { path: 'bug-details', component: BugDetailsComponent, canActivate: [AuthGuard] }
-
-    ]
-},
-
-/* ───────── Tester Dashboard section ───────── */
->>>>>>> Workload
   {
     path:"assets", 
     component : LayoutsComponent,
