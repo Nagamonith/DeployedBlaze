@@ -74,34 +74,48 @@ export class WorklogComponent implements OnInit {
     private snackBar: MatSnackBar
   ) { }
 
+  // ngOnInit(): void {
+  //   console.log('[Worklog] ngOnInit triggered');
+  //   this.apiBaseUrl = JSON.parse(sessionStorage.getItem('config') || '{}').url || '';
+  //   console.log('[Worklog] API Base URL:', this.apiBaseUrl);
+  //   this.initializeTeams();
+  //    this.http.post(`${this.apiBaseUrl}/api/gantt/sync-from-mysql`, {}).subscribe({
+  //           next: () => console.log('Gantt sync completed.'),
+  //           error: (err) => console.error('Gantt sync failed:', err)
+  //         });
+  // }
   ngOnInit(): void {
-    console.log('[Worklog] ngOnInit triggered');
-    this.apiBaseUrl = JSON.parse(sessionStorage.getItem('config') || '{}').url || '';
-    console.log('[Worklog] API Base URL:', this.apiBaseUrl);
-    this.initializeTeams();
-     this.http.post(`${this.apiBaseUrl}/api/gantt/sync-from-mysql`, {}).subscribe({
-            next: () => console.log('Gantt sync completed.'),
-            error: (err) => console.error('Gantt sync failed:', err)
-          });
+  // 1️⃣ Fetch base URL from sessionStorage
+  
+this.apiBaseUrl = 'https://blazebackend.qualis40.io'; // replace with your backend
+
+  if (!this.apiBaseUrl) {
+    console.warn('[Worklog] API Base URL not found in sessionStorage["config"]');
+    this.showMessage('⚠️ API URL not configured. Check sessionStorage config.');
+    return; // Stop further execution
   }
+
+  console.log('[Worklog] API Base URL:', this.apiBaseUrl);
+
+  // 2️⃣ Initialize Teams SDK
+  this.initializeTeams();
+}
+
 
   initializeTeams() {
     console.log('[Worklog] Initializing Teams SDK...');
-    microsoftTeams.app.initialize()
-      .then(() => microsoftTeams.app.getContext())
-      .then((context: any) => {
-        console.log('[Worklog] Teams context:', context);
-        this.userId = context.userPrincipalName || context.userObjectId || '';
-        console.log('[Worklog] Extracted UserId:', this.userId);
+   microsoftTeams.app.initialize()
+  .then(() => microsoftTeams.app.getContext())
+  .then((context: any) => {
+    console.log('[Worklog] Teams context:', context);
+    this.userId = context.userPrincipalName || context.userObjectId || context.user.id || 'test.user@company.com';
+    console.log('[Worklog] Extracted UserId:', this.userId);
+  })
+  .catch(err => {
+    console.error('[Worklog] Teams init error:', err);
+    this.userId = 'test.user@company.com'; // fallback
+  });
 
-        if (!this.userId) {
-          this.showMessage('⚠️ Could not extract UserId from Teams context');
-        }
-      })
-      .catch(err => {
-        console.error('[Worklog] Teams init error:', err);
-        this.showMessage('⚠️ Teams initialization failed');
-      });
   }
 
   logAction(actionType: 'Login' | 'Logout') {
