@@ -48,14 +48,6 @@ export const routes: Routes = [
     ]
 },
 
- { 
-  path:"blaze", component :LayoutsComponent,canActivate: [AuthGuard],
-    
-    children: [
-
-  { path: 'workload-dashboard', component: WorkloadManagementComponent, canActivate: [AuthGuard] }
-
-]},
 /* ───────── Tester Dashboard section ───────── */
   {
     path: '',
