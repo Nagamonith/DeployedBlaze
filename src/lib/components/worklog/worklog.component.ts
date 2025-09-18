@@ -212,35 +212,73 @@ activeTab: any;
       .catch(err => this.showMessage('⚠️ Teams initialization failed'));
   }
 
+  // logAction(actionType: 'Login' | 'Logout') {
+  //   if (!this.userId) {
+  //     this.showMessage('⚠️ User not identified!');
+  //     return;
+  //   }
+
+  //   const istTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+  //   const payload = {
+  //     employeeIdentifier: this.userId,
+  //     actionType: actionType,
+  //     actionTime: istTime
+  //   };
+
+  //   // Send API request
+  //   this.http.post(`${this.apiBaseUrl}/api/worklog/log-action`, payload).subscribe({
+  //     next: () => {
+  //       if (actionType === 'Login') {
+  //         this.startSession(istTime);
+  //       } else if (actionType === 'Logout') {
+  //         this.endSession();
+  //       }
+  //     },
+  //     error: err => {
+  //       console.error('[Worklog] API error:', err);
+  //       this.showMessage('❌ Error logging action. Check console for details.');
+  //     }
+  //   });
+  // }
   logAction(actionType: 'Login' | 'Logout') {
-    if (!this.userId) {
-      this.showMessage('⚠️ User not identified!');
-      return;
-    }
-
-    const istTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-
-    const payload = {
-      employeeIdentifier: this.userId,
-      actionType: actionType,
-      actionTime: istTime
-    };
-
-    // Send API request
-    this.http.post(`${this.apiBaseUrl}/api/worklog/log-action`, payload).subscribe({
-      next: () => {
-        if (actionType === 'Login') {
-          this.startSession(istTime);
-        } else if (actionType === 'Logout') {
-          this.endSession();
-        }
-      },
-      error: err => {
-        console.error('[Worklog] API error:', err);
-        this.showMessage('❌ Error logging action. Check console for details.');
-      }
-    });
+  if (!this.userId) {
+    this.showMessage('⚠️ User not identified!');
+    return;
   }
+
+  // ✅ Get IST time as ISO string
+  const istDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+  const actionTime = istDate.toISOString();
+
+  // ✅ Payload as per Swagger
+  const payload = {
+    // id: 0,                        // required by backend
+    employeeIdentifier: this.userId,
+    actionType: actionType,
+    actionTime: actionTime
+  };
+
+  console.log('[Worklog] Sending payload:', payload);
+
+  // Send API request
+  this.http.post(`${this.apiBaseUrl}/api/worklog/log-action`, payload).subscribe({
+    next: () => {
+      this.showMessage(`${actionType} logged at ${actionTime}`);
+
+      if (actionType === 'Login') {
+        this.startSession(actionTime);   // start session timer
+      } else if (actionType === 'Logout') {
+        this.endSession();               // stop session timer
+      }
+    },
+    error: err => {
+      console.error('[Worklog] API error:', err);
+      this.showMessage('❌ Error logging action. Check console for details.');
+    }
+  });
+}
+
 
   startSession(istTime: string) {
     this.sessionActive = true;
