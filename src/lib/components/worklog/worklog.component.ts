@@ -57,6 +57,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as microsoftTeams from '@microsoft/teams-js';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-worklog',
@@ -68,48 +69,47 @@ export class WorklogComponent implements OnInit {
   userId: string = '';
   apiBaseUrl: string = '';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private snackBar: MatSnackBar
+  ) { }
 
   ngOnInit(): void {
     console.log('[Worklog] ngOnInit triggered');
     this.apiBaseUrl = JSON.parse(sessionStorage.getItem('config') || '{}').url || '';
-    console.log('[Worklog] API Base URL from sessionStorage:', this.apiBaseUrl);
+    console.log('[Worklog] API Base URL:', this.apiBaseUrl);
     this.initializeTeams();
   }
 
   initializeTeams() {
-    console.log('[Worklog] Initializing Microsoft Teams SDK...');
+    console.log('[Worklog] Initializing Teams SDK...');
     microsoftTeams.app.initialize()
-      .then(() => {
-        console.log('[Worklog] Teams SDK initialized successfully');
-        return microsoftTeams.app.getContext();
-      })
+      .then(() => microsoftTeams.app.getContext())
       .then((context: any) => {
-        console.log('[Worklog] Teams context received:', context);
+        console.log('[Worklog] Teams context:', context);
         this.userId = context.userPrincipalName || context.userObjectId || '';
         console.log('[Worklog] Extracted UserId:', this.userId);
+
         if (!this.userId) {
-          alert('⚠️ UserId could not be extracted from Teams context!');
+          this.showMessage('⚠️ Could not extract UserId from Teams context');
         }
       })
       .catch(err => {
-        console.error('[Worklog] Error initializing Teams:', err);
-        alert('⚠️ Teams initialization failed. See console for details.');
+        console.error('[Worklog] Teams init error:', err);
+        this.showMessage('⚠️ Teams initialization failed');
       });
   }
 
   logAction(actionType: 'Login' | 'Logout') {
-    console.log(`[Worklog] logAction called with: ${actionType}`);
+    console.log(`[Worklog] logAction called: ${actionType}`);
 
     if (!this.userId) {
-      alert('⚠️ User not identified (userId is empty)!');
-      console.error('[Worklog] UserId missing when logging action');
+      this.showMessage('⚠️ User not identified!');
       return;
     }
 
     if (!this.apiBaseUrl) {
-      alert('⚠️ API base URL not configured!');
-      console.error('[Worklog] API base URL is missing');
+      this.showMessage('⚠️ API base URL not configured!');
       return;
     }
 
@@ -118,19 +118,21 @@ export class WorklogComponent implements OnInit {
       actionType: actionType
     };
 
-    console.log('[Worklog] Sending POST request to:', `${this.apiBaseUrl}/api/worklog/log-action`);
-    console.log('[Worklog] Payload:', payload);
+    console.log('[Worklog] Sending request to:', `${this.apiBaseUrl}/api/worklog/log-action`, payload);
 
     this.http.post(`${this.apiBaseUrl}/api/worklog/log-action`, payload).subscribe({
       next: (res) => {
         console.log('[Worklog] API response:', res);
-        alert(`${actionType} logged successfully at ${new Date().toLocaleTimeString()}`);
+        this.showMessage(`${actionType} logged at ${new Date().toLocaleTimeString()}`);
       },
       error: (err) => {
         console.error('[Worklog] API error:', err);
-        alert('❌ Error logging action. Check console for details.');
+        this.showMessage('❌ Error logging action. Check console for details.');
       }
     });
   }
 
+  private showMessage(msg: string) {
+    this.snackBar.open(msg, 'Close', { duration: 4000 });
+  }
 }
