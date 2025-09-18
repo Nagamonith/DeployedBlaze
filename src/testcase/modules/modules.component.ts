@@ -1965,33 +1965,20 @@ removeUpload(rowIndex: number, fileIndex: number): void {
   // Utility methods
   /**
    * Copy a link to the clipboard that will open the test case viewer for the given test case.
-   * The link will include both moduleId and testCaseId for correct routing.
+   * The link will include both moduleId and testCaseId for correct routing, and productId as a query param.
    * @param testCaseId The test case's id (database id, not testCaseId string)
    */
-  copyTestCaseLink(testCaseId: string): void {
-    // Find the test case object in the current context (module, suite, or run)
-    let tc = null;
-    // Try to find in versionTestCases (start testing table)
-    tc = this.versionTestCases().find(t => t.id === testCaseId || t.testCaseId === testCaseId);
-    // Fallback: try in testCasePool
-    if (!tc && this.testCasePool) {
-      tc = this.testCasePool().find(t => t.id === testCaseId || t.testCaseId === testCaseId);
-    }
-    // If not found, fallback to just using the testCaseId as before
-    let url = '';
-    if (tc && tc.moduleId && tc.id) {
-      // Use the new public route for sharing test case links
-      url = `${window.location.origin}/tester/public-view/${tc.moduleId}/${tc.id}`;
-    } else {
-      // fallback for legacy/test data
-      url = `${window.location.origin}/tester/view-testcase/${testCaseId}`;
+  copyTestCaseLink(testCaseId: string, moduleId: string): void {
+    const productId = this.selectedProductId();
+    let url = `${window.location.origin}/tester/public-view/${moduleId}/${testCaseId}`;
+    if (productId) {
+      url += `?productId=${productId}`;
     }
     navigator.clipboard.writeText(url)
       .then(() => {
         this.showAlertMessage('Link copied to clipboard!', 'success');
       })
-      .catch(err => {
-        console.error('Failed to copy: ', err);
+      .catch(() => {
         this.showAlertMessage('Failed to copy link', 'error');
       });
   }

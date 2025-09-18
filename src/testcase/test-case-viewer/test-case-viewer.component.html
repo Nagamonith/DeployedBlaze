@@ -6,7 +6,7 @@
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <a class="navbar-brand fs-4 fw-bold d-flex align-items-center">
         <img src="https://datalyzer.com/wp-content/uploads/2022/01/logo-3.png" width="60" height="60" class="me-2">
-        <span>ASSET MANAGEMENT SYSTEM</span>
+        <span>TEST CASE MANAGEMENT SYSTEM</span>
       </a>
       <div>
         <a class="nav-link text-white" href="#" (click)="goToLogin(); $event.preventDefault()">LOGIN</a>
@@ -29,13 +29,25 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <!-- <tr>
           <td><strong>ID</strong></td>
           <td>{{ testCase()?.id || '—' }}</td>
-        </tr>
+        </tr> -->
         <tr>
           <td><strong>Test Case ID</strong></td>
           <td>{{ testCase()?.testCaseId || '—' }}</td>
+        </tr>
+        <tr *ngIf="productName">
+          <td><strong>Product</strong></td>
+          <td>{{ productName }}</td>
+        </tr>
+        <tr>
+          <td><strong>Module</strong></td>
+          <td>{{ moduleName || '—' }}</td>
+        </tr>
+        <tr *ngIf="testSuiteNames">
+          <td><strong>Suite</strong></td>
+          <td>{{ testSuiteNames }}</td>
         </tr>
         <tr>
           <td><strong>Use Case</strong></td>
@@ -45,18 +57,27 @@
           <td><strong>Scenario</strong></td>
           <td class="wrap-text">{{ testCase()?.scenario || '—' }}</td>
         </tr>
-        <tr>
+        <!-- <tr>
           <td><strong>Test Type</strong></td>
           <td>{{ testCase()?.testType || '—' }}</td>
         </tr>
         <tr *ngIf="testCase()?.testTool as testTool">
           <td><strong>Test Tool</strong></td>
           <td>{{ testTool }}</td>
+        </tr> -->
+        
+        <tr *ngIf="testCase()?.executionDetails">
+          <td><strong>Execution Details</strong></td>
+          <td>
+            <div><strong>Result:</strong> {{ formatResult(testCase()?.executionDetails?.result) }}</div>
+            <div><strong>Actual:</strong> {{ testCase()?.executionDetails?.actual || '—' }}</div>
+            <div><strong>Remarks:</strong> {{ testCase()?.executionDetails?.remarks || '—' }}</div>
+          </td>
         </tr>
-        <tr>
+        <!-- <tr>
           <td><strong>Result</strong></td>
           <td>{{ formatResult(testCase()?.result) }}</td>
-        </tr>
+        </tr> -->
         <!-- <tr>
           <td><strong>Actual</strong></td>
           <td class="wrap-text">

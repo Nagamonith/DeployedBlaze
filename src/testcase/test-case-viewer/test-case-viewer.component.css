@@ -391,7 +391,6 @@ body.modal-open {
 
 
 /* ...existing code... */
-
 /* Responsive: tablet */
 @media (max-width: 900px) {
   .custom-navbar {
