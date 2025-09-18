@@ -1,34 +1,102 @@
-.adaptiveCard {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  padding: 16px;
-  max-width: 350px;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+/* Full-screen layout */
+.full-screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Tabs Header like Teams */
+.teams-tabs {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  background-color: #f3f3f3;
+  cursor: pointer;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tab-button.active {
+  background-color: #ffffff;
+  border-bottom: 2px solid #2b88d8;
+  color: #2b88d8;
+}
+
+/* Tab content fills remaining screen */
+.full-screen-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  background-color: #f4f4f4;
+  padding: 24px; /* spacing around left-aligned content */
+}
+
+/* WFH container aligned left */
+.wfh-left-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* left align content */
+  width: 100%;
+  height: 100%;
+}
+
+/* Header */
 .ac-header {
   font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+/* Current IST Time */
+.ac-current-time {
   font-size: 18px;
-  margin-bottom: 8px;
+  margin-bottom: 24px;
+  color: #444;
 }
 
+/* Body paragraphs */
 .ac-body p {
-  margin: 4px 0;
+  margin: 6px 0;
+  font-size: 16px;
 }
 
+/* Session div styling */
+.session-div {
+  background-color: #f3f3f3;
+  border-radius: 6px;
+  padding: 16px;
+  margin: 16px 0;
+  width: 100%;
+  max-width: 600px; /* optional for readability */
+  font-size: 16px;
+  text-align: left;
+}
+
+/* Buttons container */
 .ac-actions {
   display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
+  gap: 16px;
+  margin-top: 16px;
 }
 
+/* Buttons styling */
 .ac-button {
-  padding: 8px 12px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   color: #ffffff;
+  font-weight: bold;
+  font-size: 16px;
 }
 
 .ac-button.login { background-color: #2b88d8; }

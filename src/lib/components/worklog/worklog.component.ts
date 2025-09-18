@@ -158,13 +158,15 @@ import { HttpClient } from '@angular/common/http';
 import * as microsoftTeams from '@microsoft/teams-js';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { interval, Subscription } from 'rxjs';
+import { DxRadioGroupModule, DxSelectBoxModule, DxTabPanelModule } from 'devextreme-angular';
+
 
 @Component({
   selector: 'app-worklog',
   standalone:true,
   templateUrl: './worklog.component.html',
   styleUrls: ['./worklog.component.css'],
-  imports:[CommonModule]
+  imports:[CommonModule, DxTabPanelModule]
 })
 export class WorklogComponent implements OnInit, OnDestroy {
 
@@ -179,6 +181,7 @@ export class WorklogComponent implements OnInit, OnDestroy {
 
   private timerSub!: Subscription;
   private loginDate!: Date;
+activeTab: any;
 
   constructor(private http: HttpClient, private snackBar: MatSnackBar,) { }
 
@@ -202,6 +205,7 @@ export class WorklogComponent implements OnInit, OnDestroy {
     microsoftTeams.app.initialize()
       .then(() => microsoftTeams.app.getContext())
       .then((context: any) => {
+        microsoftTeams.app.notifySuccess();
         this.userId = context.user?.userPrincipalName || context.userPrincipalName || context.user?.id || context.userObjectId;
         if (!this.userId) this.showMessage('⚠️ Could not extract UserId from Teams context');
       })

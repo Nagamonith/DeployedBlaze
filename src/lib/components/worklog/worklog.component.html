@@ -1,37 +1,53 @@
-<!-- <div class="adaptiveCard">
-  <div class="ac-header">Work From Home Tracker</div>
-  <div class="ac-body">
-    <p>User: {{ userId }}</p>
+<div class="teams-tabs-container full-screen">
+
+  <!-- Tabs Header -->
+  <div class="teams-tabs">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'wfh'" 
+      (click)="activeTab = 'wfh'">
+      Work From Home
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'leave'" 
+      (click)="activeTab = 'leave'">
+      Apply Leave
+    </button>
   </div>
-  <div class="ac-actions">
-    <button class="ac-button login" (click)="logAction('Login')">Login</button>
-    <button class="ac-button logout" (click)="logAction('Logout')">Logout</button>
-  </div>
-</div> -->
 
+  <!-- Tab Content -->
+  <div class="tab-content full-screen-content">
+    
+    <!-- Work From Home Tab (full screen) -->
+    <div *ngIf="activeTab === 'wfh'" class="wfh-fullscreen-container">
+      <div class="ac-header">Work From Home Tracker</div>
+      <div class="ac-current-time">{{ currentTime }}</div>
 
-<div class="adaptiveCard">
-  <div class="ac-header">Work From Home Tracker</div>
-  
-  <!-- Current IST Time -->
-  <div class="ac-current-time">{{ currentTime }}</div>
+      <div class="ac-body">
+        <p>User: {{ userId }}</p>
 
-  <!-- Login/Logout section -->
-  <div class="ac-body">
-    <p>User: {{ userId }}</p>
+        <div *ngIf="sessionActive || logoutClicked" class="session-div">
+          <p>Login Time: {{ loginTime }}</p>
+          <p *ngIf="sessionActive">Current Session: {{ sessionDuration }}</p>
+          <p *ngIf="logoutClicked">Total Session Time: {{ sessionDuration }}</p>
+        </div>
+      </div>
 
-    <!-- Session info div (shown only after login) -->
-    <div *ngIf="sessionActive" class="session-div">
-      <p>Login Time: {{ loginTime }}</p>
-      <p>Current Session: {{ sessionDuration }}</p>
+      <div class="ac-actions">
+        <button class="ac-button login" *ngIf="!sessionActive && !logoutClicked" (click)="logAction('Login')">
+          Login
+        </button>
+        <button class="ac-button logout" *ngIf="sessionActive" [disabled]="logoutClicked" (click)="logAction('Logout')">
+          Logout
+        </button>
+      </div>
     </div>
-  </div>
 
-  <div class="ac-actions">
-    <!-- Show login button only if session not active -->
-    <button class="ac-button login" *ngIf="!sessionActive" (click)="logAction('Login')">Login</button>
+    <!-- Apply Leave Tab -->
+    <div *ngIf="activeTab === 'leave'" class="leave-container">
+      <p>Apply Leave functionality will come here.</p>
+    </div>
 
-    <!-- Show logout button only if session active -->
-    <button class="ac-button logout" *ngIf="sessionActive" [disabled]="logoutClicked" (click)="logAction('Logout')">Logout</button>
   </div>
 </div>
