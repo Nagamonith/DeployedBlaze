@@ -79,6 +79,10 @@ export class WorklogComponent implements OnInit {
     this.apiBaseUrl = JSON.parse(sessionStorage.getItem('config') || '{}').url || '';
     console.log('[Worklog] API Base URL:', this.apiBaseUrl);
     this.initializeTeams();
+     this.http.post(`${this.apiBaseUrl}/api/gantt/sync-from-mysql`, {}).subscribe({
+            next: () => console.log('Gantt sync completed.'),
+            error: (err) => console.error('Gantt sync failed:', err)
+          });
   }
 
   initializeTeams() {
