@@ -119,6 +119,8 @@ this.apiBaseUrl = 'https://blazebackend.qualis40.io'; // replace with your backe
   microsoftTeams.app.initialize()
     .then(() => microsoftTeams.app.getContext())
     .then((context: any) => {
+      microsoftTeams.app.notifySuccess();
+
       // Dump the full context object
       console.log('[Worklog] Full Teams context:', context);
 
@@ -153,6 +155,7 @@ this.apiBaseUrl = 'https://blazebackend.qualis40.io'; // replace with your backe
       console.error('[Worklog] Teams init error:', err);
       this.showMessage('⚠️ Teams initialization failed');
     });
+
 }
 
 
