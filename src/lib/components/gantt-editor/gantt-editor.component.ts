@@ -199,16 +199,16 @@ this.loadSprintDates(); // Load sprint dates if project name is provided
         this.ganttChartLoading = false;
       }
     });
-    this.http.post(`${this.apiBaseUrl}/api/gantt/sync-from-mysql`, {}).subscribe({
-          next: () => {
-            console.log('Gantt sync completed.');
-            // Optionally notify user or silently ignore
-          },
-          error: (err) => {
-            console.error('Gantt sync failed:', err);
-            // Optionally handle or silently ignore
-          }
-        });
+    // this.http.post(`${this.apiBaseUrl}/api/gantt/sync-from-mysql`, {}).subscribe({
+    //       next: () => {
+    //         console.log('Gantt sync completed.');
+    //         // Optionally notify user or silently ignore
+    //       },
+    //       error: (err) => {
+    //         console.error('Gantt sync failed:', err);
+    //         // Optionally handle or silently ignore
+    //       }
+    //     });
   }
 
   applyCombinedFilter() {
