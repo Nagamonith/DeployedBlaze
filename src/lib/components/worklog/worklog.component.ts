@@ -296,18 +296,38 @@ activeTab: any;
     });
   }
 
-  endSession() {
-    this.logoutClicked = true;
-    if (this.timerSub) this.timerSub.unsubscribe();
-    this.sessionActive = false;
+  // endSession() {
+  //   this.logoutClicked = true;
+  //   if (this.timerSub) this.timerSub.unsubscribe();
+  //   this.sessionActive = false;
 
-    // Show total session duration in same div
-    const diff = new Date().getTime() - this.loginDate.getTime();
-    const hours = Math.floor(diff / 1000 / 60 / 60);
-    const minutes = Math.floor((diff / 1000 / 60) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
-    this.sessionDuration = `Total Time: ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
-  }
+  //   // Show total session duration in same div
+  //   const diff = new Date().getTime() - this.loginDate.getTime();
+  //   const hours = Math.floor(diff / 1000 / 60 / 60);
+  //   const minutes = Math.floor((diff / 1000 / 60) % 60);
+  //   const seconds = Math.floor((diff / 1000) % 60);
+  //   this.sessionDuration = `Total Time: ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
+  // }
+  endSession() {
+  this.logoutClicked = true;
+  if (this.timerSub) this.timerSub.unsubscribe();
+  this.sessionActive = false;
+
+  // Show total session duration
+  const diff = new Date().getTime() - this.loginDate.getTime();
+  const hours = Math.floor(diff / 1000 / 60 / 60);
+  const minutes = Math.floor((diff / 1000 / 60) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+  this.sessionDuration = `Total Time: ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
+
+  // ✅ Reset UI back to login after 30 seconds
+  setTimeout(() => {
+    this.logoutClicked = false;
+    this.sessionDuration = '';
+    this.loginTime = '';
+  }, 30000); // 30 sec
+}
+
 
   pad(num: number) {
     return num.toString().padStart(2, '0');
@@ -316,4 +336,5 @@ activeTab: any;
   private showMessage(msg: string) {
     this.snackBar.open(msg, 'Close', { duration: 4000 });
   }
+  
 }

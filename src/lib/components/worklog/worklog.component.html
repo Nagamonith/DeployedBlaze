@@ -21,7 +21,7 @@
     
     <!-- Work From Home Tab (full screen) -->
     <div *ngIf="activeTab === 'wfh'" class="wfh-fullscreen-container">
-      <div class="ac-header">Work From Home Tracker</div>
+      <div class="ac-header">WFH Loggerr</div>
       <div class="ac-current-time">{{ currentTime }}</div>
 
       <div class="ac-body">
@@ -34,14 +34,27 @@
         </div>
       </div>
 
-      <div class="ac-actions">
+      <!-- <div class="ac-actions">
+        
         <button class="ac-button login" *ngIf="!sessionActive && !logoutClicked" (click)="logAction('Login')">
           Login
         </button>
         <button class="ac-button logout" *ngIf="sessionActive" [disabled]="logoutClicked" (click)="logAction('Logout')">
           Logout
         </button>
-      </div>
+      </div> -->
+      <div class="ac-actions">
+  <!-- Login only if no session and no logout in progress -->
+  <button class="ac-button login" *ngIf="!sessionActive && !logoutClicked" (click)="logAction('Login')">
+    Login
+  </button>
+
+  <!-- Logout only while active session -->
+  <button class="ac-button logout" *ngIf="sessionActive" (click)="logAction('Logout')">
+    Logout
+  </button>
+</div>
+
     </div>
 
     <!-- Apply Leave Tab -->
