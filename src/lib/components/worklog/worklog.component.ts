@@ -77,38 +77,6 @@
 
 // }
 
-
-//   // logAction(actionType: 'Login' | 'Logout') {
-//   //   console.log(`[Worklog] logAction called: ${actionType}`);
-
-//   //   if (!this.userId) {
-//   //     this.showMessage('⚠️ User not identified!');
-//   //     return;
-//   //   }
-
-//   //   if (!this.apiBaseUrl) {
-//   //     this.showMessage('⚠️ API base URL not configured!');
-//   //     return;
-//   //   }
-
-//   //   const payload = {
-//   //     employeeIdentifier: this.userId,
-//   //     actionType: actionType
-//   //   };
-
-//   //   console.log('[Worklog] Sending request to:', `${this.apiBaseUrl}/api/worklog/log-action`, payload);
-
-//   //   this.http.post(`${this.apiBaseUrl}/api/worklog/log-action`, payload).subscribe({
-//   //     next: (res) => {
-//   //       console.log('[Worklog] API response:', res);
-//   //       this.showMessage(`${actionType} logged at ${new Date().toLocaleTimeString()}`);
-//   //     },
-//   //     error: (err) => {
-//   //       console.error('[Worklog] API error:', err);
-//   //       this.showMessage('❌ Error logging action. Check console for details.');
-//   //     }
-//   //   });
-//   // }
 // logAction(actionType: 'Login' | 'Logout') {
 //   console.log(`[Worklog] logAction called: ${actionType}`);
 
@@ -152,199 +120,373 @@
 //   }
 // }
 
+
+// import { CommonModule } from '@angular/common';
+// import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
+// import { HttpClient } from '@angular/common/http';
+// import { MatSnackBar } from '@angular/material/snack-bar';
+// import { interval, Subscription } from 'rxjs';
+// import { DxTabPanelModule } from 'devextreme-angular';
+
+// @Component({
+//   selector: 'app-worklog',
+//   standalone: true,
+//   templateUrl: './worklog.component.html',
+//   styleUrls: ['./worklog.component.css'],
+//   imports: [CommonModule, DxTabPanelModule]
+// })
+// export class WorklogComponent implements OnInit, OnDestroy {
+
+//   userId: string = 'adarsha.yh@datalyzerint.com';  // ✅ Hardcoded for local test
+//   apiBaseUrl: string = 'https://localhost:7116';   // ✅ Point to local backend
+//   currentTime: string = '';
+
+//   sessionActive: boolean = false;
+//   loginTime: string = '';
+//   logoutTime: string = '';
+//   sessionDuration: string = '';
+//   logoutClicked: boolean = false;
+
+//   private timerSub!: Subscription;
+//   private loginDate!: Date;
+//   activeTab: any = 'wfh';
+
+//   constructor(
+//     private http: HttpClient,
+//     private snackBar: MatSnackBar,
+//     private ngZone: NgZone
+//   ) {}
+
+//   ngOnInit(): void {
+//     this.updateCurrentTime();
+//     setInterval(() => this.updateCurrentTime(), 1000);
+
+//     // 🔄 Restore session state from localStorage
+//     const saved = localStorage.getItem('worklog-session');
+//     if (saved) {
+//       const session = JSON.parse(saved);
+//       if (session.sessionActive) {
+//         this.startSession(session.loginTime, true);
+//       } else if (session.logoutClicked) {
+//         this.loginTime = session.loginTime;
+//         this.logoutTime = session.logoutTime;
+//         this.sessionDuration = session.sessionDuration;
+//         this.logoutClicked = true;
+//       }
+//     }
+//   }
+
+//   ngOnDestroy(): void {
+//     if (this.timerSub) this.timerSub.unsubscribe();
+//   }
+
+//   updateCurrentTime() {
+//     this.currentTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+//   }
+
+//   logAction(actionType: 'Login' | 'Logout') {
+//     const istDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+//     const actionTime = istDate.toISOString();
+
+//     const payload = {
+//       employeeIdentifier: this.userId,
+//       actionType: actionType,
+//       actionTime: actionTime
+//     };
+
+//     console.log('[Worklog] Sending payload:', payload);
+
+//     // ✅ Update UI immediately
+//     this.handleSession(actionType, actionTime);
+
+//     // ✅ Send backend request
+//     this.http.post(`${this.apiBaseUrl}/api/worklog/log-action`, payload).subscribe({
+//       next: () => {
+//         this.showMessage(`${actionType} logged at ${actionTime}`);
+//       },
+//       error: err => {
+//         console.warn('[Worklog] API error, continuing locally:', err);
+//         this.showMessage(`(Local) ${actionType} logged at ${actionTime}`);
+//       }
+//     });
+//   }
+
+//   private handleSession(actionType: 'Login' | 'Logout', actionTime: string) {
+//     if (actionType === 'Login') {
+//       this.startSession(actionTime);
+//     } else if (actionType === 'Logout') {
+//       this.endSession(actionTime);
+//     }
+//   }
+
+//   startSession(istTime: string, restoring: boolean = false) {
+//     this.sessionActive = true;
+//     this.logoutClicked = false;
+//     this.loginTime = istTime;
+//     this.logoutTime = '';
+//     this.loginDate = new Date(istTime);
+
+//     this.timerSub = interval(1000).subscribe(() => {
+//       const diff = new Date().getTime() - this.loginDate.getTime();
+//       this.sessionDuration = this.formatDuration(diff);
+
+//       // 💾 Persist state
+//       localStorage.setItem('worklog-session', JSON.stringify({
+//         sessionActive: true,
+//         loginTime: this.loginTime,
+//         sessionDuration: this.sessionDuration,
+//         logoutClicked: false
+//       }));
+//     });
+
+//     if (!restoring) {
+//       this.showMessage(`Session started at ${istTime}`);
+//     }
+//   }
+
+//   endSession(actionTime: string) {
+//     this.logoutClicked = true;
+//     this.sessionActive = false;
+//     if (this.timerSub) this.timerSub.unsubscribe();
+
+//     this.logoutTime = actionTime;
+//     const diff = new Date().getTime() - this.loginDate.getTime();
+//     this.sessionDuration = this.formatDuration(diff);
+
+//     // 💾 Save logout state
+//     localStorage.setItem('worklog-session', JSON.stringify({
+//       sessionActive: false,
+//       loginTime: this.loginTime,
+//       logoutTime: this.logoutTime,
+//       sessionDuration: this.sessionDuration,
+//       logoutClicked: true
+//     }));
+
+//     // After 30s → clear session
+//     setTimeout(() => {
+//       this.loginTime = '';
+//       this.logoutTime = '';
+//       this.sessionDuration = '';
+//       this.logoutClicked = false;
+//       localStorage.removeItem('worklog-session');
+//     }, 10000);
+//   }
+
+//   private formatDuration(ms: number): string {
+//     const hours = Math.floor(ms / 1000 / 60 / 60);
+//     const minutes = Math.floor((ms / 1000 / 60) % 60);
+//     const seconds = Math.floor((ms / 1000) % 60);
+//     return `${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
+//   }
+
+//   private pad(num: number) {
+//     return num.toString().padStart(2, '0');
+//   }
+
+//   private showMessage(msg: string) {
+//     this.snackBar.open(msg, 'Close', { duration: 4000 });
+//   }
+
+// }
+
+
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import * as microsoftTeams from '@microsoft/teams-js';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { interval, Subscription } from 'rxjs';
-import { DxRadioGroupModule, DxSelectBoxModule, DxTabPanelModule } from 'devextreme-angular';
-
+import { DxTabPanelModule } from 'devextreme-angular';
+import * as microsoftTeams from '@microsoft/teams-js';
 
 @Component({
   selector: 'app-worklog',
-  standalone:true,
+  standalone: true,
   templateUrl: './worklog.component.html',
   styleUrls: ['./worklog.component.css'],
-  imports:[CommonModule, DxTabPanelModule]
+  imports: [CommonModule, DxTabPanelModule]
 })
 export class WorklogComponent implements OnInit, OnDestroy {
 
-  userId: string = '';
-  apiBaseUrl: string = '';
+  userId: string = '';  // ✅ Will be populated from Teams context
+  apiBaseUrl: string = 'https://blazebackend.qualis40.io';   // ✅ Point to backend
   currentTime: string = '';
-  
+
   sessionActive: boolean = false;
   loginTime: string = '';
+  logoutTime: string = '';
   sessionDuration: string = '';
   logoutClicked: boolean = false;
 
   private timerSub!: Subscription;
   private loginDate!: Date;
-activeTab: any;
+  activeTab: any = 'wfh';
 
-  constructor(private http: HttpClient, private snackBar: MatSnackBar,) { }
+  constructor(
+    private http: HttpClient,
+    private snackBar: MatSnackBar,
+    private ngZone: NgZone
+  ) {}
 
   ngOnInit(): void {
-    this.apiBaseUrl = 'https://blazebackend.qualis40.io';
     this.updateCurrentTime();
-    setInterval(() => this.updateCurrentTime(), 1000); // live clock
+    setInterval(() => this.updateCurrentTime(), 1000);
 
+    // 1️⃣ Initialize Teams SDK and get userId
     this.initializeTeams();
+
+    // 2️⃣ Restore session state from localStorage
+    const saved = localStorage.getItem('worklog-session');
+    if (saved) {
+      const session = JSON.parse(saved);
+      if (session.sessionActive) {
+        this.startSession(session.loginTime, true);
+      } else if (session.logoutClicked) {
+        this.loginTime = session.loginTime;
+        this.logoutTime = session.logoutTime;
+        this.sessionDuration = session.sessionDuration;
+        this.logoutClicked = true;
+      }
+    }
   }
 
   ngOnDestroy(): void {
     if (this.timerSub) this.timerSub.unsubscribe();
   }
 
-  updateCurrentTime() {
-    this.currentTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-  }
-
+  // =================== Teams SDK Integration ===================
   initializeTeams() {
+    console.log('[Worklog] Initializing Teams SDK...');
     microsoftTeams.app.initialize()
       .then(() => microsoftTeams.app.getContext())
       .then((context: any) => {
         microsoftTeams.app.notifySuccess();
-        this.userId = context.user?.userPrincipalName || context.userPrincipalName || context.user?.id || context.userObjectId;
-        if (!this.userId) this.showMessage('⚠️ Could not extract UserId from Teams context');
+
+        // Extract UserId safely
+        this.userId = context.user?.userPrincipalName
+                   || context.userPrincipalName
+                   || context.user?.id
+                   || context.userObjectId;
+                   
+
+        console.log('[Worklog] Extracted UserId from Teams:', this.userId);
       })
-      .catch(err => this.showMessage('⚠️ Teams initialization failed'));
+      .catch(err => {
+        console.error('[Worklog] Teams init error:', err);
+        this.showMessage('⚠️ Teams initialization failed. Using fallback user.');
+        this.userId = 'local.user@example.com';
+      });
   }
 
-  
-//   logAction(actionType: 'Login' | 'Logout') {
-//   if (!this.userId) {
-//     this.showMessage('⚠️ User not identified!');
-//     return;
-//   }
-
-//   // ✅ Get IST time as ISO string
-//   const istDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-//   const actionTime = istDate.toISOString();
-
-//   // ✅ Payload as per Swagger
-//   const payload = {
-//     // id: 0,                        // required by backend
-//     employeeIdentifier: this.userId,
-//     actionType: actionType,
-//     actionTime: actionTime
-//   };
-
-//   console.log('[Worklog] Sending payload:', payload);
-
-//   // Send API request
-//   this.http.post(`${this.apiBaseUrl}/api/worklog/log-action`, payload).subscribe({
-//     next: () => {
-//       this.showMessage(`${actionType} logged at ${actionTime}`);
-
-//       if (actionType === 'Login') {
-//         this.startSession(actionTime);   // start session timer
-//       } else if (actionType === 'Logout') {
-//         this.endSession();               // stop session timer
-//       }
-//     },
-//     error: err => {
-//       console.error('[Worklog] API error:', err);
-//       this.showMessage('❌ Error logging action. Check console for details.');
-//     }
-//   });
-// }
-logAction(actionType: 'Login' | 'Logout') {
-  if (!this.userId) {
-    this.showMessage('⚠️ User not identified!');
-    return;
+  updateCurrentTime() {
+    this.currentTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
   }
 
-  // ✅ Get IST time as ISO string
-  const istDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-  const actionTime = istDate.toISOString();
-
-  const payload = {
-    employeeIdentifier: this.userId,
-    actionType: actionType,
-    actionTime: actionTime
-  };
-
-  console.log('[Worklog] Sending payload:', payload);
-
-  this.http.post(`${this.apiBaseUrl}/api/worklog/log-action`, payload).subscribe({
-    next: () => {
-      this.showMessage(`${actionType} logged at ${actionTime}`);
-
-      if (actionType === 'Login') {
-        // ✅ Activate session right after login
-        this.sessionActive = true;
-        this.logoutClicked = false;
-        this.startSession(actionTime);
-      } else if (actionType === 'Logout') {
-        this.endSession();
-      }
-    },
-    error: err => {
-      console.error('[Worklog] API error:', err);
-      this.showMessage('❌ Error logging action. Check console for details.');
+  logAction(actionType: 'Login' | 'Logout') {
+    if (!this.userId) {
+      this.showMessage('⚠️ User not identified yet!');
+      return;
     }
-  });
-}
 
+    const istDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const actionTime = istDate.toISOString();
 
+    const payload = {
+      employeeIdentifier: this.userId,
+      actionType: actionType,
+      actionTime: actionTime
+    };
 
-  startSession(istTime: string) {
-    this.sessionActive = true;
-    this.logoutClicked = false;
-    this.loginTime = istTime;
-    this.loginDate = new Date(); // store exact login time
+    console.log('[Worklog] Sending payload:', payload);
 
-    // Start session timer
-    this.timerSub = interval(1000).subscribe(() => {
-      const diff = new Date().getTime() - this.loginDate.getTime();
-      const hours = Math.floor(diff / 1000 / 60 / 60);
-      const minutes = Math.floor((diff / 1000 / 60) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      this.sessionDuration = `${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
+    // ✅ Update UI immediately
+    this.handleSession(actionType, actionTime);
+
+    // ✅ Send backend request
+    this.http.post(`${this.apiBaseUrl}/api/worklog/log-action`, payload).subscribe({
+      next: () => {
+        this.showMessage(`${actionType} logged at ${actionTime}`);
+      },
+      error: err => {
+        console.warn('[Worklog] API error, continuing locally:', err);
+        this.showMessage(`(Local) ${actionType} logged at ${actionTime}`);
+      }
     });
   }
 
-  // endSession() {
-  //   this.logoutClicked = true;
-  //   if (this.timerSub) this.timerSub.unsubscribe();
-  //   this.sessionActive = false;
+  private handleSession(actionType: 'Login' | 'Logout', actionTime: string) {
+    if (actionType === 'Login') {
+      this.startSession(actionTime);
+    } else if (actionType === 'Logout') {
+      this.endSession(actionTime);
+    }
+  }
 
-  //   // Show total session duration in same div
-  //   const diff = new Date().getTime() - this.loginDate.getTime();
-  //   const hours = Math.floor(diff / 1000 / 60 / 60);
-  //   const minutes = Math.floor((diff / 1000 / 60) % 60);
-  //   const seconds = Math.floor((diff / 1000) % 60);
-  //   this.sessionDuration = `Total Time: ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
-  // }
-  endSession() {
-  this.logoutClicked = true;
-  if (this.timerSub) this.timerSub.unsubscribe();
-  this.sessionActive = false;
-
-  // Show total session duration
-  const diff = new Date().getTime() - this.loginDate.getTime();
-  const hours = Math.floor(diff / 1000 / 60 / 60);
-  const minutes = Math.floor((diff / 1000 / 60) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
-  this.sessionDuration = `Total Time: ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
-
-  // ✅ Reset UI back to login after 30 seconds
-  setTimeout(() => {
+  startSession(istTime: string, restoring: boolean = false) {
+    this.sessionActive = true;
     this.logoutClicked = false;
-    this.sessionDuration = '';
-    this.loginTime = '';
-  }, 30000); // 30 sec
-}
+    this.loginTime = istTime;
+    this.logoutTime = '';
+    this.loginDate = new Date(istTime);
 
+    this.timerSub = interval(1000).subscribe(() => {
+      const diff = new Date().getTime() - this.loginDate.getTime();
+      this.sessionDuration = this.formatDuration(diff);
 
-  pad(num: number) {
+      // Persist state
+      localStorage.setItem('worklog-session', JSON.stringify({
+        sessionActive: true,
+        loginTime: this.loginTime,
+        sessionDuration: this.sessionDuration,
+        logoutClicked: false
+      }));
+    });
+
+    if (!restoring) {
+      this.showMessage(`Session started at ${istTime}`);
+    }
+  }
+
+  endSession(actionTime: string) {
+    this.logoutClicked = true;
+    this.sessionActive = false;
+    if (this.timerSub) this.timerSub.unsubscribe();
+
+    this.logoutTime = actionTime;
+    const diff = new Date().getTime() - this.loginDate.getTime();
+    this.sessionDuration = this.formatDuration(diff);
+
+    // Save logout state
+    localStorage.setItem('worklog-session', JSON.stringify({
+      sessionActive: false,
+      loginTime: this.loginTime,
+      logoutTime: this.logoutTime,
+      sessionDuration: this.sessionDuration,
+      logoutClicked: true
+    }));
+
+    // After 30s → clear session
+    setTimeout(() => {
+      this.loginTime = '';
+      this.logoutTime = '';
+      this.sessionDuration = '';
+      this.logoutClicked = false;
+      localStorage.removeItem('worklog-session');
+    }, 10000);
+  }
+
+  private formatDuration(ms: number): string {
+    const hours = Math.floor(ms / 1000 / 60 / 60);
+    const minutes = Math.floor((ms / 1000 / 60) % 60);
+    const seconds = Math.floor((ms / 1000) % 60);
+    return `${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
+  }
+
+  private pad(num: number) {
     return num.toString().padStart(2, '0');
   }
 
   private showMessage(msg: string) {
     this.snackBar.open(msg, 'Close', { duration: 4000 });
   }
-  
+
 }

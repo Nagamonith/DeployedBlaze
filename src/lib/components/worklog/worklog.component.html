@@ -21,7 +21,7 @@
     
     <!-- Work From Home Tab (full screen) -->
     <div *ngIf="activeTab === 'wfh'" class="wfh-fullscreen-container">
-      <div class="ac-header">WFH Loggerr</div>
+      <div class="ac-header">WFH Logger</div>
       <div class="ac-current-time">{{ currentTime }}</div>
 
       <div class="ac-body">
@@ -31,6 +31,8 @@
           <p>Login Time: {{ loginTime }}</p>
           <p *ngIf="sessionActive">Current Session: {{ sessionDuration }}</p>
           <p *ngIf="logoutClicked">Total Session Time: {{ sessionDuration }}</p>
+          <p *ngIf="logoutClicked">Logout Time: {{ logoutTime }}</p> 
+
         </div>
       </div>
 
@@ -64,3 +66,4 @@
 
   </div>
 </div>
+
