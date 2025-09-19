@@ -445,7 +445,7 @@ startEditing(testCase: TestCaseDetailResponse): void {
     this.isEditing.set(false);
   }
 
-  // FIXED: Simplified save operations
+
 saveTestCase(): void {
   if (this.form.invalid) {
     this.markFormGroupTouched(this.form);
