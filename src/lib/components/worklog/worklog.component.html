@@ -1,6 +1,5 @@
-<div class="teams-tabs-container full-screen">
+<!-- <div class="teams-tabs-container full-screen">
 
-  <!-- Tabs Header -->
   <div class="teams-tabs">
     <button 
       class="tab-button" 
@@ -16,10 +15,8 @@
     </button>
   </div>
 
-  <!-- Tab Content -->
   <div class="tab-content full-screen-content">
     
-    <!-- Work From Home Tab (full screen) -->
     <div *ngIf="activeTab === 'wfh'" class="wfh-fullscreen-container">
       <div class="ac-header">WFH Logger</div>
       <div class="ac-current-time">{{ currentTime }}</div>
@@ -35,23 +32,10 @@
 
         </div>
       </div>
-
-      <!-- <div class="ac-actions">
-        
-        <button class="ac-button login" *ngIf="!sessionActive && !logoutClicked" (click)="logAction('Login')">
-          Login
-        </button>
-        <button class="ac-button logout" *ngIf="sessionActive" [disabled]="logoutClicked" (click)="logAction('Logout')">
-          Logout
-        </button>
-      </div> -->
       <div class="ac-actions">
-  <!-- Login only if no session and no logout in progress -->
   <button class="ac-button login" *ngIf="!sessionActive && !logoutClicked" (click)="logAction('Login')">
     Login
   </button>
-
-  <!-- Logout only while active session -->
   <button class="ac-button logout" *ngIf="sessionActive" (click)="logAction('Logout')">
     Logout
   </button>
@@ -59,11 +43,71 @@
 
     </div>
 
-    <!-- Apply Leave Tab -->
+    <div *ngIf="activeTab === 'leave'" class="leave-container">
+      <p>Apply Leave functionality will come here.</p>
+    </div>
+
+  </div>
+</div> -->
+
+
+
+ <!-- Tabs Header -->
+<div class="teams-tabs">
+  <button class="tab-button" [class.active]="activeTab === 'wfh'" (click)="activeTab = 'wfh'">
+    Work From Home
+  </button>
+  <button class="tab-button" [class.active]="activeTab === 'leave'" (click)="activeTab = 'leave'">
+    Apply Leave
+  </button>
+</div>
+
+
+
+  <!-- WFH Tab -->
+  <div *ngIf="activeTab === 'wfh'" class="wfh-fullscreen-container">
+<div class="teams-tabs-container full-screen">
+
+  <div class="tab-content full-screen-content">
+    
+    <div *ngIf="activeTab === 'wfh'" class="wfh-fullscreen-container">
+      <div class="ac-header">WFH Logger</div>
+      <div class="ac-current-time">{{ currentTime }}</div>
+
+      <div class="ac-body">
+        <p>User: {{ userId }}</p>
+
+        <div *ngIf="sessionActive || logoutClicked" class="session-div">
+          <p>Login Time: {{ loginTime }}</p>
+          <p *ngIf="sessionActive">Current Session: {{ sessionDuration }}</p>
+          <p *ngIf="logoutClicked">Total Session Time: {{ sessionDuration }}</p>
+          <p *ngIf="logoutClicked">Logout Time: {{ logoutTime }}</p> 
+
+        </div>
+      </div>
+      <div class="ac-actions">
+  <button class="ac-button login" *ngIf="!sessionActive && !logoutClicked" (click)="logAction('Login')">
+    Login
+  </button>
+  <button class="ac-button logout" *ngIf="sessionActive" (click)="logAction('Logout')">
+    Logout
+  </button>
+</div>
+
+    </div>
+
     <div *ngIf="activeTab === 'leave'" class="leave-container">
       <p>Apply Leave functionality will come here.</p>
     </div>
 
   </div>
 </div>
+  </div>
+
+  <!-- Leave Tab -->
+  <div *ngIf="activeTab === 'leave'">
+    <!-- Use LeaveComponent selector -->
+    <app-leave></app-leave>
+  </div>
+
 

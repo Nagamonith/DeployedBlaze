@@ -1,0 +1,36 @@
+<div class="ac-header">
+    User : {{ userId}}
+</div>
+ <div class="ac-current-time">{{ currentTime }}</div>
+
+<div class="leave-container">
+  <form [formGroup]="leaveForm" (ngSubmit)="submitLeave()" class="leave-form">
+
+    <!-- Start Date -->
+    <input type="date" formControlName="startDate" required placeholder="Start Date" />
+
+    <!-- End Date -->
+    <input type="date" formControlName="endDate" required placeholder="End Date" />
+
+    <!-- Reason -->
+    <input type="text" formControlName="reason" required placeholder="Reason" />
+
+    <!-- Submit Button -->
+    <button type="submit" [disabled]="leaveForm.invalid || !userId">
+      Submit
+    </button>
+  </form>
+
+  <!-- Applied Leaves List -->
+  <div class="leave-list">
+    <h3>Applied Leaves</h3>
+    <div *ngIf="leaves.length === 0">No leaves applied yet.</div>
+    <ul>
+      <li *ngFor="let leave of leaves">
+        {{ leave.startDate | date:'shortDate' }} - {{ leave.endDate | date:'shortDate' }} : {{ leave.reason }}
+
+      </li>
+    </ul>
+  </div>
+  
+</div>

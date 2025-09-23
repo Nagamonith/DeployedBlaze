@@ -1,0 +1,79 @@
+.leave-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap; /* Wrap on smaller screens */
+  margin-bottom: 15px;
+    margin-left: 20px;
+}
+
+.leave-form input[type="date"],
+.leave-form input[type="text"] {
+  padding: 6px 8px;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+    margin-left: 20px;
+}
+
+.leave-form input[type="date"]:focus,
+.leave-form input[type="text"]:focus {
+  outline: none;
+  border-color: #0078d4;
+    margin-left: 20px;
+}
+
+.leave-form button {
+  padding: 6px 12px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #0078d4;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.leave-form button:disabled {
+  background-color: #a6c8e0;
+  cursor: not-allowed;
+}
+
+.leave-form button:hover:not(:disabled) {
+  background-color: #005a9e;
+}
+
+.leave-list h3 {
+  margin: 0 0 5px 0;
+  font-size: 1rem;
+    margin-left: 40px;
+}
+
+.leave-list ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+    margin-left: 40px;
+}
+
+.leave-list li {
+  padding: 4px 0;
+  font-size: 0.95rem;
+  /* border-bottom: 1px solid #e0e0e0; */
+   
+}
+
+.ac-header {
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 16px;
+  margin-top: 16px;
+  margin-left: 20px;
+}
+.ac-current-time {
+  font-size: 18px;
+  margin-bottom: 24px;
+  color: #444;
+  margin-left: 20px;
+}
