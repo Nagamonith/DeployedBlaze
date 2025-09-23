@@ -1,4 +1,5 @@
 
+
 // import { CommonModule } from '@angular/common';
 // import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 // import { HttpClient } from '@angular/common/http';
@@ -6,13 +7,14 @@
 // import { interval, Subscription } from 'rxjs';
 // import { DxTabPanelModule } from 'devextreme-angular';
 // import * as microsoftTeams from '@microsoft/teams-js';
+// import { LeaveComponent } from "../leave/leave.component";
 
 // @Component({
 //   selector: 'app-worklog',
 //   standalone: true,
 //   templateUrl: './worklog.component.html',
 //   styleUrls: ['./worklog.component.css'],
-//   imports: [CommonModule, DxTabPanelModule]
+//   imports: [CommonModule, DxTabPanelModule, LeaveComponent]
 // })
 // export class WorklogComponent implements OnInit, OnDestroy {
 
@@ -29,9 +31,10 @@
 //   private timerSub!: Subscription;
 //   private loginDate!: Date;
 //   private presenceSub!: Subscription;
+//   private lastPresenceFetch: number = Date.now();
 //   activeTab: any = 'wfh';
 
-//   // ✅ Presence summary storage
+//   // Presence summary in seconds
 //   private presenceSummary: Record<string, number> = {
 //     Available: 0,
 //     Busy: 0,
@@ -115,7 +118,7 @@
 //       actionTime: actionTime
 //     };
 
-//     // ✅ At logout, include deskTime
+//     // ✅ At logout, include DeskTime
 //     if (actionType === 'Logout') {
 //       payload.deskTime = this.calculateDeskTime();
 //     }
@@ -169,6 +172,7 @@
 //     this.logoutClicked = true;
 //     this.sessionActive = false;
 //     if (this.timerSub) this.timerSub.unsubscribe();
+//     if (this.presenceSub) this.presenceSub.unsubscribe();
 
 //     this.logoutTime = actionTime;
 //     const diff = new Date().getTime() - this.loginDate.getTime();
@@ -180,6 +184,9 @@
 //       logoutTime: this.logoutTime,
 //       sessionDuration: this.sessionDuration,
 //       logoutClicked: true
+      
+
+
 //     }));
 
 //     setTimeout(() => {
@@ -189,37 +196,44 @@
 //       this.logoutClicked = false;
 //       localStorage.removeItem('worklog-session');
 //     }, 10000);
+//       window.location.reload();
+
 //   }
 
 //   // =================== Presence Handling ===================
 //   private startPresencePolling() {
+//     // First fetch immediately
+//     this.fetchPresence();
+
 //     // Poll every 5 minutes
 //     this.presenceSub = interval(5 * 60 * 1000).subscribe(() => {
 //       this.fetchPresence();
 //     });
-//     // Do first fetch immediately
-//     this.fetchPresence();
 //   }
 
 //   private fetchPresence() {
-//     // TODO: replace with Graph API call using Teams SSO token
-//     // Mock presence for now
+//     const now = Date.now();
+//     const elapsedSeconds = Math.floor((now - this.lastPresenceFetch) / 1000);
+//     this.lastPresenceFetch = now;
+
+//     // TODO: replace mock with Graph API call using Teams SSO token
 //     const statuses = ['Available', 'Busy', 'InAMeeting', 'DoNotDisturb', 'Away', 'Offline'];
 //     const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
 
-//     this.presenceSummary[randomStatus] += 300; // 5 min in seconds
+//     if (this.presenceSummary[randomStatus] !== undefined) {
+//       this.presenceSummary[randomStatus] += elapsedSeconds;
+//     }
 
 //     console.log('[Worklog] Presence update:', randomStatus, this.presenceSummary);
 //   }
 
 //   private calculateDeskTime(): string {
-//    const totalSeconds =
-//   (this.presenceSummary['Available'] || 0) +
-//   (this.presenceSummary['Busy'] || 0) +
-//   (this.presenceSummary['InAMeeting'] || 0) +
-//   (this.presenceSummary['DoNotDisturb'] || 0) -
-//   (this.presenceSummary['Away'] || 0) -
-//   (this.presenceSummary['Offline'] || 0);
+//     const totalSeconds =
+//       (this.presenceSummary['Available'] || 0) +
+//       (this.presenceSummary['Busy'] || 0) +
+//       (this.presenceSummary['InAMeeting'] || 0) +
+//       (this.presenceSummary['DoNotDisturb'] || 0) ;
+      
 
 //     return this.formatDuration(totalSeconds * 1000);
 //   }
@@ -276,7 +290,7 @@ export class WorklogComponent implements OnInit, OnDestroy {
   private lastPresenceFetch: number = Date.now();
   activeTab: any = 'wfh';
 
-  // Presence summary in seconds
+  // Real presence summary in seconds
   private presenceSummary: Record<string, number> = {
     Available: 0,
     Busy: 0,
@@ -331,7 +345,7 @@ export class WorklogComponent implements OnInit, OnDestroy {
 
         console.log('[Worklog] UserId:', this.userId);
 
-        // ✅ Start presence polling once Teams context is ready
+        // ✅ Start real presence polling
         this.startPresencePolling();
       })
       .catch(err => {
@@ -439,29 +453,39 @@ export class WorklogComponent implements OnInit, OnDestroy {
 
   // =================== Presence Handling ===================
   private startPresencePolling() {
-    // First fetch immediately
-    this.fetchPresence();
+    // Poll every minute
+    this.fetchPresenceFromTeams(); // first fetch
+    this.presenceSub = interval(60 * 1000).subscribe(() => this.fetchPresenceFromTeams());
+  }
 
-    // Poll every 5 minutes
-    this.presenceSub = interval(5 * 60 * 1000).subscribe(() => {
-      this.fetchPresence();
+  private fetchPresenceFromTeams() {
+    microsoftTeams.authentication.getAuthToken({
+      successCallback: (token) => {
+        this.fetchPresenceFromGraph(token);
+      },
+      failureCallback: (err) => {
+        console.error('[Worklog] Token acquisition failed', err);
+      }
     });
   }
 
-  private fetchPresence() {
-    const now = Date.now();
-    const elapsedSeconds = Math.floor((now - this.lastPresenceFetch) / 1000);
-    this.lastPresenceFetch = now;
+  private fetchPresenceFromGraph(token: string) {
+    this.http.get(`https://graph.microsoft.com/v1.0/me/presence`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
+      next: (presence: any) => {
+        const status = presence.availability as keyof typeof this.presenceSummary;
+        if (this.presenceSummary[status] !== undefined) {
+          const now = Date.now();
+          const elapsedSeconds = Math.floor((now - this.lastPresenceFetch) / 1000);
+          this.lastPresenceFetch = now;
 
-    // TODO: replace mock with Graph API call using Teams SSO token
-    const statuses = ['Available', 'Busy', 'InAMeeting', 'DoNotDisturb', 'Away', 'Offline'];
-    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-
-    if (this.presenceSummary[randomStatus] !== undefined) {
-      this.presenceSummary[randomStatus] += elapsedSeconds;
-    }
-
-    console.log('[Worklog] Presence update:', randomStatus, this.presenceSummary);
+          this.presenceSummary[status] += elapsedSeconds;
+        }
+        console.log('[Worklog] Real Presence update:', presence.availability, this.presenceSummary);
+      },
+      error: (err) => console.error('[Worklog] Graph API error:', err)
+    });
   }
 
   private calculateDeskTime(): string {
@@ -469,9 +493,7 @@ export class WorklogComponent implements OnInit, OnDestroy {
       (this.presenceSummary['Available'] || 0) +
       (this.presenceSummary['Busy'] || 0) +
       (this.presenceSummary['InAMeeting'] || 0) +
-      (this.presenceSummary['DoNotDisturb'] || 0) -
-      (this.presenceSummary['Away'] || 0) -
-      (this.presenceSummary['Offline'] || 0);
+      (this.presenceSummary['DoNotDisturb'] || 0);
 
     return this.formatDuration(totalSeconds * 1000);
   }

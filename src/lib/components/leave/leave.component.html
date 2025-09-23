@@ -1,7 +1,9 @@
 <div class="ac-header">
-    User : {{ userId}}
+    <!-- User : {{ userId}} -->
+     Apply for Leave
 </div>
  <div class="ac-current-time">{{ currentTime }}</div>
+        <p style="margin-left: 20px; margin-bottom: 20px;">User: {{ userId }}</p>
 
 <div class="leave-container">
   <form [formGroup]="leaveForm" (ngSubmit)="submitLeave()" class="leave-form">
@@ -24,7 +26,7 @@
   <!-- Applied Leaves List -->
   <div class="leave-list">
     <h3>Applied Leaves</h3>
-    <div *ngIf="leaves.length === 0">No leaves applied yet.</div>
+    <div *ngIf="leaves.length === 0" style="margin-left: 40px;">No leaves applied yet.</div>
     <ul>
       <li *ngFor="let leave of leaves">
         {{ leave.startDate | date:'shortDate' }} - {{ leave.endDate | date:'shortDate' }} : {{ leave.reason }}

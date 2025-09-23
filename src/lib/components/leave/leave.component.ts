@@ -18,7 +18,7 @@ export class LeaveComponent implements OnInit {
   leaves: any[] = [];
   currentTime: string = '';
 
-  private apiUrl = 'https://localhost:7116/api/Leave';
+  private apiUrl = 'https://blazebackend.qualis40.io/api/Leave';
 
   constructor(
     private fb: FormBuilder,
@@ -37,7 +37,11 @@ export class LeaveComponent implements OnInit {
     setInterval(() => this.updateCurrentTime(), 1000);
     microsoftTeams.app.initialize().then(() => {
       microsoftTeams.app.getContext().then((context: any) => {
-        this.userId = context.userPrincipalName || context.userObjectId || '';
+        // this.userId = context.userPrincipalName || context.userObjectId || '';
+         this.userId = context.user?.userPrincipalName
+                   || context.userPrincipalName
+                   || context.user?.id
+                   || context.userObjectId;
 
         // fallback for local testing
         if (!this.userId) {
