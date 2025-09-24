@@ -276,6 +276,8 @@ export class WorklogComponent implements OnInit, OnDestroy {
 
   userId: string = '';
   apiBaseUrl: string = 'https://blazebackend.qualis40.io';
+    // apiBaseUrl: string = 'https://localhost:7116';
+
   currentTime: string = '';
 
   sessionActive: boolean = false;

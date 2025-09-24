@@ -1,5 +1,4 @@
 <div class="ac-header">
-    <!-- User : {{ userId}} -->
      Apply for Leave
 </div>
  <div class="ac-current-time">{{ currentTime }}</div>
@@ -8,10 +7,8 @@
 <div class="leave-container">
   <form [formGroup]="leaveForm" (ngSubmit)="submitLeave()" class="leave-form">
 
-    <!-- Start Date -->
     <input type="date" formControlName="startDate" required placeholder="Start Date" />
 
-    <!-- End Date -->
     <input type="date" formControlName="endDate" required placeholder="End Date" />
 
     <!-- Reason -->
