@@ -1,5 +1,8 @@
 
 
+
+// import { MsalService } from '@azure/msal-angular';
+// import { AuthenticationResult } from '@azure/msal-browser';
 // import { CommonModule } from '@angular/common';
 // import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 // import { HttpClient } from '@angular/common/http';
@@ -20,6 +23,8 @@
 
 //   userId: string = '';
 //   apiBaseUrl: string = 'https://blazebackend.qualis40.io';
+//     // apiBaseUrl: string = 'https://localhost:7116';
+
 //   currentTime: string = '';
 
 //   sessionActive: boolean = false;
@@ -34,7 +39,7 @@
 //   private lastPresenceFetch: number = Date.now();
 //   activeTab: any = 'wfh';
 
-//   // Presence summary in seconds
+//   // Real presence summary in seconds
 //   private presenceSummary: Record<string, number> = {
 //     Available: 0,
 //     Busy: 0,
@@ -47,7 +52,8 @@
 //   constructor(
 //     private http: HttpClient,
 //     private snackBar: MatSnackBar,
-//     private ngZone: NgZone
+//     private ngZone: NgZone,
+//     private msalService: MsalService
 //   ) {}
 
 //   ngOnInit(): void {
@@ -70,6 +76,7 @@
 //     }
 //   }
 
+  
 //   ngOnDestroy(): void {
 //     if (this.timerSub) this.timerSub.unsubscribe();
 //     if (this.presenceSub) this.presenceSub.unsubscribe();
@@ -89,7 +96,7 @@
 
 //         console.log('[Worklog] UserId:', this.userId);
 
-//         // ✅ Start presence polling once Teams context is ready
+//         // ✅ Start real presence polling
 //         this.startPresencePolling();
 //       })
 //       .catch(err => {
@@ -184,9 +191,6 @@
 //       logoutTime: this.logoutTime,
 //       sessionDuration: this.sessionDuration,
 //       logoutClicked: true
-      
-
-
 //     }));
 
 //     setTimeout(() => {
@@ -196,35 +200,55 @@
 //       this.logoutClicked = false;
 //       localStorage.removeItem('worklog-session');
 //     }, 10000);
-//       window.location.reload();
-
 //   }
 
 //   // =================== Presence Handling ===================
 //   private startPresencePolling() {
-//     // First fetch immediately
-//     this.fetchPresence();
-
-//     // Poll every 5 minutes
-//     this.presenceSub = interval(5 * 60 * 1000).subscribe(() => {
-//       this.fetchPresence();
-//     });
+//     // Poll every minute
+//     this.fetchPresenceFromTeams(); // first fetch
+//     this.presenceSub = interval(60 * 1000).subscribe(() => this.fetchPresenceFromTeams());
 //   }
 
-//   private fetchPresence() {
-//     const now = Date.now();
-//     const elapsedSeconds = Math.floor((now - this.lastPresenceFetch) / 1000);
-//     this.lastPresenceFetch = now;
-
-//     // TODO: replace mock with Graph API call using Teams SSO token
-//     const statuses = ['Available', 'Busy', 'InAMeeting', 'DoNotDisturb', 'Away', 'Offline'];
-//     const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-
-//     if (this.presenceSummary[randomStatus] !== undefined) {
-//       this.presenceSummary[randomStatus] += elapsedSeconds;
+ 
+// //   private fetchPresenceFromTeams() {
+// //   this.msalService.loginPopup({
+// //     scopes: ["User.Read", "Presence.Read", "Presence.Read.All"]
+// //   }).then((res: AuthenticationResult) => {
+// //     this.fetchPresenceFromGraph(res.accessToken);
+// //   }).catch(err => {
+// //     console.error('[Worklog] MSAL login error:', err);
+// //   });
+// // }
+// private fetchPresenceFromTeams() {
+//   this.msalService.loginPopup({
+//     scopes: ["User.Read", "Presence.Read", "Presence.Read.All"]
+//   }).subscribe({
+//     next: (res: AuthenticationResult) => {
+//       this.fetchPresenceFromGraph(res.accessToken);
+//     },
+//     error: (err) => {
+//       console.error('[Worklog] MSAL login error:', err);
 //     }
+//   });
+// }
 
-//     console.log('[Worklog] Presence update:', randomStatus, this.presenceSummary);
+//   private fetchPresenceFromGraph(token: string) {
+//     this.http.get(`https://graph.microsoft.com/v1.0/me/presence`, {
+//       headers: { Authorization: `Bearer ${token}` }
+//     }).subscribe({
+//       next: (presence: any) => {
+//         const status = presence.availability as keyof typeof this.presenceSummary;
+//         if (this.presenceSummary[status] !== undefined) {
+//           const now = Date.now();
+//           const elapsedSeconds = Math.floor((now - this.lastPresenceFetch) / 1000);
+//           this.lastPresenceFetch = now;
+
+//           this.presenceSummary[status] += elapsedSeconds;
+//         }
+//         console.log('[Worklog] Real Presence update:', presence.availability, this.presenceSummary);
+//       },
+//       error: (err) => console.error('[Worklog] Graph API error:', err)
+//     });
 //   }
 
 //   private calculateDeskTime(): string {
@@ -232,8 +256,7 @@
 //       (this.presenceSummary['Available'] || 0) +
 //       (this.presenceSummary['Busy'] || 0) +
 //       (this.presenceSummary['InAMeeting'] || 0) +
-//       (this.presenceSummary['DoNotDisturb'] || 0) ;
-      
+//       (this.presenceSummary['DoNotDisturb'] || 0);
 
 //     return this.formatDuration(totalSeconds * 1000);
 //   }
@@ -256,17 +279,15 @@
 // }
 
 
-
-
-import { MsalService } from '@azure/msal-angular';
-import { AuthenticationResult } from '@azure/msal-browser';
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { interval, Subscription } from 'rxjs';
-import { DxTabPanelModule } from 'devextreme-angular';
 import * as microsoftTeams from '@microsoft/teams-js';
+import { MsalService } from '@azure/msal-angular';
+import { AuthenticationResult } from '@azure/msal-browser';
+import { CommonModule } from '@angular/common';
+import { DxTabPanelModule } from 'devextreme-angular';
 import { LeaveComponent } from "../leave/leave.component";
 
 @Component({
@@ -280,10 +301,7 @@ export class WorklogComponent implements OnInit, OnDestroy {
 
   userId: string = '';
   apiBaseUrl: string = 'https://blazebackend.qualis40.io';
-    // apiBaseUrl: string = 'https://localhost:7116';
-
   currentTime: string = '';
-
   sessionActive: boolean = false;
   loginTime: string = '';
   logoutTime: string = '';
@@ -291,12 +309,14 @@ export class WorklogComponent implements OnInit, OnDestroy {
   logoutClicked: boolean = false;
 
   private timerSub!: Subscription;
-  private loginDate!: Date;
   private presenceSub!: Subscription;
+  private loginDate!: Date;
   private lastPresenceFetch: number = Date.now();
+  private msalToken: string | null = null;
+  private lastStatus: string = '';
+
   activeTab: any = 'wfh';
 
-  // Real presence summary in seconds
   private presenceSummary: Record<string, number> = {
     Available: 0,
     Busy: 0,
@@ -333,34 +353,55 @@ export class WorklogComponent implements OnInit, OnDestroy {
     }
   }
 
-  
   ngOnDestroy(): void {
     if (this.timerSub) this.timerSub.unsubscribe();
     if (this.presenceSub) this.presenceSub.unsubscribe();
   }
 
-  // =================== Teams SDK Integration ===================
+  // =================== Teams + MSAL Integration ===================
   initializeTeams() {
     microsoftTeams.app.initialize()
       .then(() => microsoftTeams.app.getContext())
       .then((context: any) => {
-        microsoftTeams.app.notifySuccess();
+        this.userId = context.user?.userPrincipalName || context.userPrincipalName || context.user?.id;
+        console.log('[Worklog] Teams initialized. UserId:', this.userId);
 
-        this.userId = context.user?.userPrincipalName
-                   || context.userPrincipalName
-                   || context.user?.id
-                   || context.userObjectId;
-
-        console.log('[Worklog] UserId:', this.userId);
-
-        // ✅ Start real presence polling
-        this.startPresencePolling();
+        // Try silent token first
+        this.acquireMsalToken();
       })
       .catch(err => {
         console.error('[Worklog] Teams init error:', err);
         this.showMessage('⚠️ Teams init failed, using fallback user.');
         this.userId = 'local.user@example.com';
       });
+  }
+
+  private acquireMsalToken() {
+    this.msalService.acquireTokenSilent({
+      scopes: ["User.Read", "Presence.Read", "Presence.Read.All"]
+    }).subscribe({
+      next: (res: AuthenticationResult) => {
+        console.log('[Worklog] Silent token acquired');
+        this.msalToken = res.accessToken;
+        this.startPresencePolling();
+      },
+      error: (err) => {
+        console.warn('[Worklog] Silent token failed, trying loginPopup', err);
+        this.msalService.loginPopup({
+          scopes: ["User.Read", "Presence.Read", "Presence.Read.All"]
+        }).subscribe({
+          next: (res: AuthenticationResult) => {
+            console.log('[Worklog] MSAL loginPopup success, token acquired');
+            this.msalToken = res.accessToken;
+            this.startPresencePolling();
+          },
+          error: (err) => {
+            console.error('[Worklog] MSAL login failed', err);
+            this.showMessage('⚠️ MSAL login failed. Presence tracking unavailable.');
+          }
+        });
+      }
+    });
   }
 
   updateCurrentTime() {
@@ -382,7 +423,6 @@ export class WorklogComponent implements OnInit, OnDestroy {
       actionTime: actionTime
     };
 
-    // ✅ At logout, include DeskTime
     if (actionType === 'Logout') {
       payload.deskTime = this.calculateDeskTime();
     }
@@ -418,7 +458,6 @@ export class WorklogComponent implements OnInit, OnDestroy {
     this.timerSub = interval(1000).subscribe(() => {
       const diff = new Date().getTime() - this.loginDate.getTime();
       this.sessionDuration = this.formatDuration(diff);
-
       localStorage.setItem('worklog-session', JSON.stringify({
         sessionActive: true,
         loginTime: this.loginTime,
@@ -450,6 +489,9 @@ export class WorklogComponent implements OnInit, OnDestroy {
       logoutClicked: true
     }));
 
+    console.log(`[Worklog] Session ended at ${actionTime} Duration: ${this.sessionDuration}`);
+    console.log(`[Worklog] Final DeskTime: ${this.calculateDeskTime()}`);
+
     setTimeout(() => {
       this.loginTime = '';
       this.logoutTime = '';
@@ -461,52 +503,83 @@ export class WorklogComponent implements OnInit, OnDestroy {
 
   // =================== Presence Handling ===================
   private startPresencePolling() {
-    // Poll every minute
-    this.fetchPresenceFromTeams(); // first fetch
-    this.presenceSub = interval(60 * 1000).subscribe(() => this.fetchPresenceFromTeams());
+    console.log('[Worklog] Starting presence polling every 2 minutes');
+    if (!this.msalToken) return;
+
+    // first fetch immediately
+    this.fetchPresenceFromGraph();
+
+    this.presenceSub = interval(2 * 60 * 1000).subscribe(() => {
+      console.log('[Worklog] Polling presence...');
+      this.fetchPresenceFromGraph();
+    });
   }
 
- 
-//   private fetchPresenceFromTeams() {
-//   this.msalService.loginPopup({
-//     scopes: ["User.Read", "Presence.Read", "Presence.Read.All"]
-//   }).then((res: AuthenticationResult) => {
-//     this.fetchPresenceFromGraph(res.accessToken);
-//   }).catch(err => {
-//     console.error('[Worklog] MSAL login error:', err);
-//   });
-// }
-private fetchPresenceFromTeams() {
-  this.msalService.loginPopup({
-    scopes: ["User.Read", "Presence.Read", "Presence.Read.All"]
+  // private fetchPresenceFromGraph() {
+  //   if (!this.msalToken) {
+  //     console.warn('[Worklog] MSAL token not available, cannot fetch presence');
+  //     return;
+  //   }
+
+  //   this.http.get(`https://graph.microsoft.com/v1.0/me/presence`, {
+  //     headers: { Authorization: `Bearer ${this.msalToken}` }
+  //   }).subscribe({
+  //     next: (presence: any) => {
+  //       const status = presence?.availability;
+  //       console.log('[Worklog] Graph presence status:', status);
+
+  //       if (status && ['Available','Busy','InAMeeting','DoNotDisturb'].includes(status)) {
+  //         const now = Date.now();
+  //         const elapsedSeconds = Math.floor((now - this.lastPresenceFetch) / 1000);
+  //         this.lastPresenceFetch = now;
+
+  //         if (status !== this.lastStatus) {
+  //           console.log(`[Worklog] Status changed: ${this.lastStatus} -> ${status} (+${elapsedSeconds}s)`);
+  //           this.lastStatus = status;
+  //         }
+
+  //         this.presenceSummary[status] = (this.presenceSummary[status] || 0) + elapsedSeconds;
+  //         console.log('[Worklog] Updated presenceSummary:', this.presenceSummary);
+  //       }
+  //     },
+  //     error: err => console.error('[Worklog] Graph API error:', err)
+  //   });
+  // }
+  private fetchPresenceFromGraph() {
+  if (!this.msalToken) {
+    console.warn('[Worklog] MSAL token not available, cannot fetch presence');
+    return;
+  }
+
+  this.http.get(`https://graph.microsoft.com/v1.0/me/presence`, {
+    headers: { Authorization: `Bearer ${this.msalToken}` }
   }).subscribe({
-    next: (res: AuthenticationResult) => {
-      this.fetchPresenceFromGraph(res.accessToken);
+    next: (presence: any) => {
+      console.log('[Worklog] Graph raw presence:', presence);
+
+      const status = presence?.availability;
+      if (!status) {
+        console.warn('[Worklog] Presence is null/empty');
+        return;
+      }
+
+      const now = Date.now();
+      const elapsedSeconds = Math.floor((now - this.lastPresenceFetch) / 1000);
+      this.lastPresenceFetch = now;
+
+      if (status !== this.lastStatus) {
+        console.log(`[Worklog] Status changed: ${this.lastStatus} -> ${status} (+${elapsedSeconds}s)`);
+        this.lastStatus = status;
+      }
+
+      // track all statuses, not just "productive" ones
+      this.presenceSummary[status] = (this.presenceSummary[status] || 0) + elapsedSeconds;
+      console.log('[Worklog] Updated presenceSummary:', this.presenceSummary);
     },
-    error: (err) => {
-      console.error('[Worklog] MSAL login error:', err);
-    }
+    error: err => console.error('[Worklog] Graph API error:', err)
   });
 }
 
-  private fetchPresenceFromGraph(token: string) {
-    this.http.get(`https://graph.microsoft.com/v1.0/me/presence`, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).subscribe({
-      next: (presence: any) => {
-        const status = presence.availability as keyof typeof this.presenceSummary;
-        if (this.presenceSummary[status] !== undefined) {
-          const now = Date.now();
-          const elapsedSeconds = Math.floor((now - this.lastPresenceFetch) / 1000);
-          this.lastPresenceFetch = now;
-
-          this.presenceSummary[status] += elapsedSeconds;
-        }
-        console.log('[Worklog] Real Presence update:', presence.availability, this.presenceSummary);
-      },
-      error: (err) => console.error('[Worklog] Graph API error:', err)
-    });
-  }
 
   private calculateDeskTime(): string {
     const totalSeconds =
@@ -514,6 +587,11 @@ private fetchPresenceFromTeams() {
       (this.presenceSummary['Busy'] || 0) +
       (this.presenceSummary['InAMeeting'] || 0) +
       (this.presenceSummary['DoNotDisturb'] || 0);
+
+    if (totalSeconds === 0) {
+      console.log('[Worklog] Presence data empty, using fallback session duration:', (new Date().getTime() - this.loginDate.getTime()) / 1000, 'seconds');
+      return this.sessionDuration; // fallback
+    }
 
     return this.formatDuration(totalSeconds * 1000);
   }
