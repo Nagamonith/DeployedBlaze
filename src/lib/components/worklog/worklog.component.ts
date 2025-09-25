@@ -256,6 +256,10 @@
 // }
 
 
+
+
+import { MsalService } from '@azure/msal-angular';
+import { AuthenticationResult } from '@azure/msal-browser';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -305,7 +309,8 @@ export class WorklogComponent implements OnInit, OnDestroy {
   constructor(
     private http: HttpClient,
     private snackBar: MatSnackBar,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private msalService: MsalService
   ) {}
 
   ngOnInit(): void {
@@ -328,6 +333,7 @@ export class WorklogComponent implements OnInit, OnDestroy {
     }
   }
 
+  
   ngOnDestroy(): void {
     if (this.timerSub) this.timerSub.unsubscribe();
     if (this.presenceSub) this.presenceSub.unsubscribe();
@@ -460,16 +466,28 @@ export class WorklogComponent implements OnInit, OnDestroy {
     this.presenceSub = interval(60 * 1000).subscribe(() => this.fetchPresenceFromTeams());
   }
 
-  private fetchPresenceFromTeams() {
-    microsoftTeams.authentication.getAuthToken({
-      successCallback: (token) => {
-        this.fetchPresenceFromGraph(token);
-      },
-      failureCallback: (err) => {
-        console.error('[Worklog] Token acquisition failed', err);
-      }
-    });
-  }
+ 
+//   private fetchPresenceFromTeams() {
+//   this.msalService.loginPopup({
+//     scopes: ["User.Read", "Presence.Read", "Presence.Read.All"]
+//   }).then((res: AuthenticationResult) => {
+//     this.fetchPresenceFromGraph(res.accessToken);
+//   }).catch(err => {
+//     console.error('[Worklog] MSAL login error:', err);
+//   });
+// }
+private fetchPresenceFromTeams() {
+  this.msalService.loginPopup({
+    scopes: ["User.Read", "Presence.Read", "Presence.Read.All"]
+  }).subscribe({
+    next: (res: AuthenticationResult) => {
+      this.fetchPresenceFromGraph(res.accessToken);
+    },
+    error: (err) => {
+      console.error('[Worklog] MSAL login error:', err);
+    }
+  });
+}
 
   private fetchPresenceFromGraph(token: string) {
     this.http.get(`https://graph.microsoft.com/v1.0/me/presence`, {
