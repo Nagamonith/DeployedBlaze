@@ -117,7 +117,7 @@ export class AssetViewerComponent implements OnInit {
   type: string = '';
   employeeId: string = '';
   notFound = false;
-  apiBaseUrl = JSON.parse(sessionStorage.getItem('config') || '{}').url;
+  apiBaseUrl = 'https://blazebackend.qualis40.io';
 
   assetType: string = '';
   assetData: any = {};
@@ -147,7 +147,6 @@ export class AssetViewerComponent implements OnInit {
       this.notFound = true;
     }
   }
-
   fetchFieldDefinitions(type: string) {
     this.http.get<string[]>(`${this.apiBaseUrl}/api/assets/types/${encodeURIComponent(type)}/fields`)
       .subscribe({
@@ -158,9 +157,14 @@ export class AssetViewerComponent implements OnInit {
           this.requiredFields = []; // fallback
         }
       });
+          console.log(this.apiBaseUrl)
+
   }
 
   goToLogin() {
     this.router.navigate(['/login']);
   }
 }
+
+
+
