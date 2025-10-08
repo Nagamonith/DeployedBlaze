@@ -570,7 +570,7 @@ label {
 }
 
 .form-control {
-  width: 100%;
+  width: 15%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -962,4 +962,134 @@ thead{
 .cust-btn-close:hover, .cust-btn-close:focus {
   background: #e6f7fd;
   color: #249fd1;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+}
+
+.multi-select-dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 10px;
+  width: 180px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.dropdown-arrow {
+  float: right;
+}
+
+.bug-search {
+  width: 180px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+/* --- Fix Filter Row Alignment --- */
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  margin: 8px 0;
+}
+
+.filter-row .form-control,
+.filter-row .dropdown-toggle {
+  height: 34px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 12px;
+  color: #313131;
+}
+
+.filter-row .form-control {
+  width: 350px !important;
+  padding: 4px 10px;
+}
+
+.filter-row .dropdown-toggle {
+  width: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.filter-row .dropdown-toggle:hover,
+.filter-row .form-control:focus {
+  border-color: #30B9EF;
+  box-shadow: 0 0 0 1px #30B9EF;
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+  margin-left: 6px;
+  color: #555;
+}
+
+/* Dropdown menu styling stays the same */
+.dropdown-menu {
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  min-width: 350px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+
+/* Aligns all filters horizontally */
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  margin: 8px 0;
+}
+
+/* Uniform input height to match your dropdowns */
+.filter-row .form-control {
+  height: 38px;
+  width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #333;
+  padding: 6px 12px;
+}
+
+.filter-row .form-control:focus {
+  border-color: #30B9EF;
+  box-shadow: 0 0 0 1px #30B9EF;
+}
+.checkbox-wrapper input[type="checkbox"] {
+  margin-right: 6px;
+  cursor: pointer;
+}
+.status-text {
+  cursor: default;
+  user-select: none;
 }

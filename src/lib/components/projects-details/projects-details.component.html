@@ -1,5 +1,4 @@
-<div class="container-fluid px-0 sprint-matrix-main-content pd-main-bg">
-  <!-- Tabs -->
+<!-- <div class="container-fluid px-0 sprint-matrix-main-content pd-main-bg">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <div class="static-header-stack">
     <div class="ribbon-tabs pd-ribbon-tabs sticky-tabs">
@@ -38,6 +37,327 @@
  
   </div>
  
+  <div class="scrollable-content">
+  <div [ngSwitch]="tabs[activeTabIndex]?.type">
+    <div *ngSwitchCase="'workload'">
+      <app-workload-management></app-workload-management>
+    </div>
+    <div *ngSwitchCase="'projects'">
+      <div *ngIf="loading">Loading projects...</div>
+      <div *ngIf="error" class="text-danger">{{ error }}</div>
+      <div class="table-responsive">
+        <table *ngIf="projects.length > 0" class="table table-bordered table-hover mt-0 rounded-bottom-8">
+          <thead class="sticky-thead">
+            <tr>
+              <th class="sticky-th">Project Name</th>
+              <th class="sticky-th">Current Target Version</th>
+              <th class="sticky-th">Sprint Start Date</th>
+              <th class="sticky-th">Sprint Original Merge Date</th>
+              <th class="sticky-th">Sprint Current Merge Date</th>
+              <th class="sticky-th">Sprint Release Date</th>
+              <th class="sticky-th">View & Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let project of projects" (dblclick)="openProjectTab(project)" class="pointer-cursor">
+              <td>{{ project.Project_Name }}</td>
+              <td>{{ project.Target_Version }}</td>
+              <td>{{ project.Sprint_Start_Date | date: 'dd-MM-yyyy' }}</td>
+              <td>{{ project.Sprint_Original_Merge_Date | date: 'dd-MM-yyyy' }}</td>
+              <td>{{ project.Sprint_Current_Merge_Date | date: 'dd-MM-yyyy' }}</td>
+              <td>{{ project.Sprint_Release_Date | date: 'dd-MM-yyyy' }}</td>
+              <td>
+                <button type="button" class="custom-btn-secondary" (click)="$event.stopPropagation(); openProjectTab(project)"><span [innerHTML]="icons.Show"></span></button>
+                <button type="button" class="custom-btn-secondary" (click)="$event.stopPropagation(); openEditProjectModal(project)"><span [innerHTML]="icons.Editfield"></span></button>
+              </td>
+      
+        <div class="modal-backdrop" *ngIf="editProjectModalOpen" (click)="closeEditProjectModal()"></div>
+        <div class="modal" *ngIf="editProjectModalOpen">
+          <div class="simple-form-header">
+            <span class="header-title">Edit Project</span>
+            <span class="close-icon" (click)="closeEditProjectModal()">
+              <i class="bi bi-x-lg"></i>
+            </span>
+          </div>
+          <div class="modal-content">
+            <div *ngIf="selectedProject">
+              <label class="simple-form-label">Project Name</label>
+              <input type="text" class="simple-form-input" [value]="selectedProject.Project_Name" readonly>
+              <label class="simple-form-label">Target Version</label>
+              <ng-container *ngIf="editProjectTargetVersionLoading">
+                <select class="simple-form-input" disabled>
+                  <option>Loading...</option>
+                </select>
+              </ng-container>
+              <ng-container *ngIf="!editProjectTargetVersionLoading">
+                <select class="simple-form-input" [(ngModel)]="selectedEditTargetVersion" name="editTargetVersion">
+                  <option *ngFor="let v of editProjectTargetVersions" [value]="v">{{ v }}</option>
+                </select>
+              </ng-container>
+              <label class="simple-form-label">Sprint Start Date</label>
+              <input type="date" class="simple-form-input" [(ngModel)]="editSprintStartDate" name="editSprintStartDate">
+              <label class="simple-form-label">Sprint Original Merge Date</label>
+              <input type="date" class="simple-form-input" [(ngModel)]="editSprintOriginalMergeDate" name="editSprintOriginalMergeDate">
+              <label class="simple-form-label">Sprint Current Merge Date</label>
+              <input type="date" class="simple-form-input" [(ngModel)]="editSprintCurrentMergeDate" name="editSprintCurrentMergeDate">
+              <label class="simple-form-label">Sprint Release Date</label>
+              <input type="date" class="simple-form-input" [(ngModel)]="editSprintReleaseDate" name="editSprintReleaseDate">
+              <div class="modal-btn-row">
+                <button type="button" class="btn cust-btn-primary me-2" (click)="setEditProject()">Set</button>
+                <button type="button" class="btn cust-btn-close" (click)="closeEditProjectModal()">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+           
+          </tr>
+        </tbody>
+        </table>
+      </div>
+    </div>
+ 
+    <div *ngSwitchCase="'project'">
+      <ng-container *ngIf="tabs[activeTabIndex]?.project as project">
+        <ng-container *ngIf="project">
+          <ng-container *ngIf="projectSubTabs[project.Project_Name + '__' + project.Target_Version] as subTabState">
+            <ng-container [ngSwitch]="subTabState.tabs[subTabState.active]?.type">
+              <div *ngSwitchCase="'metrics'">
+                <div *ngIf="projectSummaryLoading[project.Project_Name + '__' + project.Target_Version]"></div>
+                <div *ngIf="projectSummaryError[project.Project_Name + '__' + project.Target_Version]" class="text-danger">
+                  {{ projectSummaryError[project.Project_Name + '__' + project.Target_Version] }}
+                </div>
+ 
+                <div class="d-flex justify-content-start align-items-center my-2">
+                  <input
+                    id="bugSearchProject"
+                    type="text"
+                    class="form-control w-auto"
+                    placeholder="Search by BugID"
+                    [(ngModel)]="bugSearchText"
+                  />
+                
+                </div>
+ 
+                <table *ngIf="getSummaryForProject(project).length > 0" class="table table-bordered table-hover mt-3 sticky-header-table">
+                  <thead class="sticky-thead">
+                    <tr>
+                      <th *ngFor="let key of bugSummaryDisplayOrder" class="sticky-th">{{ bugSummaryDisplayNames[key] || key }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let bug of getSummaryForProject(project)" (dblclick)="openBugDetailsSubTab(project, bug.bug_id)">
+                      <td *ngFor="let key of bugSummaryDisplayOrder">
+                        <ng-container *ngIf="key === 'bug_id'; else normalCell">
+                          <a [href]="'https://sprintlyzer.qualis40.io/mantisbt/view.php?id=' + bug[key]" target="_blank" rel="noopener noreferrer">{{ bug[key] }}</a>
+                        </ng-container>
+                        <ng-template #normalCell>
+                          {{ bug[key] }}
+                        </ng-template>
+                      </td>
+                    </tr>
+                    <tr class="table-success fw-bold">
+                      <td *ngFor="let key of bugSummaryDisplayOrder; let i = index">
+                        <ng-container *ngIf="i === 0">Total hours</ng-container>
+                        <ng-container *ngIf="i === 3">{{ getTotalForColumn(project, bugSummaryDisplayOrder[3]) }}</ng-container>
+                        <ng-container *ngIf="i > 3">{{ i !== 3 ? getTotalForColumn(project, key) : '' }}</ng-container>
+                      </td>
+                    </tr>
+ 
+                    <tr class="table-info fw-bold" *ngIf="bugSummaryDisplayOrder.includes('estimated_hours')">
+                      <td *ngFor="let key of bugSummaryDisplayOrder; let i = index">
+                        <ng-container *ngIf="key === 'estimated_hours'">
+                          <ng-container *ngIf="i === 0">
+                            Total Estimated Hours: {{ getTotalForColumn(project, 'estimated_hours') }}
+                          </ng-container>
+                          <ng-container *ngIf="i !== 0">
+                            {{ getTotalForColumn(project, 'estimated_hours') }}
+                          </ng-container>
+                        </ng-container>
+                        <ng-container *ngIf="key !== 'estimated_hours' && i === 0 && bugSummaryDisplayOrder[0] !== 'estimated_hours'">
+                          Total Estimated Hours
+                        </ng-container>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="bottom-spacer"></div>
+                <div *ngIf="!projectSummaryLoading[project.Project_Name + '__' + project.Target_Version] && (getSummaryForProject(project).length === 0)">
+                  <strong style="margin-inline-start: 10px;">Please Set Sprint Details.</strong>
+                </div>
+              </div>
+              <div *ngSwitchCase="'bug-details'">
+                <ng-container *ngIf="subTabState.tabs[subTabState.active]?.bugId as bugId">
+                  <ng-container *ngIf="bugDetailsState[project?.Project_Name + '__' + project?.Target_Version]?.[bugId] as bugState">
+                    <div *ngIf="bugState.loading">Loading bug details...</div>
+                    <div *ngIf="bugState.error" class="text-danger">{{ bugState.error }}</div>
+                    <div *ngIf="!bugState.loading && (bugState.bugTaskDetails.length || bugState.timeTracking.length)" class="sprint-matrix-bottom-row">
+                      <div class="sprint-matrix-tasks-table">
+                        <div class="table-responsive">
+                          <table class="table table-bordered table-hover sticky-header-table">
+                            <thead>
+                              <tr>
+                                <th>Parent Bug ID</th>
+                                <th>Child Task ID</th>
+                                <th>Target Version</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Resource Name</th>
+                                <th>Task Resource Name</th>
+                                <th>Relationship Type</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let task of bugState.bugTaskDetails">
+                                <td>{{ task.bug_id }}</td>
+                                <td>{{ task.task_id }}</td>
+                                <td>{{ task.target_version }}</td>
+                                <td>{{ task.start_date }}</td>
+                                <td>{{ task.end_date }}</td>
+                                <td>{{ task.resource_name }}</td>
+                                <td>{{ task.task_resource_name }}</td>
+                                <td>{{ task.relationship_type }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="sprint-matrix-tracking-table">
+                        <h5 class="ms-2">Total Resource Hours</h5>
+                        <div class="table-responsive">
+                          <table class="table table-bordered table-hover sticky-header-table">
+                            <thead>
+                              <tr>
+                                <th>Resource Name</th>
+                                <th>Total Spent Hours</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let t of bugState.timeTracking">
+                                <td>{{ t.realname }}</td>
+                                <td>{{ t.total_spent }}</td>
+                              </tr>
+                              <tr class="table-info fw-bold" *ngIf="bugState.timeTracking.length > 0">
+                                <td>Total</td>
+                                <td>{{ getTotalSpentHours(bugState.timeTracking) | number:'1.2-2' }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="!bugState.loading && !bugState.bugTaskDetails.length && !bugState.timeTracking.length">
+                      No data found for this bug.
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </div>
+              <div *ngSwitchCase="'gantt'">
+                <app-gantt-editor
+                  [projectNameFromParent]="project?.Project_Name"
+                  [targetVersionFromParent]="project?.Target_Version">
+                </app-gantt-editor>
+              </div>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </div>
+ 
+    <div *ngSwitchCase="'metrics'">
+      <div *ngIf="projectSummaryLoading?.[tabs[activeTabIndex].project?.Project_Name + '__' + tabs[activeTabIndex].project?.Target_Version]">Loading summary...</div>
+      <div *ngIf="projectSummaryError?.[tabs[activeTabIndex].project?.Project_Name + '__' + tabs[activeTabIndex].project?.Target_Version]" class="text-danger">
+        {{ projectSummaryError?.[tabs[activeTabIndex].project?.Project_Name + '__' + tabs[activeTabIndex].project?.Target_Version] }}
+      </div>
+ 
+      <div class="d-flex justify-content-start align-items-center my-2">
+        <label for="bugSearchMetrics" class="me-2 fw-bold">Search Bug ID:</label>
+        <input
+          id="bugSearchMetrics"
+          type="text"
+          class="form-control w-auto"
+          placeholder="Enter Bug ID"
+          [(ngModel)]="bugSearchText"
+        />
+      </div>
+ 
+      <table *ngIf="getSummaryForActiveProject().length > 0" class="table table-bordered table-hover mt-3 sticky-header-table">
+        <thead class="sticky-thead">
+          <tr>
+            <th *ngFor="let key of bugSummaryDisplayOrder" class="sticky-th">{{ key }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bug of getSummaryForActiveProject()">
+            <td *ngFor="let key of bugSummaryDisplayOrder">
+              {{ bug[key] }}
+            </td>
+          </tr>
+          <tr class="table-success fw-bold">
+            <td *ngFor="let key of bugSummaryDisplayOrder; let i = index">
+              <ng-container *ngIf="i < 3"></ng-container>
+              <ng-container *ngIf="i >= 3">
+                {{ getTotalForColumn(tabs[activeTabIndex].project, key) }}
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="!projectSummaryLoading?.[tabs[activeTabIndex].project?.Project_Name + '__' + tabs[activeTabIndex].project?.Target_Version] && (getSummaryForActiveProject().length === 0)">
+        No data found.
+      </div>
+    </div>
+ 
+    <div *ngSwitchCase="'gantt'">
+      <app-gantt-editor
+        [projectNameFromParent]="tabs[activeTabIndex].project.Project_Name"
+        [targetVersionFromParent]="tabs[activeTabIndex].project.Target_Version">
+      </app-gantt-editor>
+    </div>
+  </div>
+</div>
+ 
+  -->
+
+  <div class="container-fluid px-0 sprint-matrix-main-content pd-main-bg">
+  <!-- Tabs -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <div class="static-header-stack">
+    <div class="ribbon-tabs pd-ribbon-tabs sticky-tabs">
+      <ng-container *ngFor="let tab of tabs; let i = index">
+        <button class="ribbon-tab flex-shrink-0 pd-ribbon-tab" [class.active]="activeTabIndex === i" (click)="activeTabIndex = i">
+          {{ tab.label }}
+          <span *ngIf="i > 0 && tab.type !== 'workload'" (click)="$event.stopPropagation(); closeTab(i)" class="pd-tab-close">&times;</span>
+        </button>
+      </ng-container>
+    </div>
+  <ng-container *ngIf="tabs[activeTabIndex]?.type === 'project'">
+    <div class="project-header-static pd-project-header sticky-header">
+      <span class="pd-project-title ml-20">{{ tabs[activeTabIndex]?.project?.Project_Name }}</span>
+      <span class="badge bg-light text-dark pd-project-badge">Target Version: {{ tabs[activeTabIndex]?.project?.Target_Version || '(unspecified)' }}</span>
+    </div>
+    <ng-container *ngIf="tabs[activeTabIndex]?.project as project">
+      <ng-container *ngIf="project">
+        <div class="subtab-bar pd-subtab-bar sticky-subtab-bar">
+          <ng-container *ngIf="projectSubTabs[project.Project_Name + '__' + project.Target_Version] as subTabState">
+            <ng-container *ngFor="let subTab of subTabState.tabs; let i = index">
+              <button class="subtab-btn flex-shrink-0 pd-subtab-btn" [class.active]="subTabState.active === i" (click)="switchProjectSubTab(project, i)">
+                <ng-container [ngSwitch]="subTab.type">
+                  <i *ngSwitchCase="'metrics'" class="bi bi-bar-chart me-1"></i>
+                  <i *ngSwitchCase="'gantt'" class="bi bi-graph-up me-1"></i>
+                  <i *ngSwitchCase="'bug-details'" class="bi bi-bug me-1"></i>
+                </ng-container>
+                {{ subTab.label }}
+                <span *ngIf="subTab.type === 'bug-details' && subTab.bugId != null" (click)="$event.stopPropagation(); closeBugDetailsSubTab(project, subTab.bugId!)" class="pd-subtab-close">&times;</span>
+              </button>
+            </ng-container>
+          </ng-container>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  </div>
+
   <div class="scrollable-content">
   <div [ngSwitch]="tabs[activeTabIndex]?.type">
     <!-- Workload Tab -->
@@ -113,13 +433,13 @@
             </div>
           </div>
         </div>
-           
+
           </tr>
         </tbody>
         </table>
       </div>
     </div>
- 
+
     <!-- Per-Project Tab -->
     <div *ngSwitchCase="'project'">
       <!-- Only render subtab content here, not header or subtab bar -->
@@ -133,18 +453,202 @@
                 <div *ngIf="projectSummaryError[project.Project_Name + '__' + project.Target_Version]" class="text-danger">
                   {{ projectSummaryError[project.Project_Name + '__' + project.Target_Version] }}
                 </div>
- 
-                <!-- Search Bar for per-project metrics -->
-                <div class="d-flex justify-content-start align-items-center my-2">
+
+                <!-- Search Bar for per-project metrics with new Type & Status multi-selects -->
+                <!-- <div class="d-flex justify-content-start align-items-center my-2">
                   <input
                     id="bugSearchProject"
                     type="text"
-                    class="form-control w-auto"
-                    placeholder="Enter Bug ID..."
+                    class="form-control w-auto me-3"
+                    placeholder="Search by BugID"
                     [(ngModel)]="bugSearchText"
                   />
-                </div>
- 
+
+                  
+                  <div class="filter-item me-2">
+                    <label class="me-1">Type:</label>
+                    <div class="multi-select-dropdown">
+                      <div class="dropdown-toggle" (click)="toggleTypeDropdown()">
+                        {{ getSelectedTypeText(project.Project_Name + '__' + project.Target_Version) }}
+                        <span class="dropdown-arrow">▼</span>
+                      </div>
+                      <div class="dropdown-menu" *ngIf="typeDropdownOpen" (click)="$event.stopPropagation()">
+                        <div class="dropdown-controls" (click)="$event.stopPropagation()">
+                          <button type="button" class="btn-link" (click)="selectAllTypes(project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">Select All</button>
+                          <button type="button" class="btn-link" (click)="clearAllTypeFilters(project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">Clear All</button>
+                        </div>
+                        <div class="dropdown-item" *ngFor="let type of typesMap[project.Project_Name + '__' + project.Target_Version]" (click)="$event.stopPropagation()">
+                          <div class="checkbox-wrapper" (click)="onTypeToggle(type.id, project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">
+                            <input
+                              type="checkbox"
+                              [checked]="isTypeSelected(type.id, project.Project_Name + '__' + project.Target_Version)"
+                              readonly
+                            />
+                            <span class="status-text">{{ type.text }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                 
+                  <div class="filter-item">
+                    <label class="me-1">Status:</label>
+                    <div class="multi-select-dropdown">
+                      <div class="dropdown-toggle" (click)="toggleStatusDropdown()">
+                        {{ getSelectedStatusText(project.Project_Name + '__' + project.Target_Version) }}
+                        <span class="dropdown-arrow">▼</span>
+                      </div>
+                      <div class="dropdown-menu" *ngIf="statusDropdownOpen" (click)="$event.stopPropagation()">
+                        <div class="dropdown-controls" (click)="$event.stopPropagation()">
+                          <button type="button" class="btn-link" (click)="selectAllStatuses(project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">Select All</button>
+                          <button type="button" class="btn-link" (click)="clearAllStatusFilters(project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">Clear All</button>
+                        </div>
+                        <div class="dropdown-item" *ngFor="let status of statusesMap[project.Project_Name + '__' + project.Target_Version]" (click)="$event.stopPropagation()">
+                          <div class="checkbox-wrapper" (click)="onStatusToggle(status.id, project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">
+                            <input
+                              type="checkbox"
+                              [checked]="isStatusSelected(status.id, project.Project_Name + '__' + project.Target_Version)"
+                              readonly
+                            />
+                            <span class="status-text">{{ status.text }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+<!-- <div class="filter-row">
+
+  <input
+    id="bugSearchProject"
+    type="text"
+    class="form-control"
+    placeholder="Search by BugID"
+    [(ngModel)]="bugSearchText"
+  />
+
+  <div class="multi-select-dropdown">
+    <div class="dropdown-toggle" (click)="toggleTypeDropdown()">
+      {{ getSelectedTypeText(project.Project_Name + '__' + project.Target_Version) }}
+      <span class="dropdown-arrow">▼</span>
+    </div>
+    <div class="dropdown-menu" *ngIf="typeDropdownOpen" (click)="$event.stopPropagation()">
+      <div class="dropdown-controls">
+        <button type="button" class="btn-link"
+          (click)="selectAllTypes(project.Project_Name + '__' + project.Target_Version)">Select All</button>
+        <button type="button" class="btn-link"
+          (click)="clearAllTypeFilters(project.Project_Name + '__' + project.Target_Version)">Clear All</button>
+      </div>
+      <div class="dropdown-item"
+        *ngFor="let type of typesMap[project.Project_Name + '__' + project.Target_Version]">
+        <div class="checkbox-wrapper"
+          (click)="onTypeToggle(type.id, project.Project_Name + '__' + project.Target_Version)">
+          <input type="checkbox"
+            [checked]="isTypeSelected(type.id, project.Project_Name + '__' + project.Target_Version)" />
+          <span class="status-text">{{ type.text }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="multi-select-dropdown">
+    <div class="dropdown-toggle" (click)="toggleStatusDropdown()">
+      {{ getSelectedStatusText(project.Project_Name + '__' + project.Target_Version) }}
+      <span class="dropdown-arrow">▼</span>
+    </div>
+    <div class="dropdown-menu" *ngIf="statusDropdownOpen" (click)="$event.stopPropagation()">
+      <div class="dropdown-controls">
+        <button type="button" class="btn-link"
+          (click)="selectAllStatuses(project.Project_Name + '__' + project.Target_Version)">Select All</button>
+        <button type="button" class="btn-link"
+          (click)="clearAllStatusFilters(project.Project_Name + '__' + project.Target_Version)">Clear All</button>
+      </div>
+      <div class="dropdown-item"
+        *ngFor="let status of statusesMap[project.Project_Name + '__' + project.Target_Version]">
+        <div class="checkbox-wrapper"
+          (click)="onStatusToggle(status.id, project.Project_Name + '__' + project.Target_Version)">
+          <input type="checkbox"
+            [checked]="isStatusSelected(status.id, project.Project_Name + '__' + project.Target_Version)" />
+          <span class="status-text">{{ status.text }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div> -->
+<div class="filter-row ml-10">
+  <!-- BugID Search -->
+  <input
+    id="bugSearchProject"
+    type="text"
+    class="form-control"
+    placeholder="Search by BugID"
+    [(ngModel)]="bugSearchText"
+  />
+
+  <!-- Type Filter -->
+  <div class="multi-select-dropdown">
+    <div class="dropdown-toggle" (click)="toggleTypeDropdown()">
+      {{ getSelectedTypeText(project.Project_Name + '__' + project.Target_Version) }}
+      <span class="dropdown-arrow">▼</span>
+    </div>
+
+    <div class="dropdown-menu" *ngIf="typeDropdownOpen" (click)="$event.stopPropagation()">
+      <div class="dropdown-controls">
+        <button type="button" class="ml-10 mt-10"
+          (click)="selectAllTypes(project.Project_Name + '__' + project.Target_Version)">Select All</button>
+        <button type="button" class="ml-10 mt-10"
+          (click)="clearAllTypeFilters(project.Project_Name + '__' + project.Target_Version)">Clear All</button>
+      </div>
+
+      <div class="dropdown-item"
+        *ngFor="let type of typesMap[project.Project_Name + '__' + project.Target_Version]">
+        <div class="checkbox-wrapper ml-20 mt-10 mb-10">
+          <input
+            type="checkbox"
+            [checked]="isTypeSelected(type.id, project.Project_Name + '__' + project.Target_Version)"
+            (change)="onTypeToggle(type.id, project.Project_Name + '__' + project.Target_Version)"
+          />
+          <span class="status-text">{{ type.text }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Filter -->
+  <div class="multi-select-dropdown">
+    <div class="dropdown-toggle" (click)="toggleStatusDropdown()">
+      {{ getSelectedStatusText(project.Project_Name + '__' + project.Target_Version) }}
+      <span class="dropdown-arrow">▼</span>
+    </div>
+
+    <div class="dropdown-menu" *ngIf="statusDropdownOpen" (click)="$event.stopPropagation()">
+      <div class="dropdown-controls">
+        <button type="button" class="ml-10 mt-10"
+          (click)="selectAllStatuses(project.Project_Name + '__' + project.Target_Version)">Select All</button>
+        <button type="button" class="ml-10 mt-10"
+          (click)="clearAllStatusFilters(project.Project_Name + '__' + project.Target_Version)">Clear All</button>
+      </div>
+
+      <div class="dropdown-item"
+        *ngFor="let status of statusesMap[project.Project_Name + '__' + project.Target_Version]">
+        <div class="checkbox-wrapper ml-20 mt-10 mb-10">
+          <input
+            type="checkbox"
+            [checked]="isStatusSelected(status.id, project.Project_Name + '__' + project.Target_Version)"
+            (change)="onStatusToggle(status.id, project.Project_Name + '__' + project.Target_Version)"
+          />
+          <span class="status-text">{{ status.text }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
                 <table *ngIf="getSummaryForProject(project).length > 0" class="table table-bordered table-hover mt-3 sticky-header-table">
                   <thead class="sticky-thead">
                     <tr>
@@ -166,11 +670,11 @@
                     <tr class="table-success fw-bold">
                       <td *ngFor="let key of bugSummaryDisplayOrder; let i = index">
                         <ng-container *ngIf="i === 0">Total hours</ng-container>
-                        <ng-container *ngIf="i === 3">{{ getTotalForColumn(project, bugSummaryDisplayOrder[3]) }}</ng-container>
-                        <ng-container *ngIf="i > 3">{{ i !== 3 ? getTotalForColumn(project, key) : '' }}</ng-container>
+                        <ng-container *ngIf="i === 4">{{ getTotalForColumn(project, bugSummaryDisplayOrder[4]) }}</ng-container>
+                        <ng-container *ngIf="i > 4">{{ i !== 4 ? getTotalForColumn(project, key) : '' }}</ng-container>
                       </td>
                     </tr>
- 
+
                     <!-- Total Estimated Hours Row (if exists) -->
                     <tr class="table-info fw-bold" *ngIf="bugSummaryDisplayOrder.includes('estimated_hours')">
                       <td *ngFor="let key of bugSummaryDisplayOrder; let i = index">
@@ -276,26 +780,81 @@
         </ng-container>
       </ng-container>
     </div>
- 
+
     <!-- Metrics Tab -->
     <div *ngSwitchCase="'metrics'">
       <div *ngIf="projectSummaryLoading?.[tabs[activeTabIndex].project?.Project_Name + '__' + tabs[activeTabIndex].project?.Target_Version]">Loading summary...</div>
       <div *ngIf="projectSummaryError?.[tabs[activeTabIndex].project?.Project_Name + '__' + tabs[activeTabIndex].project?.Target_Version]" class="text-danger">
         {{ projectSummaryError?.[tabs[activeTabIndex].project?.Project_Name + '__' + tabs[activeTabIndex].project?.Target_Version] }}
       </div>
- 
-      <!-- Search Bar for top-level metrics tab -->
+
+      <!-- Search Bar for top-level metrics tab with Type & Status -->
       <div class="d-flex justify-content-start align-items-center my-2">
         <label for="bugSearchMetrics" class="me-2 fw-bold">Search Bug ID:</label>
         <input
           id="bugSearchMetrics"
           type="text"
-          class="form-control w-auto"
-          placeholder="Enter Bug ID..."
+          class="form-control w-auto me-3"
+          placeholder="Enter Bug ID"
           [(ngModel)]="bugSearchText"
         />
+
+        <!-- Top-level: use active project key -->
+        <ng-container *ngIf="tabs[activeTabIndex]?.project as activeProject">
+          <div class="filter-item me-2">
+            <label class="me-1">Type:</label>
+            <div class="multi-select-dropdown">
+              <div class="dropdown-toggle" (click)="toggleTypeDropdown()">
+                {{ getSelectedTypeText(activeProject.Project_Name + '__' + activeProject.Target_Version) }}
+                <span class="dropdown-arrow">▼</span>
+              </div>
+              <div class="dropdown-menu" *ngIf="typeDropdownOpen" (click)="$event.stopPropagation()">
+                <div class="dropdown-controls" (click)="$event.stopPropagation()">
+                  <button type="button" class="btn-link" (click)="selectAllTypes(activeProject.Project_Name + '__' + activeProject.Target_Version); $event.stopPropagation()">Select All</button>
+                  <button type="button" class="btn-link" (click)="clearAllTypeFilters(activeProject.Project_Name + '__' + activeProject.Target_Version); $event.stopPropagation()">Clear All</button>
+                </div>
+                <div class="dropdown-item" *ngFor="let type of typesMap[activeProject.Project_Name + '__' + activeProject.Target_Version]" (click)="$event.stopPropagation()">
+                  <div class="checkbox-wrapper" (click)="onTypeToggle(type.id, activeProject.Project_Name + '__' + activeProject.Target_Version); $event.stopPropagation()">
+                    <input
+                      type="checkbox"
+                      [checked]="isTypeSelected(type.id, activeProject.Project_Name + '__' + activeProject.Target_Version)"
+                      readonly
+                    />
+                    <span class="status-text">{{ type.text }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-item">
+            <label class="me-1">Status:</label>
+            <div class="multi-select-dropdown">
+              <div class="dropdown-toggle" (click)="toggleStatusDropdown()">
+                {{ getSelectedStatusText(activeProject.Project_Name + '__' + activeProject.Target_Version) }}
+                <span class="dropdown-arrow">▼</span>
+              </div>
+              <div class="dropdown-menu" *ngIf="statusDropdownOpen" (click)="$event.stopPropagation()">
+                <div class="dropdown-controls" (click)="$event.stopPropagation()">
+                  <button type="button" class="btn-link" (click)="selectAllStatuses(activeProject.Project_Name + '__' + activeProject.Target_Version); $event.stopPropagation()">Select All</button>
+                  <button type="button" class="btn-link" (click)="clearAllStatusFilters(activeProject.Project_Name + '__' + activeProject.Target_Version); $event.stopPropagation()">Clear All</button>
+                </div>
+                <div class="dropdown-item" *ngFor="let status of statusesMap[activeProject.Project_Name + '__' + activeProject.Target_Version]" (click)="$event.stopPropagation()">
+                  <div class="checkbox-wrapper" (click)="onStatusToggle(status.id, activeProject.Project_Name + '__' + activeProject.Target_Version); $event.stopPropagation()">
+                    <input
+                      type="checkbox"
+                      [checked]="isStatusSelected(status.id, activeProject.Project_Name + '__' + activeProject.Target_Version)"
+                      readonly
+                    />
+                    <span class="status-text">{{ status.text }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
       </div>
- 
+
       <table *ngIf="getSummaryForActiveProject().length > 0" class="table table-bordered table-hover mt-3 sticky-header-table">
         <thead class="sticky-thead">
           <tr>
@@ -323,7 +882,7 @@
         No data found.
       </div>
     </div>
- 
+
     <!-- Gantt Tab -->
     <div *ngSwitchCase="'gantt'">
       <app-gantt-editor
@@ -333,5 +892,3 @@
     </div>
   </div>
 </div>
- 
- 
