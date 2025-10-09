@@ -1,58 +1,4 @@
-<!-- <div class="teams-tabs-container full-screen">
-
-  <div class="teams-tabs">
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'wfh'" 
-      (click)="activeTab = 'wfh'">
-      Work From Home
-    </button>
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'leave'" 
-      (click)="activeTab = 'leave'">
-      Apply Leave
-    </button>
-  </div>
-
-  <div class="tab-content full-screen-content">
-    
-    <div *ngIf="activeTab === 'wfh'" class="wfh-fullscreen-container">
-      <div class="ac-header">WFH Logger</div>
-      <div class="ac-current-time">{{ currentTime }}</div>
-
-      <div class="ac-body">
-        <p>User: {{ userId }}</p>
-
-        <div *ngIf="sessionActive || logoutClicked" class="session-div">
-          <p>Login Time: {{ loginTime }}</p>
-          <p *ngIf="sessionActive">Current Session: {{ sessionDuration }}</p>
-          <p *ngIf="logoutClicked">Total Session Time: {{ sessionDuration }}</p>
-          <p *ngIf="logoutClicked">Logout Time: {{ logoutTime }}</p> 
-
-        </div>
-      </div>
-      <div class="ac-actions">
-  <button class="ac-button login" *ngIf="!sessionActive && !logoutClicked" (click)="logAction('Login')">
-    Login
-  </button>
-  <button class="ac-button logout" *ngIf="sessionActive" (click)="logAction('Logout')">
-    Logout
-  </button>
-</div>
-
-    </div>
-
-    <div *ngIf="activeTab === 'leave'" class="leave-container">
-      <p>Apply Leave functionality will come here.</p>
-    </div>
-
-  </div>
-</div> -->
-
-
-
- <!-- Tabs Header -->
+<!-- 
 <div class="teams-tabs">
   <button class="tab-button" [class.active]="activeTab === 'wfh'" (click)="activeTab = 'wfh'">
     Work From Home
@@ -64,7 +10,6 @@
 
 
 
-  <!-- WFH Tab -->
   <div *ngIf="activeTab === 'wfh'" class="wfh-fullscreen-container">
 <div class="teams-tabs-container full-screen">
 
@@ -104,10 +49,57 @@
 </div>
   </div>
 
-  <!-- Leave Tab -->
   <div *ngIf="activeTab === 'leave'">
-    <!-- Use LeaveComponent selector -->
     <app-leave></app-leave>
   </div>
 
+ -->
 
+ <div class="teams-tabs">
+  <button class="tab-button" [class.active]="activeTab === 'wfh'" (click)="activeTab = 'wfh'">
+    Work From Home
+  </button>
+  <button class="tab-button" [class.active]="activeTab === 'leave'" (click)="activeTab = 'leave'">
+    Apply Leave
+  </button>
+</div>
+
+<div *ngIf="activeTab === 'wfh'" class="wfh-fullscreen-container">
+  <div class="teams-tabs-container full-screen">
+    <div class="tab-content full-screen-content">
+      <div class="ac-header">WFH Logger</div>
+      <div class="ac-current-time">{{ currentTime }}</div>
+
+      <div class="ac-body">
+        <p>User: {{ userId }}</p>
+
+        <!-- Session Info -->
+        <div *ngIf="sessionActive || logoutClicked" class="session-div">
+          <p>Login Time: {{ loginTime }}</p>
+          <p *ngIf="sessionActive">Current Session: {{ sessionDuration }}</p>
+          <p *ngIf="logoutClicked">Total Session Time: {{ sessionDuration }}</p>
+          <p *ngIf="logoutClicked">Logout Time: {{ logoutTime }}</p>
+        </div>
+
+        <!-- Presence Info -->
+        <div class="presence-div">
+          <p>Current Presence: {{ currentPresence || 'Unknown' }}</p>
+          <p>Total Desk Time (secs): {{ totalDeskSeconds || 0 }}</p>
+        </div>
+      </div>
+
+      <div class="ac-actions">
+        <button class="ac-button login" *ngIf="!sessionActive && !logoutClicked" (click)="logAction('Login')">
+          Login
+        </button>
+        <button class="ac-button logout" *ngIf="sessionActive" (click)="logAction('Logout')">
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="activeTab === 'leave'">
+  <app-leave></app-leave>
+</div>

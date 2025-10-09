@@ -18,13 +18,11 @@ export class ProjectSummaryComponent implements OnInit {
   sprintOriginalMergeDate: string = '';
   sprintCurrentMergeDate: string = '';
 
-  // Tab state
   tabs: Array<{ label: string, type: 'summary' | 'gantt' | 'bug-details', data?: any }> = [
     { label: 'Project Summary', type: 'summary' }
   ];
   activeTabIndex = 0;
 
-  // Bug summary state
   bugSummary: any[] = [];
   bugSummaryLoading = false;
   bugSummaryError = '';

@@ -315,7 +315,7 @@
     </div>
   </div>
 </div>
- 
+
   -->
 
   <div class="container-fluid px-0 sprint-matrix-main-content pd-main-bg">
@@ -454,138 +454,14 @@
                   {{ projectSummaryError[project.Project_Name + '__' + project.Target_Version] }}
                 </div>
 
-                <!-- Search Bar for per-project metrics with new Type & Status multi-selects -->
-                <!-- <div class="d-flex justify-content-start align-items-center my-2">
-                  <input
-                    id="bugSearchProject"
-                    type="text"
-                    class="form-control w-auto me-3"
-                    placeholder="Search by BugID"
-                    [(ngModel)]="bugSearchText"
-                  />
-
-                  
-                  <div class="filter-item me-2">
-                    <label class="me-1">Type:</label>
-                    <div class="multi-select-dropdown">
-                      <div class="dropdown-toggle" (click)="toggleTypeDropdown()">
-                        {{ getSelectedTypeText(project.Project_Name + '__' + project.Target_Version) }}
-                        <span class="dropdown-arrow">▼</span>
-                      </div>
-                      <div class="dropdown-menu" *ngIf="typeDropdownOpen" (click)="$event.stopPropagation()">
-                        <div class="dropdown-controls" (click)="$event.stopPropagation()">
-                          <button type="button" class="btn-link" (click)="selectAllTypes(project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">Select All</button>
-                          <button type="button" class="btn-link" (click)="clearAllTypeFilters(project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">Clear All</button>
-                        </div>
-                        <div class="dropdown-item" *ngFor="let type of typesMap[project.Project_Name + '__' + project.Target_Version]" (click)="$event.stopPropagation()">
-                          <div class="checkbox-wrapper" (click)="onTypeToggle(type.id, project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">
-                            <input
-                              type="checkbox"
-                              [checked]="isTypeSelected(type.id, project.Project_Name + '__' + project.Target_Version)"
-                              readonly
-                            />
-                            <span class="status-text">{{ type.text }}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                 
-                  <div class="filter-item">
-                    <label class="me-1">Status:</label>
-                    <div class="multi-select-dropdown">
-                      <div class="dropdown-toggle" (click)="toggleStatusDropdown()">
-                        {{ getSelectedStatusText(project.Project_Name + '__' + project.Target_Version) }}
-                        <span class="dropdown-arrow">▼</span>
-                      </div>
-                      <div class="dropdown-menu" *ngIf="statusDropdownOpen" (click)="$event.stopPropagation()">
-                        <div class="dropdown-controls" (click)="$event.stopPropagation()">
-                          <button type="button" class="btn-link" (click)="selectAllStatuses(project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">Select All</button>
-                          <button type="button" class="btn-link" (click)="clearAllStatusFilters(project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">Clear All</button>
-                        </div>
-                        <div class="dropdown-item" *ngFor="let status of statusesMap[project.Project_Name + '__' + project.Target_Version]" (click)="$event.stopPropagation()">
-                          <div class="checkbox-wrapper" (click)="onStatusToggle(status.id, project.Project_Name + '__' + project.Target_Version); $event.stopPropagation()">
-                            <input
-                              type="checkbox"
-                              [checked]="isStatusSelected(status.id, project.Project_Name + '__' + project.Target_Version)"
-                              readonly
-                            />
-                            <span class="status-text">{{ status.text }}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
-<!-- <div class="filter-row">
-
-  <input
+   <div class="filter-row ml-10">
+   <input
     id="bugSearchProject"
     type="text"
     class="form-control"
     placeholder="Search by BugID"
     [(ngModel)]="bugSearchText"
-  />
-
-  <div class="multi-select-dropdown">
-    <div class="dropdown-toggle" (click)="toggleTypeDropdown()">
-      {{ getSelectedTypeText(project.Project_Name + '__' + project.Target_Version) }}
-      <span class="dropdown-arrow">▼</span>
-    </div>
-    <div class="dropdown-menu" *ngIf="typeDropdownOpen" (click)="$event.stopPropagation()">
-      <div class="dropdown-controls">
-        <button type="button" class="btn-link"
-          (click)="selectAllTypes(project.Project_Name + '__' + project.Target_Version)">Select All</button>
-        <button type="button" class="btn-link"
-          (click)="clearAllTypeFilters(project.Project_Name + '__' + project.Target_Version)">Clear All</button>
-      </div>
-      <div class="dropdown-item"
-        *ngFor="let type of typesMap[project.Project_Name + '__' + project.Target_Version]">
-        <div class="checkbox-wrapper"
-          (click)="onTypeToggle(type.id, project.Project_Name + '__' + project.Target_Version)">
-          <input type="checkbox"
-            [checked]="isTypeSelected(type.id, project.Project_Name + '__' + project.Target_Version)" />
-          <span class="status-text">{{ type.text }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="multi-select-dropdown">
-    <div class="dropdown-toggle" (click)="toggleStatusDropdown()">
-      {{ getSelectedStatusText(project.Project_Name + '__' + project.Target_Version) }}
-      <span class="dropdown-arrow">▼</span>
-    </div>
-    <div class="dropdown-menu" *ngIf="statusDropdownOpen" (click)="$event.stopPropagation()">
-      <div class="dropdown-controls">
-        <button type="button" class="btn-link"
-          (click)="selectAllStatuses(project.Project_Name + '__' + project.Target_Version)">Select All</button>
-        <button type="button" class="btn-link"
-          (click)="clearAllStatusFilters(project.Project_Name + '__' + project.Target_Version)">Clear All</button>
-      </div>
-      <div class="dropdown-item"
-        *ngFor="let status of statusesMap[project.Project_Name + '__' + project.Target_Version]">
-        <div class="checkbox-wrapper"
-          (click)="onStatusToggle(status.id, project.Project_Name + '__' + project.Target_Version)">
-          <input type="checkbox"
-            [checked]="isStatusSelected(status.id, project.Project_Name + '__' + project.Target_Version)" />
-          <span class="status-text">{{ status.text }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div> -->
-<div class="filter-row ml-10">
-  <!-- BugID Search -->
-  <input
-    id="bugSearchProject"
-    type="text"
-    class="form-control"
-    placeholder="Search by BugID"
-    [(ngModel)]="bugSearchText"
-  />
+    />
 
   <!-- Type Filter -->
   <div class="multi-select-dropdown">
@@ -645,10 +521,6 @@
     </div>
   </div>
 </div>
-
-
-
-
                 <table *ngIf="getSummaryForProject(project).length > 0" class="table table-bordered table-hover mt-3 sticky-header-table">
                   <thead class="sticky-thead">
                     <tr>

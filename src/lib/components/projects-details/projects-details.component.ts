@@ -696,7 +696,6 @@ export class ProjectsDetailsComponent implements OnInit {
     const key = `${project.Project_Name}__${project.Target_Version}`;
     this.ensureProjectSubTabs(project);
     this.projectSubTabs[key].active = idx;
-    // Optionally, trigger data load if needed
     const tab = this.projectSubTabs[key].tabs[idx];
     if (tab.type === 'metrics') this.loadProjectSummary(project);
   }
@@ -736,7 +735,7 @@ export class ProjectsDetailsComponent implements OnInit {
       this.activeTabIndex = idx;
     }
     this.ensureProjectSubTabs(project);
-    this.openMetricsSubTab(project); // Show metrics by default
+    this.openMetricsSubTab(project); 
   }
 
   // Close a bug-details sub-tab for a project
