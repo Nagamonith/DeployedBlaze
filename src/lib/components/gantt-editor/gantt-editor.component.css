@@ -383,9 +383,8 @@ button:hover:not(:disabled) {
 }
 
 .gantt-grid-table th {
-  background-color: #f5f5f5;
   border-bottom: 2px solid #4361ee;
-  
+  background: #e1ecf5 !important;
   padding: 0.5rem;
 }
 

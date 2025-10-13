@@ -105,7 +105,7 @@
   height: 36px;
   border-bottom: 2px solid #e0e7ff;
   padding: 0 8px;
-  overflow-x: auto;
+  
   box-shadow: 0 1px 0 #d1d5db;
   position: sticky;
   top: 76px; /* 40px tab + 36px header */

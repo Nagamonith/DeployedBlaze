@@ -80,12 +80,6 @@
           <p *ngIf="logoutClicked">Total Session Time: {{ sessionDuration }}</p>
           <p *ngIf="logoutClicked">Logout Time: {{ logoutTime }}</p>
         </div>
-
-        <!-- Presence Info -->
-        <div class="presence-div">
-          <p>Current Presence: {{ currentPresence || 'Unknown' }}</p>
-          <p>Total Desk Time (secs): {{ totalDeskSeconds || 0 }}</p>
-        </div>
       </div>
 
       <div class="ac-actions">
