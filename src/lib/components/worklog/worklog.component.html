@@ -59,9 +59,7 @@
   <button class="tab-button" [class.active]="activeTab === 'wfh'" (click)="activeTab = 'wfh'">
     Work From Home
   </button>
-  <button class="tab-button" [class.active]="activeTab === 'leave'" (click)="activeTab = 'leave'">
-    Apply Leave
-  </button>
+ 
 </div>
 
 <div *ngIf="activeTab === 'wfh'" class="wfh-fullscreen-container">
