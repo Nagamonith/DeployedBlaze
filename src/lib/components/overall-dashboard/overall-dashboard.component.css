@@ -1,0 +1,217 @@
+/* ===============================
+   Overall Dashboard Component
+   Tone: same as observ.css — clean, structured, minimal
+================================= */
+
+:host {
+  display: block;
+  font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+
+  /* ✅ Enable full height + vertical scrolling */
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ======= Container ======= */
+.container {
+  max-width: 100%;
+  background: #fff;
+  border-radius: 6px;
+  scrollbar-width: auto;
+  flex: auto;
+  /* ✅ Allow scroll within container if needed */
+  overflow-y: auto;
+}
+
+/* ======= Heading ======= */
+h2 {
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+/* ======= Filters Section ======= */
+.filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  background-color: #fafafa;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.filters label {
+  font-weight: 500;
+  color: #444;
+  margin-right: 6px;
+}
+
+.filters select,
+.filters input[type="date"] {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #fff;
+  min-width: 160px;
+  transition: border-color 0.2s ease;
+}
+
+.filters select:focus,
+.filters input[type="date"]:focus {
+  outline: none;
+  border-color: #0094ff;
+}
+
+/* Button */
+button.btn {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  font-weight: 500;
+  padding: 6px 16px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+button.btn:hover {
+  background-color: #0069d9;
+}
+
+/* ======= Table Section ======= */
+.table-responsive {
+  margin-top: 20px;
+  border-radius: 6px;
+  overflow: auto; /* Enables both vertical and horizontal scroll */
+  border: 1px solid #ddd;
+  max-height: 70vh; /* Adjust scrollable area height */
+  position: relative;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* ✅ Sticky table header */
+thead {
+  background-color: #f4f4f4;
+  color: #333;
+  position: sticky;
+  top: 0;
+  z-index: 2; /* Keeps header above scrolling rows */
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+}
+
+th {
+  font-weight: 600;
+  text-align: center;
+  padding: 10px;
+  border-bottom: 1px solid #e5e5e5;
+  background-color: #f4f4f4; /* Ensure background color stays when sticky */
+}
+
+td {
+  padding: 10px;
+  color: #555;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+
+/* Row hover */
+tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* No record row */
+.text-muted {
+  font-style: italic;
+  color: #888 !important;
+}
+
+/* ======= Work Type Coloring ======= */
+td:nth-child(4) {
+  font-weight: 600;
+}
+
+/* (Note: :contains() isn’t supported natively; for real highlighting use Angular or JS logic) */
+
+/* ======= Responsive ======= */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  table {
+    font-size: 13px;
+  }
+
+  th,
+  td {
+    padding: 8px;
+  }
+}
+
+/* ======= Summary Cards ======= */
+.summary-cards {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  overflow-x: auto; /* ✅ enables horizontal scroll if too many cards */
+}
+
+.summary-card {
+  min-width: 100px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px 14px;
+  background-color: #fafafa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.summary-card .label {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.summary-card .value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Color tone */
+.summary-card.office .value {
+  color: #2a7d2e;
+}
+
+.summary-card.wfh .value {
+  color: #005f9e;
+}
+
+.summary-card.leave .value {
+  color: #b33a3a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .summary-cards {
+    justify-content: flex-start;
+    margin-top: 10px;
+  }
+
+  .summary-card {
+    flex: 1;
+  }
+}
