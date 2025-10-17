@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
@@ -20,6 +20,7 @@ export class HeaderComponent implements OnInit {
   dropdownOpen = false;
   selectedItem: string | null = null;
   dataSubscription!: Subscription;
+ @Input() tabsToDisplay!: string;
 
   currentPageTitle: string = ''; 
 

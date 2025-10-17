@@ -182,10 +182,10 @@
 
     <td>{{ getResourceName(task.id) }}</td>
     <!-- <td>{{ task.start }}</td> -->
-     <td> <input type="date" [(ngModel)]="task.start" [name]="'start-' + task.id" /></td>
+     <td> <input type="date" [(ngModel)]="task.start" [name]="'start-' + task.id" readonly /></td>
     <!-- <td>{{ getOriginalMergeDate(task.id) }}</td> -->
      <td> 
-      <input type="date" [(ngModel)]="task.originalEnd" [name]="'originalEnd-' + task.id" />
+      <input type="date" [(ngModel)]="task.originalEnd" [name]="'originalEnd-' + task.id" readonly />
      </td>
     <td>
       <input type="date" [(ngModel)]="task.end" [name]="'end-' + task.id" />

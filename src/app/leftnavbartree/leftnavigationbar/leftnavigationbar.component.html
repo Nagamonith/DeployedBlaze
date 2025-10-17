@@ -1,49 +1,46 @@
 <nav class="left-nav">
   <ul>
-    <!-- <li>
-      <a placement="end" >
-        <span [innerHTML]="leftNavIcon.Dashboard" (click)="navigatePreDashboard()" >&nbsp;</span>
-      </a>
-    </li>
-    <li>
-      <a placement="end" >
-        <span [innerHTML]="leftNavIcon.Catalogue" (click)="navigateToSprintMatrix()">&nbsp;</span>
-      </a>  
-    </li> -->
       <li>
     <a placement="end">
       <span
         [innerHTML]="leftNavIcon.Dashboard"
         (click)="navigatePreDashboard()"
         [class.active]="activeIcon === 'Dashboard'"
+         matTooltip="Asset Inventory"     
         >&nbsp;</span>
     </a>
   </li>
-  <!-- <li>
-    <a placement="end">
-      <span
-        [innerHTML]="leftNavIcon.Catalogue"
-        (click)="navigateToSprintMatrix()"
-        [class.active]="activeIcon === 'Catalogue'"
-        >&nbsp;</span>
-    </a>
-  </li> -->
   <li>
     <a placement="end">
       <span
         [innerHTML]="leftNavIcon.Catalogue"
         (click)="navigateToProjects()"
         [class.active]="activeIcon === 'Catalogue'"
+          matTooltip="Project Tracking"     
+        matTooltipPosition="right"   
         >&nbsp;</span>
     </a>
   </li>
   
    <li>
-  <a ngbTooltip="Testcase" routerLink="/tester" routerLinkActive="active">
+  <a ngbTooltip="Testcase" routerLink="/tester" routerLinkActive="active" matTooltip="Testcase Management"     
+        matTooltipPosition="right"   >
   <img src="assets/images/icons/testcase-logo3.svg" alt="Testcase" class="testcase-logo" />
 </a>
 
 </li>
+
+  <li *ngIf="userRole === 'Manager'">
+    <a placement="end">
+      <span
+        [innerHTML]="leftNavIcon.Report"
+        (click)="navigateTODashboard()"
+        [class.active]="activeIcon === 'Report'"
+          matTooltip="Dashboard"     
+        matTooltipPosition="right"   
+        >&nbsp;</span>
+    </a>
+  </li>
     <!-- <li>
       <a placement="end" >
         <span 

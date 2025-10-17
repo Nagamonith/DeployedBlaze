@@ -9,11 +9,14 @@ import { RouterLink ,RouterModule} from '@angular/router';
 import { LogoutAlertDialog } from '../../shared/dialogs/logout-alert.dialog/logout-alert.dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 // import { LogoutService } from '../common_services/logout.service';
+import { CommonModule } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Input } from '@angular/core';
 
 @Component({
   selector: 'app-leftnavigationbar',
   standalone: true,
-  imports: [TranslateModule,RouterModule],
+  imports: [TranslateModule,RouterModule,CommonModule,MatTooltipModule],
   templateUrl: './leftnavigationbar.component.html',
   styleUrl: './leftnavigationbar.component.scss'
 })
@@ -28,7 +31,7 @@ export class LeftnavigationbarComponent implements OnInit {
     private leftbar: LeftbarService,
     private dialog: MatDialog
     // private logoutService: LogoutService // <-- Inject
-  ) {
+   ) {
     this.renderer.listen('window', 'click', (e: Event) => {
       if (this.showUserNav) {
         if (
@@ -43,19 +46,25 @@ export class LeftnavigationbarComponent implements OnInit {
     });
   }
   
- 
   public showUserNav:boolean = false
   public showLanguageList:boolean = false
   public langText:string = ''
   public langIcon: any;
   public leftNavIcon = LeftnavIcon
   public defaultLanguage: string = '';
- 
+  public userRole: string | null = null;
+
+  public tabsToDisplay: string ='Adarsh';
+
   @ViewChild('leftNav',{static:false, read:ElementRef}) navbar!:ElementRef
   @ViewChild('userNavLink') userNavLink!: ElementRef;
   @ViewChild('userNavTemplate') userNavTemplate!: ElementRef;
  
   ngOnInit(): void {
+
+  this.userRole = localStorage.getItem('userRole');
+console.log(this.userRole)
+
     //  this.activeIcon = 'Dashboard'; 
     let languageOfChoice = localStorage.getItem('language')
     if(languageOfChoice) {
@@ -90,54 +99,17 @@ export class LeftnavigationbarComponent implements OnInit {
   toggleNavClass(){
     this.showUserNav = !this.showUserNav
   }
-  navigateDashboard() {
-    this.router.navigate(['assets/dashboard']);
-  }
+ 
 
-  // navigatePreDashboard() {
-  //   this.router.navigate(['assets/pre-dashboard']);
-    
-  // }
-  // navigateToSprintMatrix() {
-  //   this.router.navigate(['assets/bug']);
-  // }
-
+  
   navigateToGanttChart() {
     this.router.navigate(['assets/gantt-editor']);
   }
-  // toggleClass(id:number){
-  //   const atags = this.navbar.nativeElement.querySelectorAll('a')
-  //   for(let tag in atags){
-  //     if(atags[tag].className && atags[tag].className.includes('active')){
-  //       atags[tag].classList.remove('active')
-  //     }
-  //   }
-  //   atags[id].classList.add('active')
-  // }
  
   toggleLangList(){
       this.showLanguageList = !this.showLanguageList;
   }
  
-//   switchLanguage(event: any) {
-//   this.loaderService.showLoader();
-//   const lang = event.srcElement.innerText;
-//   this.translate.use(lang).subscribe({
-//     next: () => {
-//       console.log('Language changed successfully to:', lang);
-//       this.langIcon = this.leftNavIcon[lang as keyof typeof LeftnavIcon];
-//       this.langText = lang;
-//       sessionStorage.setItem('language', lang);
-//       this.defaultLanguage = lang;
-//       this.showLanguageList = false;
-//       this.loaderService.hideLoader();
-//     },
-//     error: (err) => {
-//       console.error('Error changing language:', err);
-//       this.loaderService.hideLoader();
-//     }
-//   });
-// }
   setData(_data:any){
     try{
       this.leftnavbardata = _data;
@@ -156,26 +128,6 @@ export class LeftnavigationbarComponent implements OnInit {
     this.activeIcon = icon;
   }
 
-  navigatePreDashboard() {
-    this.setActiveIcon('Dashboard');
-    this.router.navigate(['assets/pre-dashboard']);
-  }
-
-  // navigateToSprintMatrix() {
-  //   this.setActiveIcon('Catalogue');
-  //   this.router.navigate(['assets/bug']);
-  // }
-
-
-
-  //  logout() {
-  //   const confirmed = window.confirm('Are you sure you want to log out?');
-
-  //   if (confirmed) {
-  //     localStorage.clear();
-  //     this.router.navigate(['/login']);
-  //   }
-  // }
   logout() {
   this.dialog.open(LogoutAlertDialog, {
     data: {
@@ -185,6 +137,7 @@ export class LeftnavigationbarComponent implements OnInit {
   }).afterClosed().subscribe(result => {
     if (result) {
       localStorage.clear();
+      this.userRole='';
       this.router.navigate(['/login']);
     }
   });
@@ -197,6 +150,15 @@ navigateToWorkload():void {
   this.setActiveIcon('Report');
   this.router.navigate(['blaze/workload-dashboard'])
 }
+
+navigateTODashboard():void{
+   this.setActiveIcon('Report');
+    this.router.navigate(['assets/Dashboard'])
+  }
+ navigatePreDashboard():void {
+    this.setActiveIcon('Dashboard');
+    this.router.navigate(['assets/pre-dashboard']);
+  }
 
 }
 

@@ -23,6 +23,7 @@ import { ModulesComponent } from '../testcase/modules/modules.component';
 import { ResultsComponent } from '../testcase/results/results.component';
 import { SummaryComponent } from '../testcase/summary/summary.component';
 import { WorklogComponent } from '../lib/components/worklog/worklog.component';
+import { OverallDashboardComponent } from '../lib/components/overall-dashboard/overall-dashboard.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -46,20 +47,13 @@ export const routes: Routes = [
       { path: 'project-details', component: ProjectsDetailsComponent, canActivate: [AuthGuard] },
       { path: 'project-summary', component: ProjectSummaryComponent, canActivate: [AuthGuard] },
       { path: 'bug-time-summary', component: BugTimeSummaryComponent, canActivate: [AuthGuard] },
-      { path: 'bug-details', component: BugDetailsComponent, canActivate: [AuthGuard] }
+      { path: 'bug-details', component: BugDetailsComponent, canActivate: [AuthGuard] },
+      { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard]}
     ]
   },
 
-  // { 
-  //   path:"blaze", 
-  //   component : LayoutsComponent,
-  //   canActivate: [AuthGuard],
-  //   children: [
-  //     { path: 'workload-dashboard', component: WorkloadManagementComponent, canActivate: [AuthGuard] }
-  //   ]
-  // },
 
-  /* ───────── Tester Dashboard section ───────── */
+  ///Tester 
 {
   path: '',
   component: LayoutsComponent,
