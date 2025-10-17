@@ -103,5 +103,40 @@ export class OverallDashboardComponent implements OnInit {
     }
   });
 }
+onEmployeeChange(): void {
+  if (this.selectedEmployee === 'All') {
+    this.loadData();
+  } else {
+    const fromDate = this.startDate || '';
+    const toDate = this.endDate || '';
+    const url = `${this.apiBaseUrl}/api/EmployeeDashboard/GetDashboard?fromDate=${fromDate}&toDate=${toDate}`;
+
+    this.http.get<any[]>(url).subscribe({
+      next: (res) => {
+        const allData = res.map((item) => ({
+          empId: item.EmpId,
+          empMail: item.EmpMail,
+          date: item.Date,
+          type: item.Type,
+          loginTime: item.LoginTime || '-',
+          logoutTime: item.LogoutTime || '-',
+          totalTime: item.TotalTime,
+          deskTime: item.DeskTime,
+          productiveHours: item.ProductiveHours || '00:00:00',
+        }));
+
+        this.dashboardData = allData.filter(
+          (x) => x.empId === this.selectedEmployee
+        );
+
+        // Recalculate totals
+        this.totalOffice = this.dashboardData.filter((x) => x.type === 'Office').length;
+        this.totalWFH = this.dashboardData.filter((x) => x.type === 'WFH').length;
+        this.totalLeave = this.dashboardData.filter((x) => x.type === 'Leave').length;
+      },
+      error: (err) => console.error(err),
+    });
+  }
+}
 
 }

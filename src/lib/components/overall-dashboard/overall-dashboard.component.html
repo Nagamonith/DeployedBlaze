@@ -7,7 +7,6 @@
       <div>
         <label class="form-label fw-bold me-2">Employee</label>
         <select class="form-select" [(ngModel)]="selectedEmployee">
-          <option value="All">All</option>
           <option *ngFor="let emp of employees" [value]="emp.empId">
             {{ emp.name }}
           </option>
