@@ -26,22 +26,20 @@
       <button class="btn btn-primary" (click)="loadData()">Search</button>
 
       <div class="summary-cards d-flex gap-3 mt-3 mt-md-0 ml-50">
-      <div class="summary-card office">
-        <p class="label">Office</p>
-        <p class="value">{{ totalOffice }}</p>
-      </div>
-      <div class="summary-card wfh">
-        <p class="label">WFH</p>
-        <p class="value">{{ totalWFH }}</p>
-      </div>
-      <div class="summary-card leave">
-        <p class="label">Leave</p>
-        <p class="value">{{ totalLeave }}</p>
+        <div class="summary-card office">
+          <p class="label">Office</p>
+          <p class="value">{{ totalOffice }}</p>
+        </div>
+        <div class="summary-card wfh">
+          <p class="label">WFH</p>
+          <p class="value">{{ totalWFH }}</p>
+        </div>
+        <div class="summary-card leave">
+          <p class="label">Leave</p>
+          <p class="value">{{ totalLeave }}</p>
+        </div>
       </div>
     </div>
-    </div>
-
-    
   </div>
 
   <!-- Table -->
@@ -49,7 +47,6 @@
     <table class="table table-bordered table-striped text-center align-middle">
       <thead>
         <tr>
-          <!-- <th>Emp ID</th> -->
           <th>Name</th>
           <th>Date</th>
           <th>Type</th>
@@ -67,7 +64,6 @@
           'type-wfh': row.type === 'WFH',
           'type-leave': row.type === 'Leave'
         }">
-          <!-- <td>{{ row.empId }}</td> -->
           <td>{{ row.empName }}</td>
           <td>{{ row.date | date: 'yyyy-MM-dd' }}</td>
           <td>{{ row.type }}</td>
@@ -76,9 +72,12 @@
           <td>{{ row.totalTime }}</td>
           <td>{{ row.deskTime }}</td>
           <td>{{ row.productiveHours }}</td>
-  <button class="btn bi-0-circle" (click)="openWorkloadPopup(row)">
-    View
-  </button>        </tr>
+          <td>
+            <button class="btn btn-outline-primary btn-sm" (click)="openWorkloadPopup(row)">
+              View
+            </button>
+          </td>
+        </tr>
         <tr *ngIf="dashboardData.length === 0">
           <td colspan="10" class="text-center text-muted">No records found</td>
         </tr>
@@ -86,35 +85,35 @@
     </table>
   </div>
 </div>
+
 <!-- 🔹 Popup Modal -->
 <div class="modal-backdrop" *ngIf="showModal">
   <div class="modal-container">
     <h5 class="mb-3">Workload for {{ selectedDate | date:'yyyy-MM-dd' }}</h5>
 
-    <table class="table table-bordered table-striped text-center">
-      <thead>
-        <tr>
-          <th>Project</th>
-          <th>Task</th>
-          <th>Hours</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let w of workloadData">
-          <td>{{ w.projectName }}</td>
-          <td>{{ w.taskName }}</td>
-          <td>{{ w.hours }}</td>
-          <td>{{ w.description }}</td>
-        </tr>
-        <tr *ngIf="workloadData.length === 0">
-          <td colspan="4" class="text-muted">No workload found</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive" *ngIf="workloadData.length > 0">
+      <table class="table table-bordered table-striped text-center">
+        <thead>
+          <tr>
+            <th *ngFor="let key of tableKeys">{{ key | titlecase }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let w of workloadData">
+            <td *ngFor="let key of tableKeys">{{ w[key] }}</td>
+          </tr>
+        </tbody>
+      </table>
+      
+    </div>
 
-    <div class="text-end mt-3">
-      <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+    <div *ngIf="workloadData.length === 0" class="text-center text-muted p-3">
+      No workload found
+    </div>
+
+    <div class="button-area mt-6">
+      <button class="btn1 btn-secondary" (click)="closeModal()">Close</button>
     </div>
   </div>
+  
 </div>

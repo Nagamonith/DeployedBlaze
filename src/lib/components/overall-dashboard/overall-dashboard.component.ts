@@ -1,3 +1,4 @@
+
 // import { Component, OnInit } from '@angular/core';
 // import { CommonModule } from '@angular/common';
 // import { FormsModule } from '@angular/forms';
@@ -12,7 +13,7 @@
 
 // interface DashboardRow {
 //   empId: string;
-//   empMail: string;
+//   empName: string;
 //   date: string;
 //   type: string;
 //   loginTime: string;
@@ -20,6 +21,13 @@
 //   totalTime: string;
 //   deskTime: string;
 //   productiveHours: string;
+// }
+
+// interface Workload {
+//   projectName: string;
+//   taskName: string;
+//   hours: number;
+//   description: string;
 // }
 
 // @Component({
@@ -50,95 +58,155 @@
 //   totalWFH = 0;
 //   totalLeave = 0;
 
+//   // 🔹 Modal data
+//   showModal = false;
+//   workloadData: Workload[] = [];
+//   selectedDate: string = '';
+// tableKeys: string[] = [];
+
 //   constructor(private http: HttpClient) {}
 
 //   ngOnInit(): void {
 //     this.loadData();
 //   }
 
-//  loadData(): void {
-//   const fromDate = this.startDate || '';
-//   const toDate = this.endDate || '';
-//   const url = `${this.apiBaseUrl}/api/EmployeeDashboard/GetDashboard?fromDate=${fromDate}&toDate=${toDate}`;
-
-//   this.http.get<any[]>(url).subscribe({
-//     next: (res) => {
-//       // 🔄 Transform API response into your model
-//       this.dashboardData = res.map((item) => ({
-//         empId: item.EmpId,
-//         empMail: item.EmpMail,
-//         date: item.Date,
-//         type: item.Type,
-//         loginTime: item.LoginTime || '-',
-//         logoutTime: item.LogoutTime || '-',
-//         totalTime: item.TotalTime,
-//         deskTime: item.DeskTime,
-//         productiveHours: item.ProductiveHours || '00:00:00',
-//       }));
-
-//       // ✅ Extract employee list dynamically
-//       this.employees = [
-//         { empId: 'All', name: 'All Employees' },
-//         ...Array.from(
-//           new Map(
-//             this.dashboardData.map((x) => [x.empId, { empId: x.empId, name:x.empId }])
-//           ).values()
-//         )
-//       ];
-
-//       // ✅ Apply employee filter if not "All"
-//       if (this.selectedEmployee !== 'All') {
-//         this.dashboardData = this.dashboardData.filter(
-//           (x) => x.empId === this.selectedEmployee
-//         );
-//       }
-
-//       // ✅ Count summary
-//       this.totalOffice = this.dashboardData.filter((x) => x.type === 'Office').length;
-//       this.totalWFH = this.dashboardData.filter((x) => x.type === 'WFH').length;
-//       this.totalLeave = this.dashboardData.filter((x) => x.type === 'Leave').length;
-//     },
-//     error: (err) => {
-//       console.error('Error fetching dashboard data:', err);
-//     }
-//   });
-// }
-// onEmployeeChange(): void {
-//   if (this.selectedEmployee === 'All') {
-//     this.loadData();
-//   } else {
+//   loadData(): void {
 //     const fromDate = this.startDate || '';
 //     const toDate = this.endDate || '';
 //     const url = `${this.apiBaseUrl}/api/EmployeeDashboard/GetDashboard?fromDate=${fromDate}&toDate=${toDate}`;
 
 //     this.http.get<any[]>(url).subscribe({
 //       next: (res) => {
-//         const allData = res.map((item) => ({
+//         this.dashboardData = res.map((item) => ({
 //           empId: item.EmpId,
-//           empMail: item.EmpMail,
+//           empName: item.EmpName,
 //           date: item.Date,
 //           type: item.Type,
-//           loginTime: item.LoginTime || '-',
-//           logoutTime: item.LogoutTime || '-',
+//           loginTime: item.LoginTime,
+//           logoutTime: item.LogoutTime,
 //           totalTime: item.TotalTime,
 //           deskTime: item.DeskTime,
 //           productiveHours: item.ProductiveHours || '00:00:00',
 //         }));
 
-//         this.dashboardData = allData.filter(
-//           (x) => x.empId === this.selectedEmployee
-//         );
+//         this.employees = [
+//           { empId: 'All', name: 'All Employees' },
+//           ...Array.from(
+//             new Map(
+//               this.dashboardData.map((x) => [x.empId, { empId: x.empId, name: x.empId }])
+//             ).values()
+//           )
+//         ];
 
-//         // Recalculate totals
+//         if (this.selectedEmployee !== 'All') {
+//           this.dashboardData = this.dashboardData.filter(
+//             (x) => x.empId === this.selectedEmployee
+//           );
+//         }
+
 //         this.totalOffice = this.dashboardData.filter((x) => x.type === 'Office').length;
 //         this.totalWFH = this.dashboardData.filter((x) => x.type === 'WFH').length;
 //         this.totalLeave = this.dashboardData.filter((x) => x.type === 'Leave').length;
 //       },
-//       error: (err) => console.error(err),
+//       error: (err) => console.error('Error fetching dashboard data:', err),
 //     });
 //   }
+
+//   onEmployeeChange(): void {
+//     if (this.selectedEmployee === 'All') {
+//       this.loadData();
+//     } else {
+//       const fromDate = this.startDate || '';
+//       const toDate = this.endDate || '';
+//       const url = `${this.apiBaseUrl}/api/EmployeeDashboard/GetDashboard?fromDate=${fromDate}&toDate=${toDate}`;
+
+//       this.http.get<any[]>(url).subscribe({
+//         next: (res) => {
+//           const allData = res.map((item) => ({
+//             empId: item.EmpId,
+//             empMail: item.EmpMail,
+//             date: item.Date,
+//             type: item.Type,
+//             loginTime: item.LoginTime || '-',
+//             logoutTime: item.LogoutTime || '-',
+//             totalTime: item.TotalTime,
+//             deskTime: item.DeskTime,
+//             productiveHours: item.ProductiveHours || '00:00:00',
+//           }));
+
+         
+
+//           this.totalOffice = this.dashboardData.filter((x) => x.type === 'Office').length;
+//           this.totalWFH = this.dashboardData.filter((x) => x.type === 'WFH').length;
+//           this.totalLeave = this.dashboardData.filter((x) => x.type === 'Leave').length;
+//         },
+//         error: (err) => console.error(err),
+//       });
+//     }
+//   }
+
+//   // openWorkloadPopup(date: string): void {
+//   //   this.selectedDate = date;
+  
+//   //   const url = `https://blazebackend.qualis40.io/api/ResourceHour/workload?startDate=${date}&endDate=${date}`;
+
+//   //   this.http.get<Workload[]>(url).subscribe({
+//   //     next: (res) => {
+//   //       this.workloadData = res;
+//   //       this.showModal = true;
+//   //     },
+//   //     error: (err) => {
+//   //       console.error('Error fetching workload:', err);
+//   //       this.workloadData = [];
+//   //       this.showModal = true;
+//   //     }
+//   //   });
+//   // }
+// openWorkloadPopup(row: any): void {
+//   const date = row.date;
+//   const reporterName = row.empName;
+
+//   if (!date || !reporterName) {
+//     console.error('Missing date or reporter name in row:', row, date, reporterName);
+//     return;
+//   }
+
+//   this.selectedDate = date;
+
+//   const encodedName = encodeURIComponent(reporterName.trim());
+//   const url = `${this.apiBaseUrl}/api/ResourceHour/workload?startDate=${date}&endDate=${date}&reporterName=${encodedName}`;
+
+//   console.log('Calling workload API:', url);
+
+//   this.http.get<any[]>(url).subscribe({
+//     next: (res) => {
+//       this.workloadData = res || [];
+
+//       // 👇 Automatically extract column keys from the first object
+//       if (this.workloadData.length > 0) {
+//         this.tableKeys = Object.keys(this.workloadData[0]);
+//       } else {
+//         this.tableKeys = [];
+//       }
+
+//       this.showModal = true;
+//     },
+//     error: (err) => {
+//       console.error('Error fetching workload:', err);
+//       this.workloadData = [];
+//       this.tableKeys = [];
+//       this.showModal = true;
+//     }
+//   });
 // }
 
+
+
+
+//   closeModal(): void {
+//     this.showModal = false;
+//     this.workloadData = [];
+//   }
 // }
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -162,13 +230,6 @@ interface DashboardRow {
   totalTime: string;
   deskTime: string;
   productiveHours: string;
-}
-
-interface Workload {
-  projectName: string;
-  taskName: string;
-  hours: number;
-  description: string;
 }
 
 @Component({
@@ -201,8 +262,9 @@ export class OverallDashboardComponent implements OnInit {
 
   // 🔹 Modal data
   showModal = false;
-  workloadData: Workload[] = [];
+  workloadData: any[] = [];
   selectedDate: string = '';
+  tableKeys: string[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -252,57 +314,82 @@ export class OverallDashboardComponent implements OnInit {
     });
   }
 
-  onEmployeeChange(): void {
-    if (this.selectedEmployee === 'All') {
-      this.loadData();
-    } else {
-      const fromDate = this.startDate || '';
-      const toDate = this.endDate || '';
-      const url = `${this.apiBaseUrl}/api/EmployeeDashboard/GetDashboard?fromDate=${fromDate}&toDate=${toDate}`;
+ onEmployeeChange(): void {
+  if (this.selectedEmployee === 'All') {
+    this.loadData();
+  } else {
+    const fromDate = this.startDate || '';
+    const toDate = this.endDate || '';
+    const url = `${this.apiBaseUrl}/api/EmployeeDashboard/GetDashboard?fromDate=${fromDate}&toDate=${toDate}`;
 
-      this.http.get<any[]>(url).subscribe({
-        next: (res) => {
-          const allData = res.map((item) => ({
-            empId: item.EmpId,
-            empMail: item.EmpMail,
-            date: item.Date,
-            type: item.Type,
-            loginTime: item.LoginTime || '-',
-            logoutTime: item.LogoutTime || '-',
-            totalTime: item.TotalTime,
-            deskTime: item.DeskTime,
-            productiveHours: item.ProductiveHours || '00:00:00',
-          }));
+    this.http.get<any[]>(url).subscribe({
+      next: (res) => {
+        const allData: DashboardRow[] = res.map((item) => ({
+          empId: item.EmpId,
+          empName: item.EmpName, // ✅ added this line
+          date: item.Date,
+          type: item.Type,
+          loginTime: item.LoginTime || '-',
+          logoutTime: item.LogoutTime || '-',
+          totalTime: item.TotalTime,
+          deskTime: item.DeskTime,
+          productiveHours: item.ProductiveHours || '00:00:00',
+        }));
 
-         
+        // Filter based on selected employee
+        this.dashboardData = allData.filter(
+          (x) => x.empId === this.selectedEmployee
+        );
 
-          this.totalOffice = this.dashboardData.filter((x) => x.type === 'Office').length;
-          this.totalWFH = this.dashboardData.filter((x) => x.type === 'WFH').length;
-          this.totalLeave = this.dashboardData.filter((x) => x.type === 'Leave').length;
-        },
-        error: (err) => console.error(err),
-      });
-    }
+        // Recalculate summaries
+        this.totalOffice = this.dashboardData.filter((x) => x.type === 'Office').length;
+        this.totalWFH = this.dashboardData.filter((x) => x.type === 'WFH').length;
+        this.totalLeave = this.dashboardData.filter((x) => x.type === 'Leave').length;
+      },
+      error: (err) => console.error(err),
+    });
   }
+}
 
-  // openWorkloadPopup(date: string): void {
+
+  // ✅ Dynamic workload popup
+  // openWorkloadPopup(row: any): void {
+  //   const date = row.date;
+  //   const reporterName = row.empName;
+
+  //   if (!date || !reporterName) {
+  //     console.error('Missing date or reporter name in row:', row, date, reporterName);
+  //     return;
+  //   }
+
   //   this.selectedDate = date;
-  
-  //   const url = `https://blazebackend.qualis40.io/api/ResourceHour/workload?startDate=${date}&endDate=${date}`;
+  //   const encodedName = encodeURIComponent(reporterName.trim());
+  //   const url = `${this.apiBaseUrl}/api/ResourceHour/workload?startDate=${date}&endDate=${date}&reporterName=${encodedName}`;
 
-  //   this.http.get<Workload[]>(url).subscribe({
+  //   console.log('Calling workload API:', url);
+
+  //   this.http.get<any[]>(url).subscribe({
   //     next: (res) => {
-  //       this.workloadData = res;
+  //       this.workloadData = res || [];
+
+  //       // Extract dynamic column keys
+  //       if (this.workloadData.length > 0) {
+  //         this.tableKeys = Object.keys(this.workloadData[0]);
+  //       } else {
+  //         this.tableKeys = [];
+  //       }
+
   //       this.showModal = true;
   //     },
   //     error: (err) => {
   //       console.error('Error fetching workload:', err);
   //       this.workloadData = [];
+  //       this.tableKeys = [];
   //       this.showModal = true;
   //     }
   //   });
   // }
-openWorkloadPopup(row: any): void {
+  openWorkloadPopup(row: any): void {
   const date = row.date;
   const reporterName = row.empName;
 
@@ -318,23 +405,41 @@ openWorkloadPopup(row: any): void {
 
   console.log('Calling workload API:', url);
 
-  this.http.get<Workload[]>(url).subscribe({
+  this.http.get<any[]>(url).subscribe({
     next: (res) => {
-      this.workloadData = res;
+      // ✅ Map all fields as they come from API
+      this.workloadData = res.map(item => ({
+        Name: item.resource_Name,
+        Project_Name: item.project_Name,
+        BugID: item.mantis_BugID,
+        Total_Hours: item.total_Hoursd_Worked,
+        Summary: item.task_Summary
+        // actual_Start: item.actual_Start,
+        // original_Merge_Date: item.original_Merge_Date,
+        // progress: item.progress,
+        // current_Merge_Date: item.current_Merge_Date
+      }));
+
+      // ✅ Dynamically extract table keys
+      this.tableKeys = this.workloadData.length > 0
+        ? Object.keys(this.workloadData[0])
+        : [];
+
       this.showModal = true;
     },
     error: (err) => {
       console.error('Error fetching workload:', err);
       this.workloadData = [];
+      this.tableKeys = [];
       this.showModal = true;
     }
   });
 }
 
 
-
   closeModal(): void {
     this.showModal = false;
     this.workloadData = [];
+    this.tableKeys = [];
   }
 }
