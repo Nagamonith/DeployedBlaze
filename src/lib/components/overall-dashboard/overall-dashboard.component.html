@@ -49,8 +49,8 @@
     <table class="table table-bordered table-striped text-center align-middle">
       <thead>
         <tr>
-          <th>Emp ID</th>
-          <th>Email</th>
+          <!-- <th>Emp ID</th> -->
+          <th>Name</th>
           <th>Date</th>
           <th>Type</th>
           <th>Log In</th>
@@ -58,6 +58,7 @@
           <th>Total Time</th>
           <th>Desk Time</th>
           <th>Productive Hours</th>
+          <th>Summary</th>
         </tr>
       </thead>
       <tbody>
@@ -66,8 +67,8 @@
           'type-wfh': row.type === 'WFH',
           'type-leave': row.type === 'Leave'
         }">
-          <td>{{ row.empId }}</td>
-          <td>{{ row.empMail }}</td>
+          <!-- <td>{{ row.empId }}</td> -->
+          <td>{{ row.empName }}</td>
           <td>{{ row.date | date: 'yyyy-MM-dd' }}</td>
           <td>{{ row.type }}</td>
           <td>{{ row.loginTime | date:'HH:mm:ss' }}</td>
@@ -75,11 +76,45 @@
           <td>{{ row.totalTime }}</td>
           <td>{{ row.deskTime }}</td>
           <td>{{ row.productiveHours }}</td>
-        </tr>
+  <button class="btn bi-0-circle" (click)="openWorkloadPopup(row)">
+    View
+  </button>        </tr>
         <tr *ngIf="dashboardData.length === 0">
           <td colspan="10" class="text-center text-muted">No records found</td>
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+<!-- 🔹 Popup Modal -->
+<div class="modal-backdrop" *ngIf="showModal">
+  <div class="modal-container">
+    <h5 class="mb-3">Workload for {{ selectedDate | date:'yyyy-MM-dd' }}</h5>
+
+    <table class="table table-bordered table-striped text-center">
+      <thead>
+        <tr>
+          <th>Project</th>
+          <th>Task</th>
+          <th>Hours</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let w of workloadData">
+          <td>{{ w.projectName }}</td>
+          <td>{{ w.taskName }}</td>
+          <td>{{ w.hours }}</td>
+          <td>{{ w.description }}</td>
+        </tr>
+        <tr *ngIf="workloadData.length === 0">
+          <td colspan="4" class="text-muted">No workload found</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="text-end mt-3">
+      <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+    </div>
   </div>
 </div>

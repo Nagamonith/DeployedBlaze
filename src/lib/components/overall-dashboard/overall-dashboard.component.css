@@ -72,17 +72,19 @@ h2 {
 
 /* Button */
 button.btn {
-  background-color: #007bff;
-  border: none;
-  color: white;
+  height: 36px;
+  padding: 5px 10px;
+  background: #30B9EF;
+  color: #fff;
+  font-size: 14px;
   font-weight: 500;
-  padding: 6px 16px;
+  border: none;
   border-radius: 4px;
-  transition: background-color 0.2s ease;
+  transition: background 0.2s;
 }
 
 button.btn:hover {
-  background-color: #0069d9;
+  background-color: #30B9EF;
 }
 
 /* ======= Table Section ======= */
@@ -139,9 +141,9 @@ tbody tr:hover {
 }
 
 /* ======= Work Type Coloring ======= */
-td:nth-child(4) {
+/* td:nth-child(4) {
   font-weight: 600;
-}
+} */
 
 /* (Note: :contains() isn’t supported natively; for real highlighting use Angular or JS logic) */
 
@@ -214,4 +216,23 @@ td:nth-child(4) {
   .summary-card {
     flex: 1;
   }
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.modal-container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 80%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
