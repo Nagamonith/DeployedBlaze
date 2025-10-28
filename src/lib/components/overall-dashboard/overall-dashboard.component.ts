@@ -1,4 +1,3 @@
-
 // import { Component, OnInit } from '@angular/core';
 // import { CommonModule } from '@angular/common';
 // import { FormsModule } from '@angular/forms';
@@ -21,13 +20,6 @@
 //   totalTime: string;
 //   deskTime: string;
 //   productiveHours: string;
-// }
-
-// interface Workload {
-//   projectName: string;
-//   taskName: string;
-//   hours: number;
-//   description: string;
 // }
 
 // @Component({
@@ -60,14 +52,19 @@
 
 //   // 🔹 Modal data
 //   showModal = false;
-//   workloadData: Workload[] = [];
+//   workloadData: any[] = [];
 //   selectedDate: string = '';
-// tableKeys: string[] = [];
+//   tableKeys: string[] = [];
+
+//   // 🔹 New variable to hold productive hours summary (parsed JSON)
+//   summaryData: any[] = [];
 
 //   constructor(private http: HttpClient) {}
 
 //   ngOnInit(): void {
 //     this.loadData();
+//     // ✅ Call once on init to populate productive hours
+//     this.fetchProductiveHoursSummary();
 //   }
 
 //   loadData(): void {
@@ -93,7 +90,7 @@
 //           { empId: 'All', name: 'All Employees' },
 //           ...Array.from(
 //             new Map(
-//               this.dashboardData.map((x) => [x.empId, { empId: x.empId, name: x.empId }])
+//               this.dashboardData.map((x) => [x.empName, { empId: x.empName, name: x.empName }])
 //             ).values()
 //           )
 //         ];
@@ -122,9 +119,9 @@
 
 //       this.http.get<any[]>(url).subscribe({
 //         next: (res) => {
-//           const allData = res.map((item) => ({
+//           const allData: DashboardRow[] = res.map((item) => ({
 //             empId: item.EmpId,
-//             empMail: item.EmpMail,
+//             empName: item.EmpName,
 //             date: item.Date,
 //             type: item.Type,
 //             loginTime: item.LoginTime || '-',
@@ -134,7 +131,9 @@
 //             productiveHours: item.ProductiveHours || '00:00:00',
 //           }));
 
-         
+//           this.dashboardData = allData.filter(
+//             (x) => x.empId === this.selectedEmployee
+//           );
 
 //           this.totalOffice = this.dashboardData.filter((x) => x.type === 'Office').length;
 //           this.totalWFH = this.dashboardData.filter((x) => x.type === 'WFH').length;
@@ -145,67 +144,79 @@
 //     }
 //   }
 
-//   // openWorkloadPopup(date: string): void {
-//   //   this.selectedDate = date;
-  
-//   //   const url = `https://blazebackend.qualis40.io/api/ResourceHour/workload?startDate=${date}&endDate=${date}`;
+//   // ✅ Safe updated workload fetch with backward compatibility
+//   openWorkloadPopup(row: any): void {
+//     const date = row.date;
+//     const reporterName = row.empName;
 
-//   //   this.http.get<Workload[]>(url).subscribe({
-//   //     next: (res) => {
-//   //       this.workloadData = res;
-//   //       this.showModal = true;
-//   //     },
-//   //     error: (err) => {
-//   //       console.error('Error fetching workload:', err);
-//   //       this.workloadData = [];
-//   //       this.showModal = true;
-//   //     }
-//   //   });
-//   // }
-// openWorkloadPopup(row: any): void {
-//   const date = row.date;
-//   const reporterName = row.empName;
+//     if (!date || !reporterName) {
+//       console.error('Missing date or reporter name in row:', row, date, reporterName);
+//       return;
+//     }
 
-//   if (!date || !reporterName) {
-//     console.error('Missing date or reporter name in row:', row, date, reporterName);
-//     return;
+//     this.selectedDate = date;
+
+//     const encodedName = encodeURIComponent(reporterName.trim());
+//     const url = `${this.apiBaseUrl}/api/ResourceHour/workload?startDate=${date}&endDate=${date}&reporterName=${encodedName}`;
+
+//     console.log('Calling workload API:', url);
+
+//     this.http.get<any>(url).subscribe({
+//       next: (res) => {
+//         // ✅ Handle new backend format
+//         const data = Array.isArray(res) ? res : res?.records || [];
+//         this.workloadData = data.map((item: { resource_Name: any; project_Name: any; mantis_BugID: any; total_Hoursd_Worked: any; task_Summary: any; }) => ({
+//           Name: item.resource_Name,
+//           Project_Name: item.project_Name,
+//           BugID: item.mantis_BugID,
+//           TotalHours: item.total_Hoursd_Worked,
+//           Summary: item.task_Summary,
+//         }));
+
+//         this.tableKeys = this.workloadData.length > 0
+//           ? Object.keys(this.workloadData[0])
+//           : [];
+
+//         this.showModal = true;
+//       },
+//       error: (err) => {
+//         console.error('Error fetching workload:', err);
+//         this.workloadData = [];
+//         this.tableKeys = [];
+//         this.showModal = true;
+//       }
+//     });
 //   }
 
-//   this.selectedDate = date;
+//   // ✅ New helper to call once on init
+//   fetchProductiveHoursSummary(): void {
+//     const today = new Date().toISOString().split('T')[0];
+//     const url = `${this.apiBaseUrl}/api/ResourceHour/workload?startDate=${today}&endDate=${today}`;
 
-//   const encodedName = encodeURIComponent(reporterName.trim());
-//   const url = `${this.apiBaseUrl}/api/ResourceHour/workload?startDate=${date}&endDate=${date}&reporterName=${encodedName}`;
+//     this.http.get<any>(url).subscribe({
+//       next: (res) => {
+//         // ✅ Handle both old/new responses
+//         const summaryJson = res?.summaryJson ? JSON.parse(res.summaryJson) : [];
+//         this.summaryData = summaryJson;
 
-//   console.log('Calling workload API:', url);
-
-//   this.http.get<any[]>(url).subscribe({
-//     next: (res) => {
-//       this.workloadData = res || [];
-
-//       // 👇 Automatically extract column keys from the first object
-//       if (this.workloadData.length > 0) {
-//         this.tableKeys = Object.keys(this.workloadData[0]);
-//       } else {
-//         this.tableKeys = [];
+//         // 🔹 Match employee names and set productive hours if applicable
+//         for (const row of this.dashboardData) {
+//           const match = summaryJson.find((x: any) => x.Resource_Name === row.empName);
+//           if (match) {
+//             row.productiveHours = match.Total_Hours_Worked || '00:00:00';
+//           }
+//         }
+//       },
+//       error: (err) => {
+//         console.error('Error fetching productive hours summary:', err);
 //       }
-
-//       this.showModal = true;
-//     },
-//     error: (err) => {
-//       console.error('Error fetching workload:', err);
-//       this.workloadData = [];
-//       this.tableKeys = [];
-//       this.showModal = true;
-//     }
-//   });
-// }
-
-
-
+//     });
+//   }
 
 //   closeModal(): void {
 //     this.showModal = false;
 //     this.workloadData = [];
+//     this.tableKeys = [];
 //   }
 // }
 import { Component, OnInit } from '@angular/core';
@@ -266,19 +277,27 @@ export class OverallDashboardComponent implements OnInit {
   selectedDate: string = '';
   tableKeys: string[] = [];
 
+  // 🔹 New variable to hold productive hours summary (parsed JSON)
+  summaryData: any[] = [];
+
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+    console.log('🟢 Initializing dashboard...');
     this.loadData();
+    this.fetchProductiveHoursSummary();
   }
 
   loadData(): void {
     const fromDate = this.startDate || '';
     const toDate = this.endDate || '';
     const url = `${this.apiBaseUrl}/api/EmployeeDashboard/GetDashboard?fromDate=${fromDate}&toDate=${toDate}`;
+    console.log('📡 Loading data from:', url);
 
     this.http.get<any[]>(url).subscribe({
       next: (res) => {
+        console.log('✅ Raw dashboard response:', res);
+
         this.dashboardData = res.map((item) => ({
           empId: item.EmpId,
           empName: item.EmpName,
@@ -291,153 +310,160 @@ export class OverallDashboardComponent implements OnInit {
           productiveHours: item.ProductiveHours || '00:00:00',
         }));
 
+        // ✅ FIXED: Properly map employees using EmpId
         this.employees = [
           { empId: 'All', name: 'All Employees' },
           ...Array.from(
             new Map(
-              this.dashboardData.map((x) => [x.empName, { empId: x.empName, name: x.empName }])
+              this.dashboardData.map((x) => [x.empId, { empId: x.empId, name: x.empName }])
             ).values()
           )
         ];
 
+        console.log('👥 Employee list:', this.employees);
+
+        // Apply filter if already selected
         if (this.selectedEmployee !== 'All') {
+          console.log('🟡 Applying filter for employee:', this.selectedEmployee);
           this.dashboardData = this.dashboardData.filter(
             (x) => x.empId === this.selectedEmployee
           );
         }
 
+        // Count summary
         this.totalOffice = this.dashboardData.filter((x) => x.type === 'Office').length;
         this.totalWFH = this.dashboardData.filter((x) => x.type === 'WFH').length;
         this.totalLeave = this.dashboardData.filter((x) => x.type === 'Leave').length;
+
+        console.log('📊 Summary -> Office:', this.totalOffice, 'WFH:', this.totalWFH, 'Leave:', this.totalLeave);
       },
-      error: (err) => console.error('Error fetching dashboard data:', err),
+      error: (err) => console.error('❌ Error fetching dashboard data:', err),
     });
   }
 
- onEmployeeChange(): void {
-  if (this.selectedEmployee === 'All') {
-    this.loadData();
-  } else {
-    const fromDate = this.startDate || '';
-    const toDate = this.endDate || '';
-    const url = `${this.apiBaseUrl}/api/EmployeeDashboard/GetDashboard?fromDate=${fromDate}&toDate=${toDate}`;
+  onEmployeeChange(): void {
+    console.log('🔄 Employee changed to:', this.selectedEmployee);
 
-    this.http.get<any[]>(url).subscribe({
+    if (this.selectedEmployee === 'All') {
+      console.log('🔁 Reloading all data...');
+      this.loadData();
+    } else {
+      const fromDate = this.startDate || '';
+      const toDate = this.endDate || '';
+      const url = `${this.apiBaseUrl}/api/EmployeeDashboard/GetDashboard?fromDate=${fromDate}&toDate=${toDate}`;
+      console.log('📡 Refetching for employee filter:', url);
+
+      this.http.get<any[]>(url).subscribe({
+        next: (res) => {
+          console.log('✅ Refetch response:', res);
+
+          const allData: DashboardRow[] = res.map((item) => ({
+            empId: item.EmpId,
+            empName: item.EmpName,
+            date: item.Date,
+            type: item.Type,
+            loginTime: item.LoginTime || '-',
+            logoutTime: item.LogoutTime || '-',
+            totalTime: item.TotalTime,
+            deskTime: item.DeskTime,
+            productiveHours: item.ProductiveHours || '00:00:00',
+          }));
+
+          // ✅ Use empId for filtering
+          this.dashboardData = allData.filter(
+            (x) => x.empId === this.selectedEmployee
+          );
+
+          console.log('🧩 Filtered data:', this.dashboardData);
+
+          this.totalOffice = this.dashboardData.filter((x) => x.type === 'Office').length;
+          this.totalWFH = this.dashboardData.filter((x) => x.type === 'WFH').length;
+          this.totalLeave = this.dashboardData.filter((x) => x.type === 'Leave').length;
+
+          console.log('📊 Filtered Summary -> Office:', this.totalOffice, 'WFH:', this.totalWFH, 'Leave:', this.totalLeave);
+        },
+        error: (err) => console.error('❌ Error during employee filter fetch:', err),
+      });
+    }
+  }
+
+  // ✅ Safe updated workload fetch with backward compatibility
+  openWorkloadPopup(row: any): void {
+    const date = row.date;
+    const reporterName = row.empName;
+
+    console.log('🟢 Opening workload popup for:', row);
+
+    if (!date || !reporterName) {
+      console.error('❌ Missing date or reporter name in row:', row, date, reporterName);
+      return;
+    }
+
+    this.selectedDate = date;
+    const encodedName = encodeURIComponent(reporterName.trim());
+    const url = `${this.apiBaseUrl}/api/ResourceHour/workload?startDate=${date}&endDate=${date}&reporterName=${encodedName}`;
+    console.log('📡 Calling workload API:', url);
+
+    this.http.get<any>(url).subscribe({
       next: (res) => {
-        const allData: DashboardRow[] = res.map((item) => ({
-          empId: item.EmpId,
-          empName: item.EmpName, // ✅ added this line
-          date: item.Date,
-          type: item.Type,
-          loginTime: item.LoginTime || '-',
-          logoutTime: item.LogoutTime || '-',
-          totalTime: item.TotalTime,
-          deskTime: item.DeskTime,
-          productiveHours: item.ProductiveHours || '00:00:00',
+        console.log('✅ Workload response:', res);
+
+        const data = Array.isArray(res) ? res : res?.records || [];
+        this.workloadData = data.map((item: any) => ({
+          Name: item.resource_Name,
+          Project_Name: item.project_Name,
+          BugID: item.mantis_BugID,
+          TotalHours: item.total_Hoursd_Worked,
+          Summary: item.task_Summary,
         }));
 
-        // Filter based on selected employee
-        this.dashboardData = allData.filter(
-          (x) => x.empId === this.selectedEmployee
-        );
+        this.tableKeys = this.workloadData.length > 0
+          ? Object.keys(this.workloadData[0])
+          : [];
 
-        // Recalculate summaries
-        this.totalOffice = this.dashboardData.filter((x) => x.type === 'Office').length;
-        this.totalWFH = this.dashboardData.filter((x) => x.type === 'WFH').length;
-        this.totalLeave = this.dashboardData.filter((x) => x.type === 'Leave').length;
+        console.log('🧾 Workload table keys:', this.tableKeys);
+        this.showModal = true;
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        console.error('❌ Error fetching workload:', err);
+        this.workloadData = [];
+        this.tableKeys = [];
+        this.showModal = true;
+      }
     });
   }
-}
 
+  // ✅ Fetch Productive Hours Summary
+  fetchProductiveHoursSummary(): void {
+    const today = new Date().toISOString().split('T')[0];
+    const url = `${this.apiBaseUrl}/api/ResourceHour/workload?startDate=${today}&endDate=${today}`;
+    console.log('📡 Fetching productive hours summary:', url);
 
-  // ✅ Dynamic workload popup
-  // openWorkloadPopup(row: any): void {
-  //   const date = row.date;
-  //   const reporterName = row.empName;
+    this.http.get<any>(url).subscribe({
+      next: (res) => {
+        console.log('✅ Productive hours summary response:', res);
 
-  //   if (!date || !reporterName) {
-  //     console.error('Missing date or reporter name in row:', row, date, reporterName);
-  //     return;
-  //   }
+        const summaryJson = res?.summaryJson ? JSON.parse(res.summaryJson) : [];
+        this.summaryData = summaryJson;
 
-  //   this.selectedDate = date;
-  //   const encodedName = encodeURIComponent(reporterName.trim());
-  //   const url = `${this.apiBaseUrl}/api/ResourceHour/workload?startDate=${date}&endDate=${date}&reporterName=${encodedName}`;
+        // 🔹 Match employee names and update productive hours
+        for (const row of this.dashboardData) {
+          const match = summaryJson.find((x: any) => x.Resource_Name === row.empName);
+          if (match) {
+            row.productiveHours = match.Total_Hours_Worked || '00:00:00';
+          }
+        }
 
-  //   console.log('Calling workload API:', url);
-
-  //   this.http.get<any[]>(url).subscribe({
-  //     next: (res) => {
-  //       this.workloadData = res || [];
-
-  //       // Extract dynamic column keys
-  //       if (this.workloadData.length > 0) {
-  //         this.tableKeys = Object.keys(this.workloadData[0]);
-  //       } else {
-  //         this.tableKeys = [];
-  //       }
-
-  //       this.showModal = true;
-  //     },
-  //     error: (err) => {
-  //       console.error('Error fetching workload:', err);
-  //       this.workloadData = [];
-  //       this.tableKeys = [];
-  //       this.showModal = true;
-  //     }
-  //   });
-  // }
-  openWorkloadPopup(row: any): void {
-  const date = row.date;
-  const reporterName = row.empName;
-
-  if (!date || !reporterName) {
-    console.error('Missing date or reporter name in row:', row, date, reporterName);
-    return;
+        console.log('🕒 Updated dashboard with productive hours:', this.dashboardData);
+      },
+      error: (err) => {
+        console.error('❌ Error fetching productive hours summary:', err);
+      }
+    });
   }
 
-  this.selectedDate = date;
-
-  const encodedName = encodeURIComponent(reporterName.trim());
-  const url = `${this.apiBaseUrl}/api/ResourceHour/workload?startDate=${date}&endDate=${date}&reporterName=${encodedName}`;
-
-  console.log('Calling workload API:', url);
-
-  this.http.get<any[]>(url).subscribe({
-    next: (res) => {
-      // ✅ Map all fields as they come from API
-      this.workloadData = res.map(item => ({
-        Name: item.resource_Name,
-        Project_Name: item.project_Name,
-        BugID: item.mantis_BugID,
-        TotalHours: item.total_Hoursd_Worked,
-        Summary: item.task_Summary
-        // actual_Start: item.actual_Start,
-        // original_Merge_Date: item.original_Merge_Date,
-        // progress: item.progress,
-        // current_Merge_Date: item.current_Merge_Date
-      }));
-
-      // ✅ Dynamically extract table keys
-      this.tableKeys = this.workloadData.length > 0
-        ? Object.keys(this.workloadData[0])
-        : [];
-
-      this.showModal = true;
-    },
-    error: (err) => {
-      console.error('Error fetching workload:', err);
-      this.workloadData = [];
-      this.tableKeys = [];
-      this.showModal = true;
-    }
-  });
-}
-
-
   closeModal(): void {
+    console.log('🔴 Closing modal');
     this.showModal = false;
     this.workloadData = [];
     this.tableKeys = [];
