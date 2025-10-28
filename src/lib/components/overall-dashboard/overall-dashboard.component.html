@@ -91,11 +91,11 @@
   <div class="modal-container">
     <h5 class="mb-3">Workload for {{ selectedDate | date:'yyyy-MM-dd' }}</h5>
 
-    <div class="table-responsive" *ngIf="workloadData.length > 0">
+    <!-- <div class="table-responsive" *ngIf="workloadData.length > 0">
       <table class="table table-bordered table-striped text-center">
         <thead>
           <tr>
-            <th *ngFor="let key of tableKeys">{{ key | titlecase }}</th>
+            <th *ngFor="let key of tableKeys">{{ key }}</th>
           </tr>
         </thead>
         <tbody>
@@ -105,7 +105,37 @@
         </tbody>
       </table>
       
-    </div>
+    </div> -->
+<div class="table-responsive" *ngIf="workloadData.length > 0">
+  <table class="table table-bordered table-striped text-center">
+    <thead>
+      <tr>
+        <th *ngFor="let key of tableKeys">{{ key }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let w of workloadData">
+        <td *ngFor="let key of tableKeys">
+          <!-- Case-insensitive match for BugId -->
+          <ng-container *ngIf="key.toLowerCase() === 'bugid'; else normalCell">
+            <a
+              [href]="'https://sprintlyzer.qualis40.io/mantisbt/view.php?id=' + w[key]"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary text-decoration-underline"
+            >
+              {{ w[key] }}
+            </a>
+          </ng-container>
+
+          <ng-template #normalCell>
+            {{ w[key] }}
+          </ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
     <div *ngIf="workloadData.length === 0" class="text-center text-muted p-3">
       No workload found

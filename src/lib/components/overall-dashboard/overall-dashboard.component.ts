@@ -295,7 +295,7 @@ export class OverallDashboardComponent implements OnInit {
           { empId: 'All', name: 'All Employees' },
           ...Array.from(
             new Map(
-              this.dashboardData.map((x) => [x.empId, { empId: x.empId, name: x.empId }])
+              this.dashboardData.map((x) => [x.empName, { empId: x.empName, name: x.empName }])
             ).values()
           )
         ];
@@ -412,7 +412,7 @@ export class OverallDashboardComponent implements OnInit {
         Name: item.resource_Name,
         Project_Name: item.project_Name,
         BugID: item.mantis_BugID,
-        Total_Hours: item.total_Hoursd_Worked,
+        TotalHours: item.total_Hoursd_Worked,
         Summary: item.task_Summary
         // actual_Start: item.actual_Start,
         // original_Merge_Date: item.original_Merge_Date,
