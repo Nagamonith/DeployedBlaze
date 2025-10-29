@@ -415,7 +415,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { GanttEditorComponent } from '../gantt-editor/gantt-editor.component';
-import { LeftnavIcon } from '../../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum';
+import { LeftnavIcon } from '../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum';
 import { WorkloadManagementComponent } from '../workload-management/workload-management.component';
 import { DxCheckBoxModule } from 'devextreme-angular';
 

@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { DeleteConfirmationDialogComponent } from '../../../app/shared/dialogs/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { DeleteConfirmationDialogComponent } from '../../app/shared/dialogs/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { RequiredFieldAlertDialogComponent } from '../../../app/shared/dialogs/required-field-alert-dialog/required-field-alert-dialog.component';
+import { RequiredFieldAlertDialogComponent } from '../../app/shared/dialogs/required-field-alert-dialog/required-field-alert-dialog.component';
 
 @Component({
   selector: 'app-vendor-dashboard',

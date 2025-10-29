@@ -1,7 +1,7 @@
 
-import { DeleteConfirmationDialogComponent } from "../../../app/shared/dialogs/delete-confirmation-dialog/delete-confirmation-dialog.component";
+import { DeleteConfirmationDialogComponent } from "../../app/shared/dialogs/delete-confirmation-dialog/delete-confirmation-dialog.component";
 
-import { LeftnavIcon } from "../../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum";
+import { LeftnavIcon } from "../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum";
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { NotFoundAlertDialogComponent } from '../../../app/shared/dialogs/not-found-alert-dialog/not-found-alert-dialog.component';
+import { NotFoundAlertDialogComponent } from '../../app/shared/dialogs/not-found-alert-dialog/not-found-alert-dialog.component';
 
 
 interface AssetSummary {

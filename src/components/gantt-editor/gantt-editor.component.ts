@@ -5,12 +5,12 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { DxGanttModule } from 'devextreme-angular';
 import { FormsModule } from '@angular/forms';
-import { NotFoundAlertDialogComponent } from '../../../app/shared/dialogs/not-found-alert-dialog/not-found-alert-dialog.component';
+import { NotFoundAlertDialogComponent } from '../../app/shared/dialogs/not-found-alert-dialog/not-found-alert-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Input, OnInit } from '@angular/core';
-import { ErrorAlertDialogComponent } from '../../../app/shared/dialogs/error-alert-dialog/error-alert-dialog.component';
-import { SuccessAlertDialogComponent } from '../../../app/shared/dialogs/success-alert-dialog/success-alert-dialog.component';
-import { LeftnavIcon } from '../../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum';
+import { ErrorAlertDialogComponent } from '../../app/shared/dialogs/error-alert-dialog/error-alert-dialog.component';
+import { SuccessAlertDialogComponent } from '../../app/shared/dialogs/success-alert-dialog/success-alert-dialog.component';
+import { LeftnavIcon } from '../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum';
 
 
 @Component({

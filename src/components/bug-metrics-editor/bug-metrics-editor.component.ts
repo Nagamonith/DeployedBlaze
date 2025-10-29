@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { NotFoundAlertDialogComponent } from '../../../app/shared/dialogs/not-found-alert-dialog/not-found-alert-dialog.component';
+import { NotFoundAlertDialogComponent } from '../../app/shared/dialogs/not-found-alert-dialog/not-found-alert-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
 interface BugSummary {

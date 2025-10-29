@@ -6,11 +6,11 @@ import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 import { QRCodeComponent } from 'angularx-qrcode';
-import { DeleteConfirmationDialogComponent } from '../../../app/shared/dialogs/delete-confirmation-dialog/delete-confirmation-dialog.component';
+import { DeleteConfirmationDialogComponent } from '../../app/shared/dialogs/delete-confirmation-dialog/delete-confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { RequiredFieldAlertDialogComponent } from '../../../app/shared/dialogs/required-field-alert-dialog/required-field-alert-dialog.component';
-import { ErrorAlertDialogComponent } from '../../../app/shared/dialogs/error-alert-dialog/error-alert-dialog.component';
-import { LeftnavIcon } from '../../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum';
+import { RequiredFieldAlertDialogComponent } from '../../app/shared/dialogs/required-field-alert-dialog/required-field-alert-dialog.component';
+import { ErrorAlertDialogComponent } from '../../app/shared/dialogs/error-alert-dialog/error-alert-dialog.component';
+import { LeftnavIcon } from '../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum';
 
 @Component({
   selector: 'app-asset-dashboard',

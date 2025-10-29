@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CoolSessionStorage } from '@angular-cool/storage';
-import { ConfigService } from '../../../app/services/config.service';
-import { LoginAlertDialogComponent } from '../../../app/shared/dialogs/login-alert-dialog/login-alert-dialog.component';
+import { ConfigService } from '../../app/services/config.service';
+import { LoginAlertDialogComponent } from '../../app/shared/dialogs/login-alert-dialog/login-alert-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
