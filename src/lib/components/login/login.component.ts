@@ -41,7 +41,10 @@ export class LoginComponent implements OnInit {
     } catch (err) {
       console.error('Failed to load configuration:', err);
     }
+    localStorage.clear();
+
   }
+
 
   // onSubmit() {
   //   if (!this.apiBaseUrl) {

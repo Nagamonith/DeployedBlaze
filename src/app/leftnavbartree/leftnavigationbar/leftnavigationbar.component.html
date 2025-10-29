@@ -85,23 +85,24 @@
   <ul class="lower-nav">
     <li class="dropdown">
       <a placement="end" ngbTooltip="Profile" (click)="toggleUserNav()" [class.active]="showUserNav" #userNavLink>
-        <span [innerHTML]="leftNavIcon.User">&nbsp;</span>
+        <span [innerHTML]="leftNavIcon.User"   matTooltip="Profile"     
+        matTooltipPosition="right"   >&nbsp;</span>
       </a>
       @if(showUserNav) {
         <ul #userNavTemplate>
           <li>
             <a>
-              <span [innerHTML]="leftNavIcon.User2">&nbsp;</span> 
-               Admin
+              <span [innerHTML]="leftNavIcon.User2">&nbsp;</span>
+               {{userRole}}
             </a>
           </li>
-          <li class="dropdown">
-            <!-- <a (click)="toggleLanguageList()" [class.active]="showLanguageList"> 
+          <!-- <li class="dropdown">
+            <a (click)="toggleLanguageList()" [class.active]="showLanguageList"> 
               <span [innerHTML]="langIcon">&nbsp;</span>
               {{langText}}
-            </a> -->
+            </a>
   
-            <!-- @if(showLanguageList) {
+            @if(showLanguageList) {
               <ul>
                 <li>
                   <a (click)="switchLanguage($event)"> 
@@ -170,8 +171,14 @@
                   </a>
                 </li>
               </ul>
-            } -->
-          </li>
+            }
+          </li> -->
+           <li>
+                  <a (click)="switchLanguage($event)"> 
+                    <span [innerHTML]="leftNavIcon.English">&nbsp;</span>
+                    English
+                  </a>
+                </li>
           <li>
             <a (click)="logout()">
               <span [innerHTML]="leftNavIcon.Logout">&nbsp;</span>

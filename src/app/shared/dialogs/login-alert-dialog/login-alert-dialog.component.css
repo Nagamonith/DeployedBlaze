@@ -27,7 +27,7 @@ button:disabled { background-color: rgb(47, 185, 239); cursor: not-allowed; }
 .alertmodal .modal-footer .closeactn:hover { color: var(--qualbuttonhoverbgclr); border-color: var(--qualbuttonhoverbgclr); }
 .hd_icon { display: flex; }
 .hd_title { margin-left: 10px; }
-.info_bg { background-color: #def6ff !important; border-left: 5px solid #30b9ef !important; }
+.info_bg { background-color: #def6ff !important; border-left: 5px solid #2d1d88 !important; }
 .error_bg { background-color: #fef6f6 !important; border-left: 5px solid #dc3545 !important; }
 .warning_bg { background-color: #fcf8e3 !important; border-left: 5px solid #ffe34b !important; }
 /* .alert-container {

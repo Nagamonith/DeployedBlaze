@@ -127,6 +127,13 @@ console.log(this.userRole)
  setActiveIcon(icon: string) {
     this.activeIcon = icon;
   }
+  clearAllCookies() {
+  document.cookie.split(";").forEach((cookie) => {
+    const name = cookie.split("=")[0].trim();
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+  });
+}
+
 
   logout() {
   this.dialog.open(LogoutAlertDialog, {
@@ -139,6 +146,8 @@ console.log(this.userRole)
       localStorage.clear();
       this.userRole='';
       this.router.navigate(['/login']);
+     this.clearAllCookies();
+
     }
   });
 }
@@ -159,6 +168,17 @@ navigateTODashboard():void{
     this.setActiveIcon('Dashboard');
     this.router.navigate(['assets/pre-dashboard']);
   }
+   switchLanguage(event: any) {
+    const lang = event.srcElement.innerText;
+    this.langIcon = this.leftNavIcon[lang as keyof typeof LeftnavIcon];
+    this.langText = lang;
+    sessionStorage.setItem('language', lang)
+    this.defaultLanguage = lang
+    // this.translate.setDefaultLang(this.defaultLanguage);
+    this.showLanguageList = false;
+    // this.showUserNav = false
+  }
+
 
 }
 
