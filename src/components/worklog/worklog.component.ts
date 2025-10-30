@@ -301,7 +301,7 @@ export class WorklogComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ✅ Session start logic
+
   private startSession(istTime: string, restoring: boolean = false) {
     this.sessionActive = true;
     this.logoutClicked = false;
