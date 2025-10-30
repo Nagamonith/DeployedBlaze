@@ -101,3 +101,16 @@
 
 .ac-button.login { background-color: #2b88d8; }
 .ac-button.logout { background-color: #e81123; }
+::ng-deep .confirm-snackbar {
+  background: #2f2f2f;
+  color: #fff;
+  font-size: 15px;
+  border-radius: 20px;
+  box-shadow: 0px 3px 10px rgba(0,0,0,0.3);
+}
+
+::ng-deep .mat-mdc-snack-bar-action {
+  color: #4caf50 !important;
+  font-weight: 600;
+  text-transform: uppercase;
+}
