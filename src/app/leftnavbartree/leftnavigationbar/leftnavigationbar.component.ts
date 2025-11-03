@@ -2,16 +2,14 @@ import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/co
 import { Router } from '@angular/router';
 import { LeftnavIcon } from './leftnavigationbar-icon.enum';
 import { LeftbarService } from '../leftbar.service';
-//import { ServerService } from '../common_services/server.service';
-//import { LoaderService } from '../common_services/loader.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RouterLink ,RouterModule} from '@angular/router';
 import { LogoutAlertDialog } from '../../shared/dialogs/logout-alert.dialog/logout-alert.dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-// import { LogoutService } from '../common_services/logout.service';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Input } from '@angular/core';
+import { LoaderService } from '../../services/loader.service';
 
 @Component({
   selector: 'app-leftnavigationbar',
@@ -29,8 +27,8 @@ export class LeftnavigationbarComponent implements OnInit {
     private renderer: Renderer2,
     private router: Router,
     private leftbar: LeftbarService,
-    private dialog: MatDialog
-    // private logoutService: LogoutService // <-- Inject
+    private dialog: MatDialog,
+    private loader:LoaderService
    ) {
     this.renderer.listen('window', 'click', (e: Event) => {
       if (this.showUserNav) {
@@ -65,7 +63,6 @@ export class LeftnavigationbarComponent implements OnInit {
   this.userRole = localStorage.getItem('userRole');
 console.log(this.userRole)
 
-    //  this.activeIcon = 'Dashboard'; 
     let languageOfChoice = localStorage.getItem('language')
     if(languageOfChoice) {
       this.langText = languageOfChoice;
@@ -77,7 +74,6 @@ console.log(this.userRole)
   }
  
   navigateLeftNacBarIcons(event:any,id:number){
-    //this.toggleClass(id)
     switch(event){
       case 'user':
         this.leftbar.setLeftNode(event,'')
@@ -151,9 +147,10 @@ console.log(this.userRole)
     }
   });
 }
+
 navigateToProjects():void{
-      this.setActiveIcon('Catalogue');
- this.router.navigate(['assets/project-details']);
+  this.setActiveIcon('Catalogue');
+  this.router.navigate(['assets/project-details']);
 }
 navigateToWorkload():void {
   this.setActiveIcon('Report');
@@ -161,12 +158,12 @@ navigateToWorkload():void {
 }
 
 navigateTODashboard():void{
-   this.setActiveIcon('Report');
-    this.router.navigate(['assets/Dashboard'])
+  this.setActiveIcon('Report'); 
+  this.router.navigate(['assets/Dashboard'])
   }
  navigatePreDashboard():void {
-    this.setActiveIcon('Dashboard');
-    this.router.navigate(['assets/pre-dashboard']);
+  this.setActiveIcon('Dashboard');
+  this.router.navigate(['assets/pre-dashboard']);
   }
    switchLanguage(event: any) {
     const lang = event.srcElement.innerText;
@@ -174,9 +171,7 @@ navigateTODashboard():void{
     this.langText = lang;
     sessionStorage.setItem('language', lang)
     this.defaultLanguage = lang
-    // this.translate.setDefaultLang(this.defaultLanguage);
     this.showLanguageList = false;
-    // this.showUserNav = false
   }
 
 

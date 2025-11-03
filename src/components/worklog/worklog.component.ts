@@ -247,19 +247,17 @@ export class WorklogComponent implements OnInit, OnDestroy {
       });
   }
 
-  // ✅ Confirmation Snackbar with persistent Yes/No
   logAction(actionType: 'Login' | 'Logout') {
     const actionLabel = actionType === 'Login' ? 'login' : 'logout';
 
     const snackRef = this.snackBar.openFromComponent(ConfirmSnackBarComponent, {
       data: { message: `Are you sure you want to ${actionLabel}?`, actionType },
-      duration: 0, // stays until user chooses
+      duration: 0, 
       horizontalPosition: 'center',
       verticalPosition: 'bottom',
       panelClass: ['confirm-snackbar']
     });
 
-    // Wait for user's choice
     snackRef.instance.onDecision = (decision: 'yes' | 'no') => {
       snackRef.dismiss();
 
@@ -271,10 +269,9 @@ export class WorklogComponent implements OnInit, OnDestroy {
     };
   }
 
-  // ✅ Actual API call
   private performAction(actionType: 'Login' | 'Logout') {
     if (!this.userId) {
-      this.showMessage('⚠️ User not identified yet!');
+      this.showMessage(' User not identified yet!');
       return;
     }
 
@@ -320,10 +317,8 @@ export class WorklogComponent implements OnInit, OnDestroy {
       }));
     });
 
-    // if (!restoring) this.showMessage(`Session started at ${istTime}`);
   }
 
-  // ✅ Session end logic
   private endSession(actionTime: string) {
     this.logoutClicked = true;
     this.sessionActive = false;
@@ -341,7 +336,6 @@ export class WorklogComponent implements OnInit, OnDestroy {
       logoutClicked: true
     }));
 
-    // Reset after 10 seconds
     setTimeout(() => {
       this.loginTime = '';
       this.logoutTime = '';
@@ -371,9 +365,7 @@ export class WorklogComponent implements OnInit, OnDestroy {
   }
 }
 
-/* ---------------------------------------------
-   ✅ Custom Snackbar Component for Yes / No
---------------------------------------------- */
+
 @Component({
   selector: 'app-confirm-snackbar',
   template: `

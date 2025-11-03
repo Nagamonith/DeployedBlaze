@@ -30,12 +30,8 @@ export class PreDashboardComponent implements OnInit {
   selectedAssetType: string = '';
   assetSummaries: AssetSummary[] = [];
   apiBaseUrl = JSON.parse(sessionStorage.getItem('config') || '{}').url;
-
-  // For adding new asset type
   showAddTypeModal = false;
   newAssetType = '';
-
-  // For dynamic fields
   showAddAssetModal = false;
   dynamicFields: { key: string, value: string }[] = [];
   newFieldName = '';
@@ -53,7 +49,7 @@ export class PreDashboardComponent implements OnInit {
   errorMessage: string = '';
   newTypeFields: string[] = [];
   newFieldNameForType = '';
-  newFieldInput: string = '';  // for modal add
+  newFieldInput: string = '';  
 public icons = LeftnavIcon;
   constructor(private http: HttpClient, private router: Router, private dialog: MatDialog) {}
 

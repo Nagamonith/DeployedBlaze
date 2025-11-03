@@ -29,7 +29,6 @@ import { UnauthorizedComponent } from '../components/unauthorized/unauthorized-c
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  // { path: 'asset-view/:assetTag', component: AssetViewComponent }, 
   { path: 'asset/:assetTag', component: AssetViewerComponent },
   { path: 'worklog', component: WorklogComponent },
 
