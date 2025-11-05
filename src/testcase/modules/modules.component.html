@@ -184,19 +184,20 @@
     </div>
   </div>
 </div> -->
-<div class="suite-cards">
+<div class="suite-cards" style="display: flex; flex-wrap: wrap; gap: 15px;">
   <div *ngFor="let suiteRef of selectedTestRun()?.testSuites"
        class="suite-card"
        [class.selected]="isSuiteSelected(suiteRef.id)"
-       (click)="selectSuite(suiteRef.id)">
+       (click)="selectSuite(suiteRef.id)"
+       style="flex: 0 1 auto; min-width: 250px; max-width: 400px; width: auto;">
     <div class="suite-header">
       <!-- Hidden radio button for accessibility -->
       <input type="radio"
              [id]="'suite-' + suiteRef.id"
              [checked]="isSuiteSelected(suiteRef.id)"
              class="visually-hidden">
-      <label [for]="'suite-' + suiteRef.id">
-        <h5>{{ suiteRef.name }}</h5>
+      <label [for]="'suite-' + suiteRef.id" style="width: 100%;">
+        <h5 style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word;">{{ suiteRef.name }}</h5>
       </label>
 
       <!-- Status indicators -->
@@ -211,7 +212,7 @@
       </span> -->
     </div>
 
-    <p>{{ getSuiteDescription(suiteRef.id) || 'No description available' }}</p>
+    <!-- <p>{{ getSuiteDescription(suiteRef.id) || 'No description available' }}</p> -->
     <div class="suite-stats">
       <small>{{ getSuiteTestCaseCount(suiteRef.id) }} total test cases</small>
       <small *ngIf="getSuiteCompletedCount(suiteRef.id) > 0">
@@ -436,7 +437,8 @@
       <button class="scroll-button scroll-right" (click)="scrollTable(200)" [class.hidden]="!canScrollRight">&rarr;</button>
     </div>
 
-    <div class="save-section">
+    <!-- Action buttons positioned right after table -->
+    <div class="save-section" style="margin-top: 25px; padding: 10px; position: sticky; bottom: 10px; background: white; border-top: 1px solid #ddd; z-index: 100;">
       <button class="btn-save" (click)="onSave()">Save Results</button>
       <button class="btn-back" *ngIf="showTestRuns" (click)="backToSuiteList()">Back to Suite List</button>
     </div>
