@@ -6,6 +6,17 @@
   (onCancel)="onAlertClose()"
 ></app-alert>
 
+<!-- Save Success Alert -->
+<app-alert
+  *ngIf="showSaveSuccessAlert"
+  type="success"
+  [message]="saveSuccessMessage"
+  [show]="showSaveSuccessAlert"
+  [isConfirm]="false"
+  [showOverlay]="true"
+  (onCancel)="onSaveSuccessAlertClose()"
+></app-alert>
+
 <h2 class="text-center">Test Management</h2>
 
 <!-- Selection Toggle -->
@@ -28,7 +39,7 @@
 </div>
 
 <!-- Dynamic Selection Dropdown - Updated -->
-<div class="form-group">
+<div class="form-group compact">
   <label>
     {{ showTestRuns ? 'Select Test Run' :
        (showTestSuites ? 'Select Test Suite' : 'Select Module') }}
@@ -83,15 +94,27 @@
 </div>
 
 <!-- Test Run Info -->
-<div *ngIf="showTestRuns && selectedTestRunId() && selectedTestRun()" class="run-info">
+<div *ngIf="showTestRuns && selectedTestRunId() && selectedTestRun()" class="run-info compact-run-info">
+
   <h4>{{ selectedTestRun()?.name }}</h4>
-  <!-- <p>Status: <span class="status-badge" [class]="selectedTestRun()?.status">{{ selectedTestRun()?.status }}</span></p> -->
-  <p>Contains {{ selectedTestRun()?.testSuites?.length || 0 }} test suites</p>
-  <div *ngIf="testRunProgress().total > 0" class="progress-info">
-    Progress: {{ getCompletedCaseCount() }}/{{ getTotalCaseCount() }} test cases completed
-    ({{ getRunCompletionPercentage() }}%)
+  <p>{{ selectedTestRun()?.testSuites?.length || 0 }} test suites</p>
+
+  <div *ngIf="testRunProgress().total > 0" class="progress-container">
+
+    <div class="progress-bar">
+      <div class="progress-fill"
+           [style.width.%]="getRunCompletionPercentage()">
+      </div>
+    </div>
+
+    <small class="progress-text">
+      {{ getCompletedCaseCount() }}/{{ getTotalCaseCount() }} completed ({{ getRunCompletionPercentage() }}%)
+    </small>
+
   </div>
+
 </div>
+
 
 <!-- Test Suite Info -->
 <div *ngIf="showTestSuites && !showTestRuns && selectedModule() && selectedTestSuite()" class="suite-info">

@@ -164,6 +164,11 @@ export class ModulesComponent implements OnInit, OnDestroy, AfterViewInit {
   alertDuration = 3000;
   private alertTimeout: any;
 
+  // Save success popup properties
+  showSaveSuccessAlert = false;
+  saveSuccessMessage = '';
+  private saveAlertTimeout: any;
+
   private boundHandleClick = this.handleDocumentClick.bind(this);
   private boundOnResize = this.onResize.bind(this);
   private boundStopResize = this.stopResize.bind(this);
@@ -1474,10 +1479,17 @@ private initializeFormForTestCases(): void {
     });
 
     forkJoin(updateRequests).subscribe(results => {
-      const successCount = results.filter(r => r !== null).length;
-      if (successCount > 0) {
-        this.showAlertMessage(`${successCount} test case(s) updated successfully!`, 'success');
+      this.saveSuccessMessage = 'Saved Result';
+      this.showSaveSuccessAlert = true;
+      
+      // Auto-hide the alert after 3 seconds
+      if (this.saveAlertTimeout) {
+        clearTimeout(this.saveAlertTimeout);
       }
+      this.saveAlertTimeout = setTimeout(() => {
+        this.showSaveSuccessAlert = false;
+        this.cdRef.detectChanges();
+      }, 3000);
 
       if (this.showTestRuns && this.selectedTestRunId()) {
         this.updateTestRunProgress();
@@ -2030,6 +2042,13 @@ removeUpload(rowIndex: number, fileIndex: number): void {
     this.showAlert = false;
     if (this.alertTimeout) {
       clearTimeout(this.alertTimeout);
+    }
+  }
+
+  onSaveSuccessAlertClose(): void {
+    this.showSaveSuccessAlert = false;
+    if (this.saveAlertTimeout) {
+      clearTimeout(this.saveAlertTimeout);
     }
   }
 

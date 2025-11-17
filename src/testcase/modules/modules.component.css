@@ -913,3 +913,118 @@ input[type="checkbox"] {
         overflow: visible;
     }
 }
+/* Reduce vertical spacing for everything above the table */
+.selection-toggle {
+  margin: 5px 0 !important;
+}
+
+.toggle-btn {
+  padding: 4px 10px !important;
+  font-size: 13px !important;
+}
+
+.form-group {
+  margin: 5px 0 !important;
+}
+
+.form-group label {
+  font-size: 13px !important;
+  margin-bottom: 3px !important;
+}
+
+.select-dropdown {
+  padding: 4px 6px !important;
+  font-size: 13px !important;
+  height: 28px !important;
+}
+
+/* Reduce spacing for Action buttons */
+.action-buttons {
+  margin: 8px 0 !important;
+  gap: 6px !important;
+}
+
+.action-buttons button {
+  padding: 5px 10px !important;
+  font-size: 13px !important;
+}
+
+/* Reduce spacing for suite list */
+.run-info, .suite-info {
+  margin: 6px 0 !important;
+  padding: 5px !important;
+}
+
+/* Compact suite cards */
+.suite-card {
+  padding: 8px !important;
+  gap: 5px !important;
+  min-height: 80px !important;
+}
+
+.suite-card h5 {
+  font-size: 14px !important;
+}
+
+/* Reduce filter area height */
+.filters input, .filters select {
+  height: 26px !important;
+  font-size: 13px !important;
+  padding: 2px 6px !important;
+  margin-right: 5px !important;
+}
+
+/* Alert box compact */
+app-alert {
+  transform: scale(0.85);       /* slightly shrink alert */
+  margin: 5px 0 !important;
+}
+
+/* shrink section headings */
+h2, h3, h4 {
+  margin: 4px 0 !important;
+  font-size: 16px !important;
+}
+
+/* Reduce top spacing globally */
+* {
+  --compact-gap: 4px;
+}
+/* Compact box */
+.compact-run-info {
+  background: #f1f1f1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  min-width: 200px;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+/* Progress bar container */
+.progress-container {
+  margin-top: 4px;
+}
+
+/* Progress bar background */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #dcdcdc;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+/* Progress fill (GREEN) */
+.progress-fill {
+  height: 100%;
+  background: #4caf50; /* Google green */
+  transition: width 0.3s ease;
+}
+
+/* Text below bar */
+.progress-text {
+  font-size: 11px;
+  color: #333;
+}
