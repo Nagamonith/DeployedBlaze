@@ -1,9 +1,19 @@
+// ===================================================================
+// EXAMPLE: msal-config.ts with YOUR credentials filled in
+// ===================================================================
+// 
+// THIS IS AN EXAMPLE FILE - Do not use this directly
+// Copy your actual Tenant ID and Client ID from Azure Portal
+//
+// Location to update: src/app/services/msal-config.ts
+// ===================================================================
+
 import { Configuration, LogLevel } from '@azure/msal-browser';
 
-// TODO: Replace these values with your Azure AD credentials
-// You can get these from Azure Portal > App Registrations
+// ⬇️⬇️⬇️ REPLACE THESE VALUES WITH YOUR AZURE AD CREDENTIALS ⬇️⬇️⬇️
 const TENANT_ID = '52b7b6d2-2234-49f8-8d65-a57004a008f8'; // Your Azure AD Tenant ID
 const CLIENT_ID = '4ab42685-3dd7-4d35-a499-3e48e90c608a'; // Your Application (client) ID
+// ⬆️⬆️⬆️ REPLACE THESE VALUES WITH YOUR AZURE AD CREDENTIALS ⬆️⬆️⬆️
 
 export const msalConfig: Configuration = {
   auth: {
@@ -45,3 +55,12 @@ export const msalConfig: Configuration = {
 export const loginRequest = {
   scopes: ['User.Read', 'openid', 'profile', 'email']
 };
+
+// ===================================================================
+// How your authority URL will look:
+// https://login.microsoftonline.com/12345678-1234-1234-1234-123456789abc
+//
+// How your redirectUri will look:
+// - Development: http://localhost:4200/login
+// - Production: https://yourdomain.com/login
+// ===================================================================

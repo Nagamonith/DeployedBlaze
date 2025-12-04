@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Input } from '@angular/core';
 import { LoaderService } from '../../services/loader.service';
+import { MsalService } from '@azure/msal-angular';
 
 @Component({
   selector: 'app-leftnavigationbar',
@@ -28,7 +29,8 @@ export class LeftnavigationbarComponent implements OnInit {
     private router: Router,
     private leftbar: LeftbarService,
     private dialog: MatDialog,
-    private loader:LoaderService
+    private loader: LoaderService,
+    private authService: MsalService
    ) {
     this.renderer.listen('window', 'click', (e: Event) => {
       if (this.showUserNav) {
@@ -60,7 +62,7 @@ export class LeftnavigationbarComponent implements OnInit {
  
   ngOnInit(): void {
 
-  this.userRole = localStorage.getItem('userRole');
+  this.userRole = localStorage.getItem('userName');
 console.log(this.userRole)
 
     let languageOfChoice = localStorage.getItem('language')
@@ -132,21 +134,27 @@ console.log(this.userRole)
 
 
   logout() {
-  this.dialog.open(LogoutAlertDialog, {
-    data: {
-      title: 'Confirm Logout',
-      message: 'Are you sure you want to log out?'
-    }
-  }).afterClosed().subscribe(result => {
-    if (result) {
-      localStorage.clear();
-      this.userRole='';
-      this.router.navigate(['/login']);
-     this.clearAllCookies();
-
-    }
-  });
-}
+    this.dialog.open(LogoutAlertDialog, {
+      data: {
+        title: 'Confirm Logout',
+        message: 'Are you sure you want to log out?'
+      }
+    }).afterClosed().subscribe(result => {
+      if (result) {
+        // Clear local storage
+        localStorage.clear();
+        this.userRole = '';
+        
+        // Clear cookies
+        this.clearAllCookies();
+        
+        // Logout from Microsoft and redirect to login page
+        this.authService.logoutRedirect({
+          postLogoutRedirectUri: window.location.origin + '/login'
+        });
+      }
+    });
+  }
 
 navigateToProjects():void{
   this.setActiveIcon('Catalogue');

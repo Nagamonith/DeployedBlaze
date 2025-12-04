@@ -22,7 +22,7 @@
 
 
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { APP_INITIALIZER } from '@angular/core';
 import { AppComponent } from './app/app.component';
 import { AppConfigService } from './app/services/app-config.service';
@@ -34,7 +34,7 @@ export function configInitializer(config: AppConfigService) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideHttpClient(),
+    provideHttpClient(withInterceptorsFromDi()),
     ...appConfig.providers,
     {
       provide: APP_INITIALIZER,

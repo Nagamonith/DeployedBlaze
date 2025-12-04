@@ -24,7 +24,6 @@ import { ResultsComponent } from '../testcase/results/results.component';
 import { SummaryComponent } from '../testcase/summary/summary.component';
 import { WorklogComponent } from '../components/worklog/worklog.component';
 import { OverallDashboardComponent } from '../components/overall-dashboard/overall-dashboard.component';
-import { UnauthorizedComponent } from '../components/unauthorized/unauthorized-component.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -48,8 +47,9 @@ export const routes: Routes = [
       { path: 'project-summary', component: ProjectSummaryComponent, canActivate: [AuthGuard] },
       { path: 'bug-time-summary', component: BugTimeSummaryComponent, canActivate: [AuthGuard] },
       { path: 'bug-details', component: BugDetailsComponent, canActivate: [AuthGuard] },
-      { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard], data: { expectedRole: 'Manager' } },
-      { path: 'unauthorized', component: UnauthorizedComponent }
+      // { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard], data: { expectedRole: 'Manager' } }
+      { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard]}
+
 
     ]
   },

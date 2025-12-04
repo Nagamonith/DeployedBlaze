@@ -26,7 +26,8 @@
   <img src="assets/images/icons/testcase-logo3.svg" alt="Testcase" class="testcase-logo" />
 </a>
 </li>
-  <li *ngIf="userRole === 'Manager'">
+  <!-- <li *ngIf="userRole === 'Manager'"> -->
+    <li>
     <a placement="end">
       <span
         [innerHTML]="leftNavIcon.Report"
@@ -36,7 +37,7 @@
         matTooltipPosition="right"   
         >&nbsp;</span>
     </a>
-  </li>
+    </li>
   </ul>
   <ul class="lower-nav">
     <li class="dropdown">

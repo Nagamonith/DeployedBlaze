@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { CoolSessionStorage } from '@angular-cool/storage';
+import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
+import { AuthenticationResult, InteractionStatus } from '@azure/msal-browser';
+import { Subject, filter, takeUntil } from 'rxjs';
 import { ConfigService } from '../../app/services/config.service';
 import { LoginAlertDialogComponent } from '../../app/shared/dialogs/login-alert-dialog/login-alert-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,23 +13,24 @@ import { LoaderService } from '../../app/services/loader.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
-  username: string = '';
-  password: string = '';
+export class LoginComponent implements OnInit, OnDestroy {
   message: string = '';
   private apiBaseUrl: string = '';
+  private readonly _destroying$ = new Subject<void>();
+  isLoggingIn = false;
 
   constructor(
     private http: HttpClient,
     private router: Router,
-    private sessionStorage: CoolSessionStorage,
+    private authService: MsalService,
+    private msalBroadcastService: MsalBroadcastService,
     private configService: ConfigService,
     private dialog: MatDialog,
-    private loader:LoaderService
+    private loader: LoaderService
   ) {}
 
   async ngOnInit() {
@@ -44,73 +46,112 @@ export class LoginComponent implements OnInit {
     }
     localStorage.clear();
 
-  }
-
-  onSubmit() {
-  if (!this.apiBaseUrl) {
-
-    this.message = 'Cannot login: API URL not loaded.';
-    return;
-  }
-
-  const payload = {
-    username: this.username,
-    password: this.password
-  };
-
-  this.http.post(`${this.apiBaseUrl}/api/Auth/user-login`, payload, { responseType: 'text' })
-    .subscribe({
-      next: (response) => {
-        this.message = response;
-
-        // ✅ Determine role based on username
-        let role = '';
-        if (this.username.toLowerCase() === 'admin') {
-          role = 'Admin';
-        } else if (this.username.toLowerCase() === 'manager') {
-          role = 'Manager';
-        } else if (this.username.toLowerCase() === 'tester') {
-          role = 'Tester';
-        } else {
-          role = 'Unknown';
+    // Handle redirect response from Microsoft login
+    this.authService.handleRedirectObservable().subscribe({
+      next: (result: AuthenticationResult | null) => {
+        if (result) {
+          this.handleLoginSuccess(result);
         }
-
-        // ✅ Set userRole only after successful login
-        localStorage.setItem('userRole', role);
-        localStorage.setItem('isLoggedIn', 'true');
-
-        // ✅ Optional success dialog
-        this.dialog.open(LoginAlertDialogComponent, {
-          width: '420px',
-          data: {
-            title: 'Login Successful',
-            message: `Welcome, ${role}!`
-          }
-        });
-
-        // Optional: Trigger your Gantt sync
-        this.http.post(`${this.apiBaseUrl}/api/gantt/sync-from-mysql`, {}).subscribe({
-          next: () => console.log('Gantt sync completed.'),
-          error: (err) => console.error('Gantt sync failed:', err)
-        });
-
-        this.http.post(`${this.apiBaseUrl}/api/gantt/sync-time-from-mysql`, {}).subscribe({
-          next: () => console.log('Time sync completed.'),
-          error: (err) => console.error('Time sync failed:', err)
-        });
-        this.router.navigate(['/assets/pre-dashboard']);
       },
       error: (error) => {
-        if (error.status === 401) {
-          this.message = 'Invalid username or password.';
-        } else {
-          this.message = 'Login failed. Try again later.';
-        }
-
-        localStorage.removeItem('userRole');
-        localStorage.removeItem('isLoggedIn');
+        console.error('Login failed:', error);
+        this.message = 'Login failed. Please try again.';
       }
     });
-}
 
+    // Check if user is already logged in
+    this.msalBroadcastService.inProgress$
+      .pipe(
+        filter((status: InteractionStatus) => status === InteractionStatus.None),
+        takeUntil(this._destroying$)
+      )
+      .subscribe(() => {
+        this.checkAndSetActiveAccount();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this._destroying$.next(undefined);
+    this._destroying$.complete();
+  }
+
+  checkAndSetActiveAccount() {
+    const activeAccount = this.authService.instance.getActiveAccount();
+    if (activeAccount) {
+      // User is already logged in, redirect to dashboard
+      this.router.navigate(['/assets/pre-dashboard']);
+    }
+  }
+
+  loginWithMicrosoft() {
+    if (this.isLoggingIn) {
+      return; // Prevent multiple login attempts
+    }
+
+    this.isLoggingIn = true;
+    this.message = 'Redirecting to Microsoft login...';
+    
+    this.authService.loginRedirect({
+      scopes: ['User.Read', 'openid', 'profile', 'email']
+    });
+  }
+
+  private handleLoginSuccess(result: AuthenticationResult) {
+    this.isLoggingIn = false;
+    console.log('Login successful:', result);
+
+    // Set active account
+    this.authService.instance.setActiveAccount(result.account);
+
+    // Extract user information
+    const account = result.account;
+    const userEmail = account.username || account.name || 'user@example.com';
+    const userName = account.name || userEmail;
+
+    // Determine role based on email or claims
+    // You can customize this logic based on your Azure AD setup
+    let role = 'User';
+    if (userEmail.toLowerCase().includes('admin')) {
+      role = 'Admin';
+    } else if (userEmail.toLowerCase().includes('manager')) {
+      role = 'Manager';
+    } else if (userEmail.toLowerCase().includes('tester')) {
+      role = 'Tester';
+    }
+    // Alternative: You can also check Azure AD group membership or app roles
+    // const roles = account.idTokenClaims?.roles || [];
+    // if (roles.includes('Admin')) role = 'Admin';
+
+    // Store user information
+    localStorage.setItem('userRole', role);
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userEmail', userEmail);
+    localStorage.setItem('userName', userName);
+    localStorage.setItem('msalAccessToken', result.accessToken);
+
+    // Show success dialog
+    this.dialog.open(LoginAlertDialogComponent, {
+      width: '420px',
+      data: {
+        title: 'Login Successful',
+        message: `Welcome, ${userName}!`
+      }
+    });
+
+    // Optional: Trigger your Gantt sync
+    if (this.apiBaseUrl) {
+      this.http.post(`${this.apiBaseUrl}/api/gantt/sync-from-mysql`, {}).subscribe({
+        next: () => console.log('Gantt sync completed.'),
+        error: (err) => console.error('Gantt sync failed:', err)
+      });
+
+      this.http.post(`${this.apiBaseUrl}/api/gantt/sync-time-from-mysql`, {}).subscribe({
+        next: () => console.log('Time sync completed.'),
+        error: (err) => console.error('Time sync failed:', err)
+      });
+    }
+
+    // Navigate to dashboard
+    this.router.navigate(['/assets/pre-dashboard']);
+  }
 }

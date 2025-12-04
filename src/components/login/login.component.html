@@ -1,36 +1,10 @@
-<!-- 
-<form (submit)="onSubmit(); $event.preventDefault()" class="login-form">
-  <h2>Login</h2>
 
-  <input 
-    type="text" 
-    [(ngModel)]="username" 
-    name="username" 
-    placeholder="Username" 
-    required 
-    class="input-field" 
-  />
 
-  <input 
-    type="password" 
-    [(ngModel)]="password" 
-    name="password" 
-    placeholder="Password" 
-    required 
-    class="input-field" 
-  />
-
-  <button type="submit" class="btn-login">Login</button>
-
-  <p class="message" *ngIf="message">{{ message }}</p>
-</form> -->
-
-<div class="login-background">
+<!-- <div class="login-background">
   <div class="login-container">
   
 
     <form (submit)="onSubmit(); $event.preventDefault()" class="login-form" >
-      <!-- <h2>Login</h2> -->
  <h1><img src="https://datalyzer.com/wp-content/uploads/2022/01/logo-3.png" class="login-logo" /></h1>
  
       <label for="password" class="login-label"><strong>User Name</strong></label>
@@ -54,11 +28,98 @@
       />
 
       <button type="submit" class="btn-login">Login</button>
-      <!-- <button type="button" class="btn-login" (click)="loginWithMicrosoft()">Login with Microsoft</button> -->
 
       <p class="message" *ngIf="message">{{ message }}</p>
     </form>
   </div>
+</div> -->
+<!-- 
+<div class="login-background">
+
+  <div class="login-container">
+
+    <div class="login-form">
+
+      <h1><img src="https://datalyzer.com/wp-content/uploads/2022/01/logo-3.png" class="login-logo" alt="DataLyzer Logo" /></h1>
+
+     
+
+      <div class="login-content">
+
+<h1 style="text-align: center;"><b>BLAZE</b></h1>
+       
+
+        <button
+
+          type="button"
+
+          class="btn-microsoft-login"
+
+          (click)="loginWithMicrosoft()"
+
+          [disabled]="isLoggingIn">
+
+          <svg class="microsoft-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23">
+
+            <path fill="#f35325" d="M0 0h11v11H0z"/>
+
+            <path fill="#81bc06" d="M12 0h11v11H12z"/>
+
+            <path fill="#05a6f0" d="M0 12h11v11H0z"/>
+
+            <path fill="#ffba08" d="M12 12h11v11H12z"/>
+
+          </svg>
+
+          <span>{{ isLoggingIn ? 'Signing in...' : 'Login with Microsoft SSO' }}</span>
+
+        </button>
+
+
+
+        <p class="message" *ngIf="message">{{ message }}</p>
+
+      </div>
+
+    </div>
+
+  </div>
+
 </div>
+ -->
+<div class="login-background">
+    <div class="login-form">
 
+      <h1>
+        <img src="https://datalyzer.com/wp-content/uploads/2022/01/logo-3.png"
+             class="login-logo"
+             alt="DataLyzer Logo" />
+      </h1>
 
+      <div class="login-content">
+
+        <h1 style="text-align: center;"><b>BLAZE</b></h1>
+
+        <button
+          id="microsoft-login-btn"
+          type="button"
+          class="btn-microsoft-login"
+          (click)="loginWithMicrosoft()"
+          [disabled]="isLoggingIn">
+
+          <svg class="microsoft-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23">
+            <path fill="#f35325" d="M0 0h11v11H0z"/>
+            <path fill="#81bc06" d="M12 0h11v11H12z"/>
+            <path fill="#05a6f0" d="M0 12h11v11H0z"/>
+            <path fill="#ffba08" d="M12 12h11v11H12z"/>
+          </svg>
+
+          <span>{{ isLoggingIn ? 'Signing in...' : 'Login with Microsoft SSO' }}</span>
+        </button>
+
+        <p class="message" *ngIf="message">{{ message }}</p>
+
+      </div>
+
+    </div>
+  </div>
