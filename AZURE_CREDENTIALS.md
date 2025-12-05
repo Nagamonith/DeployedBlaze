@@ -57,8 +57,8 @@ const CLIENT_ID = '172886d9-63ac-4043-87e2-c4d6b84f7b15';
 - **Logout URI**: `http://localhost:4200/login`
 
 ### Production (Update with your domain)
-- **Redirect URI**: `https://yourdomain.com/login`
-- **Logout URI**: `https://yourdomain.com/login`
+- **Redirect URI**: `https://blaze.qualis40.io/login`
+- **Logout URI**: `https://blaze.qualis40.io/login`
 
 ---
 

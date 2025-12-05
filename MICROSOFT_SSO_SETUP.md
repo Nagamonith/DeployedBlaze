@@ -29,7 +29,7 @@ You need to register your application in Azure Active Directory:
    - **Redirect URI**: 
      - Platform: **Single-page application (SPA)**
      - URI: `http://localhost:4200/login` (for development)
-     - Add production URL when deploying (e.g., `https://yourdomain.com/login`)
+     - Add production URL when deploying (e.g., `https://blaze.qualis40.io/login`)
 5. Click **Register**
 
 ### Step 2: Configure Your Application
@@ -81,10 +81,10 @@ Add all your redirect URIs (both development and production):
 2. Click **Authentication** in the left menu
 3. Under **Single-page application**, add:
    - `http://localhost:4200/login` (development)
-   - `https://yourdomain.com/login` (production)
+   - `https://blaze.qualis40.io/login` (production)
 4. Under **Logout URL**, add:
    - `http://localhost:4200/login` (development)
-   - `https://yourdomain.com/login` (production)
+   - `https://blaze.qualis40.io/login` (production)
 5. Enable **ID tokens** under **Implicit grant and hybrid flows** (if needed)
 6. Click **Save**
 

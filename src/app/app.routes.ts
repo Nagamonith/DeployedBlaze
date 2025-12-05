@@ -47,8 +47,8 @@ export const routes: Routes = [
       { path: 'project-summary', component: ProjectSummaryComponent, canActivate: [AuthGuard] },
       { path: 'bug-time-summary', component: BugTimeSummaryComponent, canActivate: [AuthGuard] },
       { path: 'bug-details', component: BugDetailsComponent, canActivate: [AuthGuard] },
-      // { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard], data: { expectedRole: 'Manager' } }
-      { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard]}
+      { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard], data: { userName: 'Manager' } }
+      // { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard]}
 
 
     ]

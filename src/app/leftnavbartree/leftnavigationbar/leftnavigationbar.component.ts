@@ -53,8 +53,8 @@ export class LeftnavigationbarComponent implements OnInit {
   public leftNavIcon = LeftnavIcon
   public defaultLanguage: string = '';
   public userRole: string | null = null;
+  atob = atob;
 
-  public tabsToDisplay: string ='Adarsh';
 
   @ViewChild('leftNav',{static:false, read:ElementRef}) navbar!:ElementRef
   @ViewChild('userNavLink') userNavLink!: ElementRef;
