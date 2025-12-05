@@ -9,6 +9,7 @@ import { ConfigService } from '../../app/services/config.service';
 import { LoginAlertDialogComponent } from '../../app/shared/dialogs/login-alert-dialog/login-alert-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoaderService } from '../../app/services/loader.service';
+import { IdleTimeoutService } from '../../app/services/idle-timeout.service';
 
 @Component({
   selector: 'app-login',
@@ -30,7 +31,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private msalBroadcastService: MsalBroadcastService,
     private configService: ConfigService,
     private dialog: MatDialog,
-    private loader: LoaderService
+    private loader: LoaderService,
+    private idleTimeoutService: IdleTimeoutService
   ) {}
 
   async ngOnInit() {
@@ -152,6 +154,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     // Navigate to dashboard
-    this.router.navigate(['/assets/pre-dashboard']);
+    this.router.navigate(['/assets/pre-dashboard']).then(() => {
+      // Start idle timeout monitoring after successful login
+      this.idleTimeoutService.startWatching();
+    });
   }
 }
