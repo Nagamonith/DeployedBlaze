@@ -4,27 +4,25 @@
   <div class="top-section d-flex justify-content-between align-items-start flex-wrap mb-4">
     <!-- Filters -->
     <div class="filters d-flex flex-wrap align-items-center gap-3">
-      <div>
-        <label class="form-label fw-bold me-2">Employee</label>
-       <select class="form-select" [(ngModel)]="selectedEmployee" (change)="onEmployeeChange()">
-  <option *ngFor="let emp of employees" [value]="emp.empId">{{ emp.name }}</option>
-</select>
-
-
-      </div>
+     
 
       <div>
-        <label class="form-label fw-bold me-2">Start Date</label>
+        <label class="form-label fw-bold me-2">Choose Date</label>
         <input type="date" class="form-control" [(ngModel)]="startDate" />
       </div>
-
+<!-- 
       <div>
         <label class="form-label fw-bold me-2">End Date</label>
         <input type="date" class="form-control" [(ngModel)]="endDate" />
-      </div>
+      </div> -->
 
-      <button class="btn btn-primary" (click)="loadData()">Search</button>
-
+      <button class="btn btn-primary" style="margin-top:20px" (click)="loadData()">Search</button>
+      
+ <div>
+        <label class="form-label fw-bold me-2">Filter by Employee</label>
+       <select class="form-select" [(ngModel)]="selectedEmployee" (change)="onEmployeeChange()">
+      <option *ngFor="let emp of employees" [value]="emp.empId">{{ emp.name }}</option>
+       </select></div>
       <div class="summary-cards d-flex gap-3 mt-3 mt-md-0 ml-50">
         <div class="summary-card office">
           <p class="label">Office</p>
@@ -39,6 +37,11 @@
           <p class="value">{{ totalLeave }}</p>
         </div>
       </div>
+       <!-- <div>
+        <label class="form-label fw-bold me-2">Filter by Employee</label>
+       <select class="form-select" [(ngModel)]="selectedEmployee" (change)="onEmployeeChange()">
+      <option *ngFor="let emp of employees" [value]="emp.empId">{{ emp.name }}</option>
+       </select></div> -->
     </div>
   </div>
 

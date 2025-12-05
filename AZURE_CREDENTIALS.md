@@ -9,8 +9,8 @@
 ## Current Configuration
 
 ```typescript
-const TENANT_ID = '52b7b6d2-2234-49f8-8d65-a57004a008f8'; // ⬅️ REPLACE THIS
-const CLIENT_ID = '4ab42685-3dd7-4d35-a499-3e48e90c608a'; // ⬅️ REPLACE THIS
+const TENANT_ID = '52b7b6d2-2234-49f8-8d65-a57004a008f8'; 
+const CLIENT_ID = '4ab42685-3dd7-4d35-a499-3e48e90c608a'; 
 ```
 
 ---
