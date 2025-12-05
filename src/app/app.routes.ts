@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from '../components/login/login.component';
 import { AssetViewComponent } from '../components/asset-view/asset-view.component';
 import { AuthGuard } from './auth.guard';
+import { DashboardGuard } from './dashboard.guard';
 import { LayoutsComponent } from './layouts/layouts.component';
 import { PreDashboardComponent } from '../components/pre-dashboard/pre-dashboard.component';
 import { AssetDashboardComponent } from '../components/asset-dashboard/asset-dashboard.component';
@@ -25,6 +26,7 @@ import { SummaryComponent } from '../testcase/summary/summary.component';
 import { WorklogComponent } from '../components/worklog/worklog.component';
 import { OverallDashboardComponent } from '../components/overall-dashboard/overall-dashboard.component';
 
+
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
@@ -47,10 +49,7 @@ export const routes: Routes = [
       { path: 'project-summary', component: ProjectSummaryComponent, canActivate: [AuthGuard] },
       { path: 'bug-time-summary', component: BugTimeSummaryComponent, canActivate: [AuthGuard] },
       { path: 'bug-details', component: BugDetailsComponent, canActivate: [AuthGuard] },
-      { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard], data: { userName: 'Manager' } }
-      // { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard]}
-
-
+      { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard, DashboardGuard] }
     ]
   },
 

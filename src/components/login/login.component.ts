@@ -110,22 +110,22 @@ export class LoginComponent implements OnInit, OnDestroy {
     const userEmail = account.username || account.name || 'user@example.com';
     const userName = account.name || userEmail;
 
-    // Determine role based on email or claims
-    // You can customize this logic based on your Azure AD setup
-    let role = 'User';
-    if (userEmail.toLowerCase().includes('admin')) {
-      role = 'Admin';
-    } else if (userEmail.toLowerCase().includes('manager')) {
-      role = 'Manager';
-    } else if (userEmail.toLowerCase().includes('tester')) {
-      role = 'Tester';
-    }
-    // Alternative: You can also check Azure AD group membership or app roles
-    // const roles = account.idTokenClaims?.roles || [];
-    // if (roles.includes('Admin')) role = 'Admin';
+    // Store the actual user's name as their role for specific access control
+    // This allows checking against specific users like 'Jayanth Purushottam' or 'Adarsha Y H'
+    const role = userName; // Use the actual name from Azure AD
+    
+    // Alternative: If you need generic roles, you can check email patterns:
+    // let role = 'User';
+    // if (userEmail.toLowerCase().includes('admin')) {
+    //   role = 'Admin';
+    // } else if (userEmail.toLowerCase().includes('manager')) {
+    //   role = 'Manager';
+    // } else if (userEmail.toLowerCase().includes('tester')) {
+    //   role = 'Tester';
+    // }
 
     // Store user information
-    localStorage.setItem('userRole', role);
+    localStorage.setItem('userRole', role); // Now stores actual user name
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('userEmail', userEmail);
     localStorage.setItem('userName', userName);
