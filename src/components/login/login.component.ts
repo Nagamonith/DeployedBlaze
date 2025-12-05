@@ -140,7 +140,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Optional: Trigger your Gantt sync
     if (this.apiBaseUrl) {
       this.http.post(`${this.apiBaseUrl}/api/gantt/sync-from-mysql`, {}).subscribe({
         next: () => console.log('Gantt sync completed.'),
@@ -151,11 +150,15 @@ export class LoginComponent implements OnInit, OnDestroy {
         next: () => console.log('Time sync completed.'),
         error: (err) => console.error('Time sync failed:', err)
       });
+
+       this.http.post(`${this.apiBaseUrl}/api/EmployeeDashboard/InsertDailyAttendanceSummary`, {}).subscribe({
+        next: () => console.log('Attendance inserted successfully.'),
+        error: (err) => console.error('Attendance Insertion failed:', err)
+      });
+
     }
 
-    // Navigate to dashboard
     this.router.navigate(['/assets/pre-dashboard']).then(() => {
-      // Start idle timeout monitoring after successful login
       this.idleTimeoutService.startWatching();
     });
   }

@@ -317,6 +317,7 @@ export class OverallDashboardComponent implements OnInit {
 
  
   loadData(): void {
+     this.selectedEmployee = 'All';
     this.loader.showLoader()
     const fromDate = this.startDate || '';
     const toDate = this.endDate || '';
@@ -338,10 +339,8 @@ export class OverallDashboardComponent implements OnInit {
           productiveHours: item.ProductiveHours || '00:00:00',
         }));
 
-        // ⭐ Save a MASTER COPY for filtering
         this.dashboardDataOriginal = [...this.dashboardData];
 
-        // Generate employee dropdown list
         this.employees = [
           { empId: 'All', name: 'All Employees' },
           ...Array.from(
