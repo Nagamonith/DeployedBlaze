@@ -133,28 +133,24 @@ console.log(this.userRole)
 }
 
 
-  logout() {
-    this.dialog.open(LogoutAlertDialog, {
-      data: {
-        title: 'Confirm Logout',
-        message: 'Are you sure you want to log out?'
-      }
-    }).afterClosed().subscribe(result => {
-      if (result) {
-        // Clear local storage
-        localStorage.clear();
-        this.userRole = '';
-        
-        // Clear cookies
-        this.clearAllCookies();
-        
-        // Logout from Microsoft and redirect to login page
-        this.authService.logoutRedirect({
-          postLogoutRedirectUri: window.location.origin + '/login'
-        });
-      }
-    });
-  }
+logout() {
+  this.dialog.open(LogoutAlertDialog, {
+    data: {
+      title: 'Confirm Logout',
+      message: 'Are you sure you want to log out?'
+    }
+  }).afterClosed().subscribe(result => {
+    if (result === true) {
+
+
+      this.authService.logoutRedirect({
+        postLogoutRedirectUri: window.location.origin + '/login'
+      });
+    }
+  });
+}
+
+
 
 navigateToProjects():void{
   this.setActiveIcon('Catalogue');
