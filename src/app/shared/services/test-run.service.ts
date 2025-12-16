@@ -233,4 +233,15 @@ getAssignedTestSuites(testRunId: string): Observable<any[]> {
       })
     );
   }
+  updateTestRunDetails(
+  productId: string,
+  testRunId: string,
+  request: CreateTestRunRequest
+): Observable<void> {
+  return this.http.put<void>(
+    `${this.apiUrl}/products/${productId}/testruns/${testRunId}`,
+    request
+  );
+}
+
 }

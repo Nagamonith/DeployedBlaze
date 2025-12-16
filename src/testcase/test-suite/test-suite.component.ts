@@ -32,6 +32,7 @@ import {
   EMPTY,
   throwError
 } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-test-suite',
@@ -563,62 +564,86 @@ private assignTestCasesToSuite(suiteId: string): Observable<void> {
   return this.testSuiteService.assignTestCasesToSuite(suiteId, request);
 }
   // Delete functionality
-  confirmDeleteSuite(suiteId: string): void {
-    if (!suiteId) {
-      this.showAlertMessage('Invalid test suite ID for deletion', 'error');
-      return;
-    }
+ confirmDeleteSuite(suiteId: string): void {
+  this.pendingDeleteId.set(suiteId);
 
-    this.pendingDeleteId.set(suiteId);
-    this.alertMessage.set('Are you sure you want to delete this test suite? This action cannot be undone.');
-    this.alertType.set('warning');
-    this.isConfirmAlert.set(true);
-    this.showAlert.set(true);
-  }
+  this.alertMessage.set(
+    'Are you sure you want to delete this test suite?'
+  );
+  this.alertType.set('warning');
+  this.isConfirmAlert.set(true);   // 👈 CONFIRM MODE
+  this.showAlert.set(true);        // 👈 SHOW POPUP
+}
 
-  handleConfirmDelete(): void {
-    const suiteId = this.pendingDeleteId();
-    if (!suiteId || !this.currentProductId()) {
-      this.showAlert.set(false);
-      this.pendingDeleteId.set(null);
-      return;
-    }
 
-    this.isDeleting.set(true);
-    this.showAlert.set(false);
+handleConfirmDelete(): void {
+  const suiteId = this.pendingDeleteId();
+  const productId = this.currentProductId();
 
-    this.testSuiteService.deleteTestSuite(this.currentProductId(), suiteId, false).pipe(
+  if (!suiteId || !productId) return;
+
+  console.log('CONFIRM DELETE CLICKED');
+
+  this.isDeleting.set(true);
+  this.showAlert.set(false);
+
+  this.testSuiteService
+    .deleteTestSuite(productId, suiteId, false)
+    .pipe(
       tap(() => {
-        this.showAlertMessage('Test suite deleted successfully', 'success');
+        // ✅ SUCCESS
+        this.showAlertMessage(
+          'Test suite deleted successfully',
+          'success'
+        );
         this.loadTestSuites();
       }),
-      catchError(err => {
-        console.error('Failed to delete test suite:', err);
-        
-        if (err.message && err.message.includes('reference')) {
-          // Ask for force delete
-          this.alertMessage.set('This test suite contains references. Force delete anyway?');
-          this.alertType.set('warning');
-          this.isConfirmAlert.set(true);
-          this.showAlert.set(true);
-          return of(null);
-        } else {
-          this.showAlertMessage('Failed to delete test suite: ' + (err.message || 'Unknown error'), 'error');
-          return of(null);
+      catchError((err: HttpErrorResponse) => {
+        console.log('DELETE ERROR RECEIVED:', err);
+
+        // 🚫 BLOCKED BY TEST RUN
+        if (err.status === 409) {
+          console.log('OPENING BLOCKED POPUP');
+
+          // Ensure popup re-renders
+          this.showAlert.set(false);
+
+          setTimeout(() => {
+            this.alertMessage.set(
+              'This Test Suite is used in one or more Test Runs and cannot be deleted.'
+            );
+            this.alertType.set('warning');
+            this.isConfirmAlert.set(false);
+            this.showAlert.set(true);
+          });
+
+          return EMPTY;
         }
+
+        // ❌ OTHER ERRORS
+        this.showAlertMessage(
+          'Delete failed. Please try again.',
+          'error'
+        );
+        return EMPTY;
       }),
       finalize(() => {
         this.isDeleting.set(false);
         this.pendingDeleteId.set(null);
       })
-    ).subscribe();
-  }
+    )
+    .subscribe();
+}
 
-  handleCancelDelete(): void {
-    this.showAlert.set(false);
-    this.isConfirmAlert.set(false);
-    this.pendingDeleteId.set(null);
-  }
+
+
+
+handleCancelDelete(): void {
+  this.showAlert.set(false);
+  this.isConfirmAlert.set(false);
+  this.pendingDeleteId.set(null);
+}
+
 
   // Utility methods
   private showAlertMessage(message: string, type: 'success' | 'error' | 'warning'): void {
@@ -684,4 +709,5 @@ private assignTestCasesToSuite(suiteId: string): Observable<void> {
 getSelectedTestCaseIds(): string {
   return this.selectedTestCases().map(tc => tc.id).join(', ');
 }
+
 }

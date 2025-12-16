@@ -40,6 +40,8 @@ export class TestRunComponent implements OnInit {
 
   // State signals
   mode = signal<'list' | 'add' | 'edit'>('list');
+  originalSuiteIds = signal<string[]>([]);
+
   selectedRunId = signal<string>('');
   selectedSuiteIds = signal<string[]>([]);
   testRuns = signal<TestRunResponse[]>([]);
@@ -184,14 +186,17 @@ testRunsWithCounts = computed(() =>
     this.isLoadingRuns.set(true);
     this.testRunService.getTestRunById(this.currentProductId(), runId).pipe(
       tap((run) => {
-        if (run) {
-          this.mode.set('edit');
-          this.selectedRunId.set(runId);
-          this.runName = run.name;
-          this.runDescription = run.description || '';
-          this.selectedSuiteIds.set(run.testSuites?.map(suite => suite.id) || []);
-        }
-      }),
+  if (run) {
+    this.mode.set('edit');
+    this.selectedRunId.set(runId);
+    this.runName = run.name;
+    this.runDescription = run.description || '';
+
+    const ids = run.testSuites?.map(s => s.id) || [];
+    this.selectedSuiteIds.set([...ids]);
+    this.originalSuiteIds.set([...ids]); // 🔥 IMPORTANT
+  }
+}),
       catchError(err => {
         console.error('Failed to load test run:', err);
         this.showAlertMessage('Failed to load test run details', 'error');
@@ -274,10 +279,50 @@ testRunsWithCounts = computed(() =>
     ).subscribe();
   }
 
-  private updateTestRun(request: CreateTestRunRequest): void {
-    // Swagger exposes only status update; update suites and keep status as-is
-    this.assignTestSuites(this.selectedRunId());
-  }
+private updateTestRun(request: CreateTestRunRequest): void {
+  const runId = this.selectedRunId();
+
+  const original = this.originalSuiteIds();
+  const current = this.selectedSuiteIds();
+
+  const toAdd = current.filter(id => !original.includes(id));
+  const toRemove = original.filter(id => !current.includes(id));
+
+  this.isSaving.set(true);
+
+  const updateDetails$ =
+    this.testRunService.updateTestRunDetails(
+      this.currentProductId(),
+      runId,
+      request
+    );
+
+  const addCalls = toAdd.map(id =>
+    this.testRunService.assignTestSuitesToRun(runId, {
+      testSuiteIds: [id]
+    })
+  );
+
+  const removeCalls = toRemove.map(id =>
+    this.testRunService.removeTestSuiteFromRun(runId, id)
+  );
+
+  forkJoin([updateDetails$, ...addCalls, ...removeCalls]).pipe(
+    tap(() => {
+      this.showAlertMessage('Test run updated successfully', 'success');
+      this.loadTestRuns();
+      this.isSaving.set(false);
+      this.cancelEdit();
+    }),
+    catchError(err => {
+      console.error(err);
+      this.showAlertMessage('Failed to update test run', 'error');
+      this.isSaving.set(false);
+      return of(null);
+    })
+  ).subscribe();
+}
+
 
   private assignTestSuites(runId: string): void {
     const request: AssignTestSuitesRequest = {

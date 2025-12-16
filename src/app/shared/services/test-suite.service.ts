@@ -229,42 +229,46 @@ getTestSuites(productId: string): Observable<TestSuiteResponse[]> {
     );
   }
 
-  deleteTestSuite(productId: string, testSuiteId: string, forceDelete: boolean = false): Observable<void> {
-    if (!productId?.trim() || !testSuiteId?.trim()) {
-      return throwError(() => new Error('Product ID and Test Suite ID are required'));
-    }
+deleteTestSuite(
+  productId: string,
+  testSuiteId: string,
+  forceDelete: boolean = false
+): Observable<void> {
 
-    const url = `${this.apiUrl}/api/products/${productId}/testsuites/${testSuiteId}`;
-    const options = {
-      ...this.httpOptions,
-      params: { forceDelete: forceDelete.toString() }
-    };
-    
-    console.log('Deleting test suite at:', url, 'with forceDelete:', forceDelete);
-    
-    return this.http.delete<void>(url, options).pipe(
-      tap(() => {
-        console.log('Test suite deleted successfully');
-      }),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Delete test suite error:', error);
-        
-        if (error.status === 409) {
-          const message = error.error?.message || error.error?.error || 'Cannot delete test suite with references';
-          return throwError(() => new Error(message));
-        }
-        if (error.status === 404) {
-          return throwError(() => new Error('Test suite not found'));
-        }
-        if (error.status === 400) {
-          const message = error.error?.message || 'Bad request';
-          return throwError(() => new Error(message));
-        }
-        
-        return throwError(() => new Error('Failed to delete test suite'));
-      })
+  if (!productId?.trim() || !testSuiteId?.trim()) {
+    return throwError(() =>
+      new Error('Product ID and Test Suite ID are required')
     );
   }
+
+  const url = `${this.apiUrl}/api/products/${productId}/testsuites/${testSuiteId}`;
+  const options = {
+    ...this.httpOptions,
+    params: { forceDelete: forceDelete.toString() }
+  };
+
+  console.log(
+    'Deleting test suite at:',
+    url,
+    'with forceDelete:',
+    forceDelete
+  );
+
+  return this.http.delete<void>(url, options).pipe(
+    tap(() => {
+      console.log('Test suite deleted successfully');
+    }),
+    catchError((error: HttpErrorResponse) => {
+      console.error('Delete test suite error:', error);
+
+      // ✅ DO NOT MODIFY THE ERROR
+      // ✅ DO NOT WRAP IT
+      // ✅ PASS IT AS IS
+      return throwError(() => error);
+    })
+  );
+}
+
   // Add this method to TestSuiteService
 // In your TestSuiteService
 // Alternative method using Base64 endpoint
