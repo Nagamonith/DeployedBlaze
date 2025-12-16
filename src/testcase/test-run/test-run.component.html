@@ -56,6 +56,11 @@
                       [disabled]="isLoadingSuites()">
                <span [innerHTML]="icons.Delete">Delete</span>
               </button>
+               <button class="btn-archive"
+          (click)="confirmArchiveRun(run.id)"
+          [disabled]="isLoadingSuites()">
+    Archive
+  </button>
             </td>
           </tr>
         </tbody>

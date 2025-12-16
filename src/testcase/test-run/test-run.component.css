@@ -14,6 +14,10 @@
 .action-buttons {
   margin-bottom: 20px;
 }
+.btn-archive {
+  background-color: #f5a623;
+  color: #fff;
+}
 
 .btn-primary {
   background-color: #4873ff;

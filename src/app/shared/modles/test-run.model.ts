@@ -26,6 +26,7 @@ export interface TestRunResponse {
   updatedAt: Date;
   createdBy?: string;
   testSuites: TestSuite[]; // Add this line
+  isArchived: boolean;
 }
 
 export interface CreateTestRunRequest {

@@ -49,6 +49,8 @@ export class TestRunComponent implements OnInit {
   filteredTestSuites = signal<TestSuiteResponse[]>([]);
   currentProductId = signal<string>('');
   suiteSearchTerm = signal<string>('');
+  pendingArchiveId = signal<string | null>(null);
+
 
   // Alert signals
   showAlert = signal(false);
@@ -106,11 +108,15 @@ private loadTestRuns(): void {
   if (!this.currentProductId()) return;
 
   this.isLoadingRuns.set(true);
+
   this.testRunService.getTestRuns(this.currentProductId()).pipe(
     tap((runs) => {
-      // Sort the test runs before setting them
-      const sortedRuns = this.sortTestRuns(runs);
+      // ✅ FILTER ONLY NON-ARCHIVED
+      const activeRuns = runs.filter(r => r.isArchived === false);
+
+      const sortedRuns = this.sortTestRuns(activeRuns);
       this.testRuns.set(sortedRuns);
+
       this.isLoadingRuns.set(false);
     }),
     catchError(err => {
@@ -121,6 +127,7 @@ private loadTestRuns(): void {
     })
   ).subscribe();
 }
+
 
 // In your test-run.component.ts
 private loadTestSuites(): void {
@@ -361,29 +368,38 @@ private updateTestRun(request: CreateTestRunRequest): void {
     this.showAlert.set(true);
   }
 
-  handleConfirmDelete(): void {
-    const runId = this.pendingDeleteId();
-    if (!runId || !this.currentProductId()) {
-      this.showAlert.set(false);
-      return;
-    }
+handleConfirmDelete(): void {
+  const productId = this.currentProductId();
 
-    this.testRunService.deleteTestRun(this.currentProductId(), runId).pipe(
-      tap(() => {
+  // 🟠 ARCHIVE FLOW
+  if (this.pendingArchiveId() && productId) {
+    const runId = this.pendingArchiveId()!;
+    this.testRunService
+      .setArchiveStatus(productId, runId, true)
+      .subscribe(() => {
+        this.showAlertMessage('Test run archived successfully', 'success');
+        this.loadTestRuns(); // removes from grid
+      });
+  }
+
+  // 🔴 DELETE FLOW
+  if (this.pendingDeleteId() && productId) {
+    const runId = this.pendingDeleteId()!;
+    this.testRunService
+      .deleteTestRun(productId, runId)
+      .subscribe(() => {
         this.showAlertMessage('Test run deleted successfully', 'success');
         this.loadTestRuns();
-      }),
-      catchError(err => {
-        console.error('Failed to delete test run:', err);
-        this.showAlertMessage('Failed to delete test run', 'error');
-        return of(null);
-      })
-    ).subscribe();
-
-    this.pendingDeleteId.set(null);
-    this.isConfirmAlert.set(false);
-    this.showAlert.set(false);
+      });
   }
+
+  // ✅ reset state
+  this.pendingArchiveId.set(null);
+  this.pendingDeleteId.set(null);
+  this.isConfirmAlert.set(false);
+  this.showAlert.set(false);
+}
+
 
   handleCancelDelete(): void {
     this.showAlert.set(false);
@@ -454,4 +470,12 @@ private sortTestSuites(suites: TestSuiteResponse[]): TestSuiteResponse[] {
     return a.name.localeCompare(b.name);
   });
 }
+confirmArchiveRun(runId: string): void {
+  this.pendingArchiveId.set(runId);
+  this.alertMessage.set('Are you sure you want to archive this test run?');
+  this.alertType.set('warning');
+  this.isConfirmAlert.set(true);
+  this.showAlert.set(true);
+}
+
 }

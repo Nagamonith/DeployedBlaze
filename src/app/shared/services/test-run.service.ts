@@ -243,5 +243,14 @@ getAssignedTestSuites(testRunId: string): Observable<any[]> {
     request
   );
 }
-
+  setArchiveStatus(
+  productId: string,
+  testRunId: string,
+  isArchived: boolean
+): Observable<void> {
+  return this.http.put<void>(
+    `${this.apiUrl}/products/${productId}/testruns/${testRunId}/archive`,
+    isArchived
+  );
+}
 }
