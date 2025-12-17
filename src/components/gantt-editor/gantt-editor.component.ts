@@ -157,14 +157,15 @@ this.loadSprintDates();
         if (this.validChartTasks.length === 0) {
           this.ganttChartReady = false;
           this.ganttChartLoading = false;
+          this.cdr.detectChanges();
           return; 
         }
 
         setTimeout(() => {
           this.ganttChartReady = true;
           this.ganttChartLoading = false;
-          this.cdr.markForCheck();
-        }, 0);
+          this.cdr.detectChanges();
+        }, 100);
       },
       error: () => {
         this.dialog.open(ErrorAlertDialogComponent, {

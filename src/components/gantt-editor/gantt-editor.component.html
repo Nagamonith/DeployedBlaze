@@ -162,7 +162,7 @@
      <td> <input type="date" [(ngModel)]="task.start" [name]="'start-' + task.id" readonly /></td>
     <!-- <td>{{ getOriginalMergeDate(task.id) }}</td> -->
      <td> 
-      <input type="date" [(ngModel)]="task.originalEnd" [name]="'originalEnd-' + task.id" readonly />
+      <input type="date" [(ngModel)]="task.originalEnd" [name]="'originalEnd-' + task.id"  />
      </td>
     <td>
       <input type="date" [(ngModel)]="task.end" [name]="'end-' + task.id" />
@@ -192,20 +192,21 @@
     </div>
 
     <div *ngIf="!showGrid" class="gantt-chart-section">
+      <div *ngIf="ganttChartLoading" class="gantt-loading">Loading chart...</div>
       <dx-gantt
-        *ngIf="ganttChartReady"
+        *ngIf="ganttChartReady && !ganttChartLoading"
         [tasks]="{ dataSource: filteredTasks }"
         [dependencies]="{ dataSource: ganttDependencies }"
         [resources]="{ dataSource: ganttResources }"
         [resourceAssignments]="{ dataSource: ganttAssignments }"
         [height]="500"
+        [taskListWidth]="500"
         [columns]="[
-          { dataField: 'realmantisid', caption: 'Bug ID' },
-          { dataField: 'title', caption: 'Summary' },
-          { dataField: 'type', caption: 'Type' },
-          { dataField: 'status', caption: 'Status' }        ]">
+          { dataField: 'realmantisid', caption: 'Bug ID', width: 100 },
+          { dataField: 'title', caption: 'Summary', width: 200 },
+          { dataField: 'type', caption: 'Type', width: 100 },
+          { dataField: 'status', caption: 'Status', width: 100 }        ]">
       </dx-gantt>
-      <div *ngIf="ganttChartLoading" class="gantt-loading">Loading chart...</div>
     </div>
   </div>
 </div>
