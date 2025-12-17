@@ -418,6 +418,7 @@ import { GanttEditorComponent } from '../gantt-editor/gantt-editor.component';
 import { LeftnavIcon } from '../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum';
 import { WorkloadManagementComponent } from '../workload-management/workload-management.component';
 import { DxCheckBoxModule } from 'devextreme-angular';
+import * as XLSX from 'xlsx';
 
 
 @Component({
@@ -548,22 +549,72 @@ export class ProjectsDetailsComponent implements OnInit {
     });
   }
 
-  // Tabs: first is always 'Projects', others are per-project
+  exportProjectsToExcel(): void {
+    // Prepare data for export
+    const exportData = this.projects.map(project => ({
+      'Project Name': project.Project_Name,
+      'Current Target Version': project.Target_Version,
+      'Sprint Start Date': project.Sprint_Start_Date ? new Date(project.Sprint_Start_Date).toLocaleDateString() : '',
+      'Sprint Original Merge Date': project.Sprint_Original_Merge_Date ? new Date(project.Sprint_Original_Merge_Date).toLocaleDateString() : '',
+      'Sprint Current Merge Date': project.Sprint_Current_Merge_Date ? new Date(project.Sprint_Current_Merge_Date).toLocaleDateString() : '',
+      'Sprint Release Date': project.Sprint_Release_Date ? new Date(project.Sprint_Release_Date).toLocaleDateString() : ''
+    }));
+
+    // Create worksheet
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+
+    // Create workbook
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Projects');
+
+    // Generate filename with timestamp
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `Projects_${timestamp}.xlsx`;
+
+    // Save file
+    XLSX.writeFile(wb, filename);
+  }
+
+  exportProjectSummaryToExcel(project: any): void {
+    const summaryData = this.getSummaryForProject(project);
+    
+    if (summaryData.length === 0) {
+      return;
+    }
+    const exportData = summaryData.map(bug => {
+      const row: any = {};
+      this.bugSummaryDisplayOrder.forEach(key => {
+        const displayName = this.bugSummaryDisplayNames[key] || key;
+        row[displayName] = bug[key] ?? '';
+      });
+      return row;
+    });
+
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Bug Summary');
+
+    const projectName = project.Project_Name || 'Project';
+    const targetVersion = project.Target_Version || 'Version';
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `${projectName}_${targetVersion}_Overall-Metrics_${timestamp}.xlsx`;
+    XLSX.writeFile(wb, filename);
+  }
+
   tabs: Array<{ label: string, type: 'projects' | 'workload' | 'project' | 'metrics' | 'gantt', project?: any }> = [
     { label: 'Projects', type: 'projects' },
     { label: 'Workload', type: 'workload' }
   ];
   activeTabIndex = 0;
 
-  // Projects grid
   projects: any[] = [];
   loading = false;
   error = '';
 
   apiBaseUrl = JSON.parse(sessionStorage.getItem('config') || '{}').url;
 
-  // Per-project state
-  projectSummary: { [key: string]: any[] } = {}; // bug summary per project
+  projectSummary: { [key: string]: any[] } = {}; 
   projectSummaryLoading: { [key: string]: boolean } = {};
   projectSummaryError: { [key: string]: string } = {};
   bugSummaryDisplayOrder = [
@@ -601,14 +652,12 @@ export class ProjectsDetailsComponent implements OnInit {
     Training_hours: 'Training'
   };
 
-  // Per-project sub-tab bar state
   projectSubTabs: {
     [key: string]: {
       tabs: Array<{ label: string, type: 'metrics' | 'gantt' | 'bug-details', bugId?: number }>,
       active: number
     }
   } = {};
-  // Store bug details state per project sub-tab
   bugDetailsState: {
     [key: string]: {
       [bugId: number]: {
@@ -621,7 +670,6 @@ export class ProjectsDetailsComponent implements OnInit {
       }
     }
   } = {};
-  // Ensure sub-tab bar exists for a project
   ensureProjectSubTabs(project: any) {
     const key = `${project.Project_Name}__${project.Target_Version}`;
     if (!this.projectSubTabs[key]) {

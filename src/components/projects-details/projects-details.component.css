@@ -1041,6 +1041,22 @@ thead{
   box-shadow: 0 0 0 1px #30B9EF;
 }
 
+.filter-row .custom-btn-primary {
+  height: 34px;
+  width: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.filter-row .custom-btn-primary span {
+  display: inline-flex;
+  align-items: center;
+}
+
 .dropdown-arrow {
   font-size: 10px;
   margin-left: 6px;

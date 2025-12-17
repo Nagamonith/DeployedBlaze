@@ -11,6 +11,7 @@ import { Input, OnInit } from '@angular/core';
 import { ErrorAlertDialogComponent } from '../../app/shared/dialogs/error-alert-dialog/error-alert-dialog.component';
 import { SuccessAlertDialogComponent } from '../../app/shared/dialogs/success-alert-dialog/success-alert-dialog.component';
 import { LeftnavIcon } from '../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum';
+import * as XLSX from 'xlsx';
 
 
 @Component({
@@ -48,9 +49,9 @@ export class GanttEditorComponent implements OnInit {
   statusDropdownOpen: boolean = false;
   resourceDropdownOpen: boolean = false;
   typeDropdownOpen: boolean = false;
-  private isProcessingStatusChange: boolean = false; // Flag to prevent multiple rapid calls
-  private isProcessingResourceChange: boolean = false; // Flag to prevent multiple rapid calls
-  private isProcessingTypeChange: boolean = false; // Flag to prevent multiple rapid calls
+  private isProcessingStatusChange: boolean = false; 
+  private isProcessingResourceChange: boolean = false; 
+  private isProcessingTypeChange: boolean = false; 
   showTaskModal = false;
   selectedTask: any = null;
   ganttChartReady: boolean | undefined;
@@ -70,17 +71,7 @@ export class GanttEditorComponent implements OnInit {
     'AI_MLOPS'
   ];
 task: any;
-  //  ngOnInit() {
-  //   if (this.projectNameFromParent && this.targetVersionFromParent) {
-  //     this.ganttForm.patchValue({
-  //       projectName: this.projectNameFromParent,
-  //       targetVersion: this.targetVersionFromParent
-  //     });
-  //         this.fetchTargetVersions(this.projectNameFromParent);
 
-  //     this.showGanttChart(); // auto-load chart
-  //   }
-  // );}
     ngOnInit() {
     if (this.projectNameFromParent && this.targetVersionFromParent) {
       this.ganttForm.patchValue({
@@ -88,12 +79,12 @@ task: any;
         targetVersion: this.targetVersionFromParent
       });
           this.fetchTargetVersions(this.projectNameFromParent);
-this.loadSprintDates(); // Load sprint dates if project name is provided
-      this.showGanttChart(); // auto-load chart
+this.loadSprintDates(); 
+      this.showGanttChart(); 
     }
     this.ganttForm.get('projectName')?.valueChanges.subscribe((selectedProject: string) => {
     this.fetchTargetVersions(selectedProject);
-    this.ganttForm.patchValue({ targetVersion: '' }); // reset target version
+    this.ganttForm.patchValue({ targetVersion: '' }); 
   });
   }
 
@@ -112,11 +103,6 @@ this.loadSprintDates(); // Load sprint dates if project name is provided
   showGanttChart() {
     const projectName = this.ganttForm.value.projectName;
     const targetVersion = this.ganttForm.value.targetVersion;
-
-    // if (!projectName || !targetVersion) {
-    //   alert('Project Name and Target Version are required!');
-    //   return;
-    // }
 
     if (!projectName || !targetVersion) {
        this.dialog.open(NotFoundAlertDialogComponent, {
@@ -171,16 +157,6 @@ this.loadSprintDates(); // Load sprint dates if project name is provided
         if (this.validChartTasks.length === 0) {
           this.ganttChartReady = false;
           this.ganttChartLoading = false;
-        //   alert('Please fill in all required fields (start and end dates) for at least one task.');
-        //   return;
-        // }
-        // this.dialog.open(NotFoundAlertDialogComponent, 
-        //   {
-        //   width: '400px',
-        //   data: {
-        //     message: 'No matches found'
-        //   }
-        // });
           return; 
         }
 
@@ -191,7 +167,6 @@ this.loadSprintDates(); // Load sprint dates if project name is provided
         }, 0);
       },
       error: () => {
-        // alert('Error loading Gantt data');
         this.dialog.open(ErrorAlertDialogComponent, {
           width: '480px',
           data: { message: 'Error loading Gantt data' }
@@ -302,6 +277,32 @@ this.loadSprintDates(); // Load sprint dates if project name is provided
   }
 
   // Type multi-select methods
+  exportToExcel() {
+    // Prepare data for export
+    const exportData = this.filteredTasks.map(task => ({
+      'Bug ID': task.realmantisid,
+      'Summary': task.title,
+      'Type': task.type,
+      'Status': task.status,
+      'Resource': this.getResourceName(task.id),
+      'Start Date': task.start,
+      'Original Merge Date': task.originalEnd,
+      'Current Merge Date': task.end,
+      'Tester Release Date': task.testerReleaseDate,
+      'Progress': task.progress
+    }));
+
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Gantt Tasks');
+    const projectName = this.ganttForm.value.projectName || 'Project';
+    const targetVersion = this.ganttForm.value.targetVersion || 'Version';
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `${projectName}_${targetVersion}_GanttChart_${timestamp}.xlsx`;
+    XLSX.writeFile(wb, filename)
+  }
+
   onTypeToggle(typeId: string) {
     if (this.isProcessingTypeChange) {
       return;

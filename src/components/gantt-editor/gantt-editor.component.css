@@ -646,3 +646,21 @@ thead{
 .filter-item .multi-select-dropdown {
   min-width: 200px;
 }
+/* Export container for Excel button */
+.export-container {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.export-container .custom-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.export-container .custom-btn-primary span {
+  display: inline-flex;
+  align-items: center;
+}

@@ -16,7 +16,6 @@
       <div class="ac-body">
         <p>User : {{ userId }}</p>
 
-        <!-- Session Info -->
         <div *ngIf="sessionActive || logoutClicked" class="session-div">
           <p>Login Time: {{ loginTime }}</p>
           <p *ngIf="sessionActive">Current Session: {{ sessionDuration }}</p>

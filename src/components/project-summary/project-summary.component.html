@@ -1,31 +1,3 @@
-<!-- <div class="container mt-4">
-  <h2>Project Summary</h2>
-  <p><strong>Project:</strong> {{ projectName }}</p>
-  <p><strong>Target Version:</strong> {{ version || '(unspecified)' }}</p>
-
-  <div class="mt-4">
-    <button class="btn btn-primary me-2" (click)="showOverallMetrics()">Overall Metrics</button>
-    <button class="btn btn-outline-secondary" (click)="showGanttChart()">Gantt Chart</button>
-  </div>
-</div> -->
-
-<!-- <div class="container mt-4">
-  <h2>Project Summary</h2>
-  <p><strong>Project:</strong> {{ projectName }}</p>
-  <p><strong>Target Version:</strong> {{ version || '(unspecified)' }}</p>
-
-  <div class="mt-4">
-    <button class="btn btn-primary me-2" (click)="showOverallMetrics()">Overall Metrics</button>
-    <button class="btn btn-outline-secondary" (click)="showGanttChart()">Gantt Chart</button>
-  </div>
-
-  <div class="mt-4" *ngIf="showGantt">
-    <app-gantt-editor
-      [projectNameFromParent]="projectName"
-      [targetVersionFromParent]="version">
-    </app-gantt-editor>
-  </div>
-</div> -->
 
 
 
@@ -75,7 +47,6 @@
               {{ bug[key] }}
             </td>
           </tr>
-          <!-- Total Row -->
           <tr class="table-success fw-bold">
             <td *ngFor="let key of bugSummaryDisplayOrder; let i = index">
               <ng-container *ngIf="i < 3"></ng-container>
@@ -88,8 +59,8 @@
       </table>
       <div *ngIf="!bugSummaryLoading && bugSummary.length === 0">No data found.</div>
     </div>
+    
 
-    <!-- Gantt Chart Tab -->
     <div *ngSwitchCase="'gantt'">
       <app-gantt-editor
         [projectNameFromParent]="projectName"
@@ -97,12 +68,10 @@
       </app-gantt-editor>
     </div>
 
-    <!-- Bug Details Tab -->
     <div *ngSwitchCase="'bug-details'">
       <div *ngIf="bugDetailsLoading">Loading bug details...</div>
       <div *ngIf="bugDetailsError" class="text-danger">{{ bugDetailsError }}</div>
       <div *ngIf="!bugDetailsLoading && (bugTaskDetails.length || timeTracking.length)" class="sprint-matrix-bottom-row">
-        <!-- Bug Task Table -->
         <div class="sprint-matrix-tasks-table">
           <div class="table-responsive">
             <table class="table table-bordered table-hover sticky-header-table">

@@ -33,38 +33,14 @@
         </button>
       </div>
     </form>
-    <!-- <button class="btn custom-btn-secondary" (click)="goToPreviousPage()">Back</button> -->
+      <div class="filter-item">
+           <div class="export-container">
+        <button class="custom-btn-primary" (click)="exportToExcel()">
+          <span [innerHTML]="icons.Export"></span> Export to Excel
+        </button>
+      </div>
+        </div>
   </div>
-<!-- <div class="form-group">
-        <label for="startDate">Sprint Start Date:</label>
-        <input id="startDate" type="date" [(ngModel)]="sprintStartDate" name="startDate" /> 
-        <label for="originalMergeDate">Sprint Original Merge Date:</label>
-        <input id="originalMergeDate" type="date" [(ngModel)]="sprintOriginalMergeDate" name="originalMergeDate" />
-    
-        <label for="currentMergeDate">Sprint Current Merge Date:</label>
-        <input id="currentMergeDate" type="date" [(ngModel)]="sprintCurrentMergeDate" name="currentMergeDate" />
-
-
-      <button type="button" class="btn custom-btn-primary" (click)="setSprintDates()" >
-        <i class="bi bi-calendar"></i>
-      Set Sprint Dates
-      </button>
-    </div> -->
-    <!-- <div class="form-group">
-  <label for="startDate">Sprint Start Date:</label>
-  <input id="startDate" type="date" [(ngModel)]="sprintStartDate" name="startDate" />
-
-  <label for="originalMergeDate">Sprint Original Merge Date:</label>
-  <input id="originalMergeDate" type="date" [(ngModel)]="sprintOriginalMergeDate" name="originalMergeDate" />
-
-  <label for="currentMergeDate">Sprint Current Merge Date:</label>
-  <input id="currentMergeDate" type="date" [(ngModel)]="sprintCurrentMergeDate" name="currentMergeDate" />
-
-  <button type="button" class="btn custom-btn-primary" (click)="setSprintDates()">
-    <i class="bi bi-calendar"></i>
-    Set Sprint Dates
-  </button>
-</div> -->
 
   <div class="gantt-editor-container">
     <div *ngIf="showGrid" class="gantt-grid-section">
@@ -150,6 +126,7 @@
         </div>
       </div>
 
+     
 
       <table class="gantt-grid-table">
   

@@ -125,22 +125,29 @@ fetchWorkloadData(): void {
       // (doesn't affect any existing logic)
       (this as any).summaryData = summaryJson;
 
-      // ✅ Existing mapping logic untouched
-      this.ganttTasks = (data || []).map((row: { task_Summary: any; project_Name: any; actual_Start: any; current_Merge_Date: any; resource_Name: any; target_Version: any; mantis_BugID: any; total_Hoursd_Worked: any; original_Merge_Date: any; progress: any; }, idx: number) => ({
-        id: idx + 1,
-        title: row.task_Summary || row.project_Name,
-        start: row.actual_Start,
-        end: row.current_Merge_Date,
-        project_Name: row.project_Name,
-        resource_Name: row.resource_Name,
-        target_Version: row.target_Version,
-        mantis_BugID: row.mantis_BugID,
-        total_Hoursd_Worked: row.total_Hoursd_Worked,
-        actual_Start: row.actual_Start,
-        original_Merge_Date: row.original_Merge_Date,
-        current_Merge_Date: row.current_Merge_Date,
-        progress: row.progress
-      }));
+      // ✅ Existing mapping logic with proper date parsing
+      this.ganttTasks = (data || []).map((row: { task_Summary: any; project_Name: any; actual_Start: any; current_Merge_Date: any; resource_Name: any; target_Version: any; mantis_BugID: any; total_Hoursd_Worked: any; original_Merge_Date: any; progress: any; }, idx: number) => {
+        // Parse dates properly
+        const startDate = row.actual_Start ? new Date(row.actual_Start) : new Date();
+        const endDate = row.current_Merge_Date ? new Date(row.current_Merge_Date) : new Date();
+        const originalMergeDate = row.original_Merge_Date ? new Date(row.original_Merge_Date) : null;
+        
+        return {
+          id: idx + 1,
+          title: row.task_Summary || row.project_Name,
+          start: startDate,
+          end: endDate,
+          project_Name: row.project_Name,
+          resource_Name: row.resource_Name,
+          target_Version: row.target_Version,
+          mantis_BugID: row.mantis_BugID,
+          total_Hoursd_Worked: row.total_Hoursd_Worked,
+          actual_Start: startDate,
+          original_Merge_Date: originalMergeDate,
+          current_Merge_Date: endDate,
+          progress: row.progress || 0
+        };
+      });
 
       this.resourceList = Array.from(new Set(this.ganttTasks.map(t => t.resource_Name).filter(r => r)));
       this.selectedResource = '';
@@ -168,5 +175,12 @@ fetchWorkloadData(): void {
     } else {
       this.filteredGanttTasks = this.ganttTasks.filter(t => t.resource_Name === this.selectedResource);
     }
+  }
+
+  getTotalHours(): number {
+    return this.filteredGanttTasks.reduce((total, task) => {
+      const hours = parseFloat(task.total_Hoursd_Worked) || 0;
+      return total + hours;
+    }, 0);
   }
 }
