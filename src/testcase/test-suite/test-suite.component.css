@@ -11,6 +11,13 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
+.btn-archive {
+  background-color: #818fba;
+  color: #fff;
+  border-radius: 4px;
+  padding: 6px 12px;
+}
+
 
 .action-buttons {
   margin-bottom: 20px;

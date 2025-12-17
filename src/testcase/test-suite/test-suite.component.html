@@ -87,6 +87,13 @@
                   title="Delete Test Suite">
                   <span [innerHTML]="icons.Delete">Delete</span>
                 </button>
+                <button 
+  class="btn-archive"
+  (click)="confirmArchiveSuite(suite.id!)"
+  [disabled]="isLoading()"
+  title="Archive Test Suite">
+  Archive
+</button>
               </td>
             </tr>
           </tbody>

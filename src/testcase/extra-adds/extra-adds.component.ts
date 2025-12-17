@@ -13,6 +13,9 @@ import { AlertComponent } from "../../app/shared/alert/alert.component";
 import { Product, ProductVersionResponse } from '../../app/shared/modles/product.model';
 import { ProductModule } from '../../app/shared/modles/module.model';
 import { ModuleService } from '../../app/shared/services/module.service';
+import { Router } from '@angular/router';
+
+
 
 interface Module extends ProductModule {
   editing?: boolean;
@@ -23,7 +26,7 @@ interface ModuleWithUI extends ProductModule {
   testCaseCount?: number;  // Make this optional since it's UI-specific
   versionCount?: number;   // Make this optional since it's UI-specific
 }
-type PendingAction = 'addModule' | 'addVersion' | 'toggleModules' | null;
+type PendingAction = 'addModule' | 'addVersion' | 'toggleModules' | 'archivedTestRuns' | 'archivedTestSuites' | null;
 
 @Component({
   selector: 'app-extra-adds',
@@ -39,6 +42,8 @@ export class ExtraAddsComponent implements OnInit {
   private autoSaveService = inject(AutoSaveService);
   private cdr = inject(ChangeDetectorRef);
   private moduleService = inject(ModuleService);
+  
+private router = inject(Router);
 
   openCard(card: 'addProduct' | 'addModule' | 'addVersion' | 'showModules' | 'showProducts' | 'autoSave') {
     this.closeAllCards();
@@ -480,23 +485,42 @@ confirmProductSelection(): void {
     this.showAlertMessage('Please select a product', 'warning');
     return;
   }
+
   this.showProductSelectorModal = false;
-  
+
   switch (this.pendingAction) {
     case 'addModule':
       this.showAddModuleForm = true;
       break;
+
     case 'addVersion':
       this.showAddVersionForm = true;
       break;
+
     case 'toggleModules':
       this.showModuleList = true;
-      // Load modules for the selected product
       this.loadModules(this.selectedProductId());
       break;
+
+    case 'archivedTestRuns':
+      this.router.navigate(
+        ['/tester/archived-test-runs'],
+        { queryParams: { productId: this.selectedProductId() } }
+      );
+      break;
+      case 'archivedTestSuites':
+  this.router.navigate(
+    ['/tester/archived-test-suites'],
+    { queryParams: { productId: this.selectedProductId() } }
+  );
+  break;
+
+      break;
   }
+
   this.pendingAction = null;
 }
+
 
   cancelProductSelection(): void {
     this.pendingAction = null;
@@ -597,4 +621,28 @@ confirmProductSelection(): void {
     this.showAlert = false;
     this.pendingActionData = null;
   }
+
+  handleArchivedTestRuns(): void {
+  if (this.products().length === 0) {
+    this.resetAllToggles();
+    this.showAddProductForm = true;
+    return;
+  }
+
+  this.resetAllToggles();
+  this.pendingAction = 'archivedTestRuns';
+  this.showProductSelectorModal = true;
+}
+handleArchivedTestSuites(): void {
+  if (this.products().length === 0) {
+    this.resetAllToggles();
+    this.showAddProductForm = true;
+    return;
+  }
+
+  this.resetAllToggles();
+  this.pendingAction = 'archivedTestSuites';
+  this.showProductSelectorModal = true;
+}
+
 }

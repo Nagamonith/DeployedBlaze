@@ -1,0 +1,65 @@
+<app-alert
+  [type]="alertType()"
+  [message]="alertMessage()"
+  [show]="showAlert()"
+  [isConfirm]="isConfirmAlert()"
+  (onConfirm)="handleConfirm()"
+  (onCancel)="handleCancel()">
+</app-alert>
+
+<div class="test-run-container">
+
+  <!-- Header + Back -->
+  <div class="header-bar">
+    <button class="btn-back" (click)="goBack()">
+      ← Back to Test Runs
+    </button>
+    <h2>Archived Test Runs</h2>
+  </div>
+
+  <!-- Archived Runs Table -->
+  <div *ngIf="archivedRuns().length > 0; else noArchivedRuns" class="runs-list">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Test Suites</th>
+          <th>Last Updated</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let run of archivedRuns()">
+          <td>{{ run.name }}</td>
+          <td>{{ run.description || '-' }}</td>
+          <td>{{ run.testSuites?.length || 0 }}</td>
+          <td>{{ run.updatedAt | date:'MMM d, y, h:mm a' }}</td>
+
+          <td class="actions">
+            <button
+              class="btn-archive"
+              (click)="confirmUnarchive(run.id)">
+              Unarchive
+            </button>
+
+            <button
+              class="btn-delete"
+              (click)="confirmDelete(run.id)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Empty State -->
+  <ng-template #noArchivedRuns>
+    <div class="no-runs">
+      No archived test runs found.
+    </div>
+  </ng-template>
+
+</div>

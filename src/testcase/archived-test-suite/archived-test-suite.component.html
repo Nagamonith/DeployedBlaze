@@ -1,0 +1,45 @@
+<app-alert
+  [type]="alertType()"
+  [message]="alertMessage()"
+  [show]="showAlert()"
+  [isConfirm]="isConfirmAlert()"
+  (onConfirm)="handleConfirm()"
+  (onCancel)="handleCancel()">
+</app-alert>
+
+<div class="list-view">
+
+  <div class="page-header">
+    <button class="btn-back" (click)="goBack()">← Back</button>
+    <h2>Archived Test Suites</h2>
+  </div>
+
+  <table *ngIf="archivedSuites().length > 0">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Last Updated</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let suite of archivedSuites()">
+        <td>{{ suite.name }}</td>
+        <td>{{ suite.description || '-' }}</td>
+        <td>{{ formatDate(suite.updatedAt) }}</td>
+        <td>
+          <button class="btn-unarchive"
+                  (click)="confirmUnarchive(suite.id)">
+            Unarchive
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="archivedSuites().length === 0" class="empty">
+    No archived test suites found.
+  </div>
+</div>

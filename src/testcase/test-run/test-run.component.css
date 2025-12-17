@@ -15,8 +15,10 @@
   margin-bottom: 20px;
 }
 .btn-archive {
-  background-color: #f5a623;
+  background-color: #748bb2;
   color: #fff;
+  border-radius: 4px;
+  padding: 6px 12px;
 }
 
 .btn-primary {
