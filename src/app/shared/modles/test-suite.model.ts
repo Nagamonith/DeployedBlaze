@@ -19,6 +19,7 @@ export interface TestSuiteResponse {
   name: string;
   description?: string;
   isActive: boolean;
+  isArchived?: boolean; 
   createdAt?: Date;
   updatedAt?: Date;
   testCases?: TestCaseResponse[];

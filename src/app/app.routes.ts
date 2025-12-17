@@ -121,7 +121,20 @@ export const routes: Routes = [
           loadComponent: () =>
             import('../testcase/test-run/test-run.component')
               .then(m => m.TestRunComponent)
-        }
+        },
+        {
+          path: 'archived-test-runs',
+          loadComponent: () =>
+            import('../testcase/archived-test-run/archived-test-run.component')
+              .then(m => m.ArchivedTestRunComponent)
+        },
+        {
+  path: 'archived-test-suites',
+  loadComponent: () =>
+    import('../testcase/archived-test-suite/archived-test-suite.component')
+      .then(m => m.ArchivedTestSuiteComponent)
+}
+,
       ]
     },
 
@@ -140,7 +153,7 @@ export const routes: Routes = [
       loadComponent: () =>
         import('../testcase/test-case-viewer/test-case-viewer.component')
           .then(m => m.TestCaseViewerComponent)
-    }
-
+    },
+    
 
 ];

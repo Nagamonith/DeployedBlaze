@@ -535,4 +535,25 @@ getTestSuiteUploadUrl(uploadId: string, suiteId: string): string {
   }
 
 
+  setArchiveStatus(
+  productId: string,
+  testSuiteId: string,
+  isArchived: boolean
+): Observable<void> {
+
+  if (!productId?.trim() || !testSuiteId?.trim()) {
+    return throwError(() => new Error('Product ID and Test Suite ID are required'));
+  }
+
+  const url = `${this.apiUrl}/api/products/${productId}/testsuites/${testSuiteId}/archive`;
+
+  return this.http.put<void>(url, isArchived, this.httpOptions).pipe(
+    tap(() => console.log('Test suite archive status updated')),
+    catchError((error: HttpErrorResponse) => {
+      console.error('Archive test suite error:', error);
+      return throwError(() => error);
+    })
+  );
+}
+
 }
