@@ -53,7 +53,7 @@
 
     <!-- Test Runs -->
     <ng-container *ngIf="showTestRuns">
-      <option *ngFor="let run of testRuns()" [value]="run.id">
+      <option *ngFor="let run of unarchivedTestRuns()" [value]="run.id">
         {{ run.name }} 
       </option>
     </ng-container>

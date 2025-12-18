@@ -107,11 +107,13 @@ export class ModulesComponent implements OnInit, OnDestroy, AfterViewInit {
   modules = signal<ProductModule[]>([]);
   testSuites = signal<TestSuite[]>([]);
   testCasePool = signal<TestCase[]>([]);
-  testRuns = signal<TestRun[]>([]);
+ testRuns = signal<TestRunResponse[]>([]);
+
   formArray = new FormArray<FormGroup>([]);
   uploads: UploadedFile[][] = [];
   selectedTestRunId = signal<string | null>(null);
   viewingSuiteId = signal<string | null>(null);
+
 
   // Suite selection
   selectedSuiteIds: string[] = [];
@@ -375,6 +377,10 @@ private loadSuiteData(suiteId: string): void {
       }
     });
 } 
+unarchivedTestRuns = computed(() =>
+  this.testRuns().filter(run => run.isArchived !== true)
+);
+
   private loadAllData(): void {
     this.isLoading.set(true);
     
@@ -422,74 +428,92 @@ private loadSuiteData(suiteId: string): void {
       );
   }
 
-  private loadTestSuites(): any {
-    const productId = this.selectedProductId();
-    if (!productId) {
+private loadTestSuites(): any {
+  const productId = this.selectedProductId();
+
+  if (!productId) {
+    this.testSuites.set([]);
+    return of([]);
+  }
+
+  return this.testSuiteService.getTestSuites(productId).pipe(
+
+    // ✅ STEP 1: FILTER UNARCHIVED HERE
+    map((responses: TestSuiteResponse[]) =>
+      responses.filter(suite => suite.isArchived !== true)
+    ),
+
+    // ✅ STEP 2: CONVERT AFTER FILTERING
+    map((responses: TestSuiteResponse[]) =>
+      responses.map(res => this.convertTestSuiteResponseToTestSuite(res))
+    ),
+
+    // ✅ STEP 3: EXISTING COUNT LOGIC (UNCHANGED)
+    switchMap((suites: TestSuite[]) => {
+      if (!suites || suites.length === 0) {
+        return of([] as TestSuite[]);
+      }
+
+      const countRequests = suites.map(suite =>
+        this.testSuiteService.getTestSuiteWithCases(suite.id).pipe(
+          map(resp => ({
+            id: suite.id,
+            count: (resp.testCases || []).length
+          })),
+          catchError(() => of({ id: suite.id, count: 0 }))
+        )
+      );
+
+      return forkJoin(countRequests).pipe(
+        map(counts => {
+          const idToCount = new Map<string, number>();
+          counts.forEach(c => idToCount.set(c.id, c.count));
+
+          return suites.map(s => ({
+            ...s,
+            testCases: new Array(idToCount.get(s.id) || 0) as any
+          }));
+        })
+      );
+    }),
+
+    tap(suites => {
+      console.log('Loaded UNARCHIVED test suites:', suites);
+      this.testSuites.set(suites);
+    }),
+
+    catchError(error => {
+      console.error('Failed to load test suites:', error);
+      this.showAlertMessage('Failed to load test suites', 'error');
       this.testSuites.set([]);
       return of([]);
-    }
+    })
+  );
+}
 
-    return this.testSuiteService.getTestSuites(productId)
-      .pipe(
-        map((responses: TestSuiteResponse[]) => 
-          responses.map(res => this.convertTestSuiteResponseToTestSuite(res))
-        ),
-        switchMap((suites: TestSuite[]) => {
-          if (!suites || suites.length === 0) {
-            return of([] as TestSuite[]);
-          }
-          // Fetch counts for each suite
-          const countRequests = suites.map(suite =>
-            this.testSuiteService.getTestSuiteWithCases(suite.id).pipe(
-              map(resp => ({ id: suite.id, count: (resp.testCases || []).length })),
-              catchError(() => of({ id: suite.id, count: 0 }))
-            )
-          );
-          return forkJoin(countRequests).pipe(
-            map(counts => {
-              const idToCount = new Map<string, number>();
-              counts.forEach(c => idToCount.set(c.id, c.count));
-              return suites.map(s => ({ ...s, testCases: new Array(idToCount.get(s.id) || 0) as any }));
-            })
-          );
-        }),
-        tap(suites => {
-          console.log('Loaded test suites:', suites);
-          this.testSuites.set(suites);
-        }),
-        catchError(error => {
-          console.error('Failed to load test suites:', error);
-          this.showAlertMessage('Failed to load test suites', 'error');
-          this.testSuites.set([]);
-          return of([]);
-        })
-      );
+
+private loadTestRuns(): any {
+  const productId = this.selectedProductId();
+
+  if (!productId) {
+    this.testRuns.set([]);
+    return of([]);
   }
 
-  private loadTestRuns(): any {
-    const productId = this.selectedProductId();
-    if (!productId) {
+  return this.testRunService.getTestRuns(productId).pipe(
+    tap((responses: TestRunResponse[]) => {
+      console.log('Loaded test runs (raw):', responses);
+      this.testRuns.set(responses);
+    }),
+    catchError(error => {
+      console.error('Failed to load test runs:', error);
+      this.showAlertMessage('Failed to load test runs', 'error');
       this.testRuns.set([]);
       return of([]);
-    }
+    })
+  );
+}
 
-    return this.testRunService.getTestRuns(productId)
-      .pipe(
-        map((responses: TestRunResponse[]) => 
-          responses.map(res => this.convertTestRunResponseToTestRun(res))
-        ),
-        tap(runs => {
-          console.log('Loaded test runs:', runs);
-          this.testRuns.set(runs);
-        }),
-        catchError(error => {
-          console.error('Failed to load test runs:', error);
-          this.showAlertMessage('Failed to load test runs', 'error');
-          this.testRuns.set([]);
-          return of([]);
-        })
-      );
-  }
 
   // Conversion methods
   private convertTestSuiteResponseToTestSuite(response: TestSuiteResponse): TestSuite {
