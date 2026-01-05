@@ -15,16 +15,21 @@
   <div *ngIf="workloadError" class="text-danger">{{ workloadError }}</div>
   <!-- Resource Filter Dropdown -->
   
-  <div class="filters-container" *ngIf="resourceList.length > 0">
+  <!-- <div class="filters-container" *ngIf="resourceList.length > 0">
     <div class="filter-item">
-      <label>Filter by Resource</label>
+      <label>Filter by Resource</label> -->
+        <div class="filters-container" style="display: flex; align-items: center; gap: 16px;" *ngIf="resourceList.length > 0">
+    <div class="filter-item" style="display: flex; align-items: center;">
+      <label style="margin-right: 8px; min-width: 120px;">Filter by Resource</label>
       <select class="form-control" [(ngModel)]="selectedResource" (change)="applyResourceFilter()">
         <option value="">All Resources</option>
         <option *ngFor="let res of resourceList" [value]="res">{{ res }}</option>
       </select>
     </div>
-    <div class="filter-item">
-      <label>View Mode</label>
+    <!-- <div class="filter-item">
+      <label>View Mode</label> -->
+       <div class="filter-item" style="display: flex; align-items: center;">
+      <label style="margin-right: 8px; min-width: 120px;">View Mode</label>
       <select class="form-control" [(ngModel)]="viewMode">
         <option value="gantt">Gantt Chart</option>
         <option value="grid">Grid</option>
@@ -39,7 +44,6 @@
     [resourceAssignments]="{ dataSource: ganttAssignments }"
     [taskListWidth]="350"
     [height]="550"
-    [scaleType]="'days'"
     [columns]="[
       { dataField: 'mantis_BugID', caption: 'Bug ID' },
       { dataField: 'project_Name', caption: 'Project' },
@@ -76,7 +80,7 @@
     ]"
     (onRowDblClick)="onBugRowDblClick($event)"
   >
-    <dxo-summary>
+    <!-- <dxo-summary>
       <dxi-total-item
         column="total_Hoursd_Worked"
         summaryType="sum"
@@ -84,7 +88,7 @@
         [valueFormat]="{ type: 'fixedPoint', precision: 2 }"
       >
       </dxi-total-item>
-    </dxo-summary>
+    </dxo-summary> -->
   </dx-data-grid>
   <div *ngIf="!workloadLoading && workloadData && workloadData.length === 0 && workloadStartDate && workloadEndDate && loadButtonClicked">
     <strong>No workload data found for selected dates.</strong>

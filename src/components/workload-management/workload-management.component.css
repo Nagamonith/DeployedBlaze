@@ -1,11 +1,6 @@
 .workload-management-container {
-  width: 100%;
-  max-width: 100%;
   max-height: 100vh;
   overflow-y: auto;
-  overflow-x: hidden;
-  padding: 1rem;
-  box-sizing: border-box;
 }
 
 a {
@@ -17,59 +12,41 @@ a {
 dx-data-grid a {
   pointer-events: auto;
 }
-
-/* Responsive top bar */
 .top-bar {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  width: 100%;
+  gap: 16px;
+  margin-bottom: 10px;
 }
 
 .form-group {
   display: flex;
   align-items: center;
   margin-bottom: 0;
-  flex-shrink: 0;
 }
 
 .form-group label {
-  margin-right: 0.5rem;
-  min-width: 5rem;
-  white-space: nowrap;
-  font-size: clamp(12px, 1vw, 14px);
+  margin-right: 8px;
+  min-width: 80px;
 }
-
-.form-group input[type="date"],
-.form-group .form-control {
-  min-width: 8.75rem;
-  max-width: 100%;
-  font-size: clamp(12px, 1vw, 14px);
-  padding: 0.375rem 0.5rem;
-  box-sizing: border-box;
+.form-group input[type="date"] {
+  min-width: 140px;
 }
 
 .custom-btn-primary {
-  margin-left: 0.5rem;
-  padding: 0.375rem 0.75rem;
-  font-size: clamp(12px, 1vw, 14px);
-  white-space: nowrap;
+  margin-left: 8px;
 }
 
 .view-toggle {
-  margin-left: 1rem;
+  margin-left: 16px;
 }
 
 /* Responsive filters container */
 .filters-container {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  width: 100%;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .filter-item {

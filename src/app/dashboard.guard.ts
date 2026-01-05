@@ -3,7 +3,7 @@ import { CanActivate, Router, ActivatedRouteSnapshot } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardGuard implements CanActivate {
-  private readonly ALLOWED_USERS = ['Jayanth Purushottam', 'Adarsha Y H', 'Siddhant S Mishrikoti'];
+  private readonly ALLOWED_USERS = ['Jayanth Purushottam', 'Adarsha Y H', 'Bhanumathi subramani'];
 
   constructor(private router: Router) {}
 

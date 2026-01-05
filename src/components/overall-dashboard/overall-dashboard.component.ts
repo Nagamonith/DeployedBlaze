@@ -290,7 +290,7 @@ export class OverallDashboardComponent implements OnInit {
 
   employees: Employee[] = [];
   dashboardData: DashboardRow[] = [];
-  dashboardDataOriginal: DashboardRow[] = [];  // ⭐ NEW MASTER COPY
+  dashboardDataOriginal: DashboardRow[] = [];  
 
   selectedEmployee: string = 'All';
   startDate: string = '';
@@ -364,9 +364,7 @@ export class OverallDashboardComponent implements OnInit {
     });
   }
 
-  // ======================================
-  //          FILTER LOCAL DATA ONLY
-  // ======================================
+
   onEmployeeChange(): void {
     if (this.selectedEmployee === 'All') {
       this.dashboardData = [...this.dashboardDataOriginal];    // Restore all
@@ -379,18 +377,13 @@ export class OverallDashboardComponent implements OnInit {
     this.updateCounts();
   }
 
-  // ======================================
-  //        UPDATE SUMMARY COUNTS
-  // ======================================
   updateCounts(): void {
     this.totalOffice = this.dashboardData.filter(x => x.type === 'Office').length;
     this.totalWFH = this.dashboardData.filter(x => x.type === 'WFH').length;
     this.totalLeave = this.dashboardData.filter(x => x.type === 'Leave').length;
   }
 
-  // ======================================
-  //        WORKLOAD MODAL
-  // ======================================
+
   openWorkloadPopup(row: any): void {
     const date = row.date;
     const reporterName = row.empName;
@@ -426,9 +419,7 @@ export class OverallDashboardComponent implements OnInit {
     });
   }
 
-  // ======================================
-  //   PRODUCTIVE HOURS SUMMARY UPDATE
-  // ======================================
+
   fetchProductiveHoursSummary(): void {
     const today = new Date().toISOString().split('T')[0];
     const url = `${this.apiBaseUrl}/api/ResourceHour/workload?startDate=${today}&endDate=${today}`;
