@@ -53,6 +53,7 @@ export class LeftnavigationbarComponent implements OnInit {
   public leftNavIcon = LeftnavIcon
   public defaultLanguage: string = '';
   public userRole: string | null = null;
+  public userEmail: string | null = null;
   atob = atob;
 
 
@@ -63,6 +64,7 @@ export class LeftnavigationbarComponent implements OnInit {
   ngOnInit(): void {
 
   this.userRole = localStorage.getItem('userName');
+  this.userEmail = localStorage.getItem('userEmail');
 console.log(this.userRole)
 
     let languageOfChoice = localStorage.getItem('language')
