@@ -15,10 +15,7 @@
   <div *ngIf="workloadError" class="text-danger">{{ workloadError }}</div>
   <!-- Resource Filter Dropdown -->
   
-  <!-- <div class="filters-container" *ngIf="resourceList.length > 0">
-    <div class="filter-item">
-      <label>Filter by Resource</label> -->
-        <div class="filters-container" style="display: flex; align-items: center; gap: 16px;" *ngIf="resourceList.length > 0">
+  <div class="filters-container" style="display: flex; align-items: center; gap: 16px;" *ngIf="resourceList.length > 0">
     <div class="filter-item" style="display: flex; align-items: center;">
       <label style="margin-right: 8px; min-width: 120px;">Filter by Resource</label>
       <select class="form-control" [(ngModel)]="selectedResource" (change)="applyResourceFilter()">
@@ -26,9 +23,7 @@
         <option *ngFor="let res of resourceList" [value]="res">{{ res }}</option>
       </select>
     </div>
-    <!-- <div class="filter-item">
-      <label>View Mode</label> -->
-       <div class="filter-item" style="display: flex; align-items: center;">
+    <div class="filter-item" style="display: flex; align-items: center;">
       <label style="margin-right: 8px; min-width: 120px;">View Mode</label>
       <select class="form-control" [(ngModel)]="viewMode">
         <option value="gantt">Gantt Chart</option>
@@ -37,6 +32,7 @@
     </div>
   </div>
 
+  <!-- DevExtreme Gantt Chart -->
   <dx-gantt
     *ngIf="viewMode === 'gantt' && filteredGanttTasks && filteredGanttTasks.length > 0"
     [tasks]="{ dataSource: filteredGanttTasks }"
@@ -53,10 +49,9 @@
       
     ]"
   >
-    <dxo-validation [autoUpdateParentTasks]="true"></dxo-validation>
-    <dxo-editing [enabled]="false"></dxo-editing>
+    
   </dx-gantt>
- 
+  <!-- DevExtreme Data Grid -->
   <dx-data-grid
 
     *ngIf="viewMode === 'grid' && filteredGanttTasks && filteredGanttTasks.length > 0"
@@ -65,7 +60,7 @@
     [columnAutoWidth]="true"
     [filterRow]="{ visible: false }"
     [searchPanel]="{ visible: false }"
-    [paging]="{ pageSize: 8 }"
+    [paging]="{ pageSize: 10 }"
     [allowColumnResizing]="true"
     [columns]="[
       { dataField: 'mantis_BugID', caption: 'Bug ID' },
@@ -80,18 +75,9 @@
     ]"
     (onRowDblClick)="onBugRowDblClick($event)"
   >
-    <!-- <dxo-summary>
-      <dxi-total-item
-        column="total_Hoursd_Worked"
-        summaryType="sum"
-        displayFormat="Total: {0} hours"
-        [valueFormat]="{ type: 'fixedPoint', precision: 2 }"
-      >
-      </dxi-total-item>
-    </dxo-summary> -->
   </dx-data-grid>
   <div *ngIf="!workloadLoading && workloadData && workloadData.length === 0 && workloadStartDate && workloadEndDate && loadButtonClicked">
     <strong>No workload data found for selected dates.</strong>
   </div>
 </div>
-
+<!-- Note: Make sure FormsModule is imported in your module for ngModel to work. -->

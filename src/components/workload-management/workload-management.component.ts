@@ -124,31 +124,7 @@ fetchWorkloadData(): void {
       // 🟩 OPTIONAL: store summary if you want to show it somewhere later
       // (doesn't affect any existing logic)
       (this as any).summaryData = summaryJson;
-
-      // // ✅ Existing mapping logic with proper date parsing
-      // this.ganttTasks = (data || []).map((row: { task_Summary: any; project_Name: any; actual_Start: any; current_Merge_Date: any; resource_Name: any; target_Version: any; mantis_BugID: any; total_Hoursd_Worked: any; original_Merge_Date: any; progress: any; }, idx: number) => {
-      //   // Parse dates properly
-      //   const startDate = row.actual_Start ? new Date(row.actual_Start) : new Date();
-      //   const endDate = row.current_Merge_Date ? new Date(row.current_Merge_Date) : new Date();
-      //   const originalMergeDate = row.original_Merge_Date ? new Date(row.original_Merge_Date) : null;
-        
-      //   return {
-      //     id: idx + 1,
-      //     title: row.task_Summary || row.project_Name,
-      //     start: startDate,
-      //     end: endDate,
-      //     project_Name: row.project_Name,
-      //     resource_Name: row.resource_Name,
-      //     target_Version: row.target_Version,
-      //     mantis_BugID: row.mantis_BugID,
-      //     total_Hoursd_Worked: row.total_Hoursd_Worked,
-      //     actual_Start: startDate,
-      //     original_Merge_Date: originalMergeDate,
-      //     current_Merge_Date: endDate,
-      //     progress: row.progress || 0
-      //   };
-      // });
-      this.ganttTasks = (data || []).map((row: { task_Summary: any; project_Name: any; actual_Start: any; current_Merge_Date: any; resource_Name: any; target_Version: any; mantis_BugID: any; total_Hoursd_Worked: any; original_Merge_Date: any; progress: any; }, idx: number) => ({
+   this.ganttTasks = (data || []).map((row: { task_Summary: any; project_Name: any; actual_Start: any; current_Merge_Date: any; resource_Name: any; target_Version: any; mantis_BugID: any; total_Hoursd_Worked: any; original_Merge_Date: any; progress: any; }, idx: number) => ({
         id: idx + 1,
         title: row.task_Summary || row.project_Name,
         start: row.actual_Start,
