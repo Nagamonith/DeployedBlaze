@@ -168,7 +168,7 @@ export class WorklogComponent implements OnInit, OnDestroy {
       this.sessionDuration = '';
       this.logoutClicked = false;
       localStorage.removeItem('worklog-session');
-    }, 10000);
+    },);
   }
 
   private formatDuration(ms: number): string {
