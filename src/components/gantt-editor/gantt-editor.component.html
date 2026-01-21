@@ -32,6 +32,13 @@
           {{ showGrid ? 'Show Chart' : 'Show Grid' }}
         </button>
       </div>
+      <div>
+        <textarea></textarea>
+      </div>
+      <div>
+              <button class="custom-btn-primary" type="submit">Generate Review</button>
+
+      </div>
     </form>
       <div class="filter-item">
            <div class="export-container">
@@ -135,10 +142,10 @@
     <th>Bug ID</th>
     <th>Summary</th>
     <th>Type</th>
-            <th>Status</th>
+    <th>Status</th>
     <th>Resource</th>
-    <th>Start Date</th>
-    <th>Original Merge Date</th>
+    <th>Planned End Date</th>
+    <th>Actual End Date</th>
     <th>Current Merge Date</th>
     <th>Tester Release Date</th> 
     <!-- <th>Due Date</th>              -->
@@ -159,10 +166,10 @@
 
     <td>{{ getResourceName(task.id) }}</td>
     <!-- <td>{{ task.start }}</td> -->
-     <td> <input type="date" [(ngModel)]="task.start" [name]="'start-' + task.id" readonly /></td>
+     <td> <input type="date" [(ngModel)]="task.start" [name]="'start-' + task.id" /></td>
     <!-- <td>{{ getOriginalMergeDate(task.id) }}</td> -->
      <td> 
-      <input type="date" [(ngModel)]="task.originalEnd" [name]="'originalEnd-' + task.id" readonly />
+      <input type="date" [(ngModel)]="task.originalEnd" [name]="'originalEnd-' + task.id" />
      </td>
     <td>
       <input type="date" [(ngModel)]="task.end" [name]="'end-' + task.id" />

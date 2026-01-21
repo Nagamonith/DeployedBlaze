@@ -174,4 +174,15 @@ fetchWorkloadData(): void {
       return total + hours;
     }, 0);
   }
+
+formatHoursValue = (rowData: any) => {
+  const val = rowData.total_Hoursd_Worked;
+  if (!val && val !== 0) return '';
+  
+  const hours = Math.floor(val);
+  const minutes = Math.round((val - hours) * 60);
+  
+  // This returns a string like "19:30" or "19h 30m"
+  return `${hours}:${minutes.toString().padStart(2, '0')}`;
+};
 }

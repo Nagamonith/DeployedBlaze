@@ -1,0 +1,62 @@
+<div class="tms-container">
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <dx-text-box
+      placeholder="Search English text..."
+      mode="search"
+      [width]="350"
+      [(value)]="searchText"
+      (onValueChanged)="onSearch($event)"
+    ></dx-text-box>
+
+    <dx-button
+      text="Add Translation"
+      icon="add"
+      type="default"
+      (onClick)="openAddPopup()"
+    ></dx-button>
+  </div>
+
+  <!-- Grid -->
+  <dx-data-grid
+    #grid
+    [dataSource]="filteredTranslations"
+    keyExpr="key"
+    [showBorders]="true"
+    [columnAutoWidth]="true"
+    [rowAlternationEnabled]="true"
+    (onRowClick)="onRowClick($event)"
+  >
+    <dxi-column dataField="key" caption="KEY" [fixed]="true"></dxi-column>
+    <dxi-column dataField="en" caption="English"></dxi-column>
+    <dxi-column dataField="fr" caption="French"></dxi-column>
+    <dxi-column dataField="de" caption="German"></dxi-column>
+    <dxi-column dataField="hi" caption="Hindi"></dxi-column>
+  </dx-data-grid>
+
+  <!-- Add Translation Widget -->
+  <dx-popup
+    [(visible)]="addPopupVisible"
+    title="Add New Translation"
+    [width]="400"
+    [height]="220"
+    [showCloseButton]="true"
+  >
+    <div class="popup-body">
+      <dx-text-area
+        placeholder="Enter English text"
+        [(value)]="newEnglishText"
+        [height]="80"
+      ></dx-text-area>
+
+      <dx-button
+        text="Add"
+        type="success"
+        stylingMode="contained"
+        (onClick)="addTranslation()"
+      ></dx-button>
+    </div>
+  </dx-popup>
+
+</div>

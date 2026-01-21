@@ -45,8 +45,10 @@
       { dataField: 'project_Name', caption: 'Project' },
       { dataField: 'resource_Name', caption: 'Resource' },
       { dataField: 'title', caption: 'Task' },
-      { dataField: 'total_Hoursd_Worked', caption: 'Hours' }
-      
+{ 
+      caption: 'Hours', 
+      calculateCellValue: formatHoursValue 
+    }      
     ]"
   >
     
@@ -67,8 +69,10 @@
       { dataField: 'project_Name', caption: 'Project' },
       { dataField: 'resource_Name', caption: 'Resource' },
       { dataField: 'title', caption: 'Task' },
-      { dataField: 'total_Hoursd_Worked', caption: 'Hours' },
-      { dataField: 'actual_Start', caption: 'StartDate' },
+{ 
+      caption: 'Hours', 
+      calculateCellValue: formatHoursValue 
+    },      { dataField: 'actual_Start', caption: 'StartDate' },
       { dataField: 'original_Merge_Date', caption: 'MergeDate' },
       { dataField: 'current_Merge_Date', caption: 'Current MergeDate' },
       { dataField: 'progress', caption: 'Progress' }

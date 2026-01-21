@@ -248,3 +248,17 @@ tbody tr:hover {
   overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
+.type-leave {
+    background-color: #ffebee !important; /* Soft Red/Pink */
+    color: #c62828;
+}
+.type-wfh {
+    background-color: #e8f5e9 !important; /* Soft Green */
+    color: #2e7d32;
+}
+.type-office {
+    background-color: #e3f2fd !important; /* Soft Blue */
+    color: #1565c0;
+}
+
+

@@ -25,6 +25,8 @@ import { ResultsComponent } from '../testcase/results/results.component';
 import { SummaryComponent } from '../testcase/summary/summary.component';
 import { WorklogComponent } from '../components/worklog/worklog.component';
 import { OverallDashboardComponent } from '../components/overall-dashboard/overall-dashboard.component';
+import { TranslationComponent } from '../components/translation/translation.component';
+
 
 
 export const routes: Routes = [
@@ -49,7 +51,8 @@ export const routes: Routes = [
       { path: 'project-summary', component: ProjectSummaryComponent, canActivate: [AuthGuard] },
       { path: 'bug-time-summary', component: BugTimeSummaryComponent, canActivate: [AuthGuard] },
       { path: 'bug-details', component: BugDetailsComponent, canActivate: [AuthGuard] },
-      { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard, DashboardGuard] }
+      { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard, DashboardGuard] },
+      { path: 'Translation',component:TranslationComponent, canActivate:[AuthGuard]}
     ]
   },
 

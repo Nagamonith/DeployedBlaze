@@ -1,5 +1,22 @@
 <div class="container p-4">
 
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="m-0">Employee Dashboard</h4>
+    
+    <div class="export-nav d-flex align-items-end gap-2 p-3 shadow-sm rounded border">
+      <div>
+        <label class="form-label fw-bold small mb-1">From</label>
+        <input type="date" class="form-control form-control-sm" [(ngModel)]="startDate" />
+      </div>
+      <div>
+        <label class="form-label fw-bold small mb-1">To</label>
+        <input type="date" class="form-control form-control-sm" [(ngModel)]="endDate" />
+      </div>
+      <button class="btn btn-success btn-sm d-flex align-items-center gap-1" (click)="exportToExcel()">
+        <i class="bi bi-file-earmark-excel"></i> Export to Excel
+      </button>
+    </div>
   <!-- Filters + Summary -->
   <div class="top-section d-flex justify-content-between align-items-start flex-wrap mb-4">
     <!-- Filters -->
@@ -64,7 +81,7 @@
       <tbody>
         <tr *ngFor="let row of dashboardData" [ngClass]="{
           'type-office': row.type === 'Office',
-          'type-wfh': row.type === 'WFH',
+          'type-wfh': row.type === 'WFH', 
           'type-leave': row.type === 'Leave'
         }">
           <td>{{ row.empName }}</td>

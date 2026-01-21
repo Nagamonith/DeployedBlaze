@@ -12,14 +12,14 @@ import { ErrorAlertDialogComponent } from '../../app/shared/dialogs/error-alert-
 import { SuccessAlertDialogComponent } from '../../app/shared/dialogs/success-alert-dialog/success-alert-dialog.component';
 import { LeftnavIcon } from '../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum';
 import * as XLSX from 'xlsx';
-
+import { DxTextBoxModule } from 'devextreme-angular';
 
 @Component({
   selector: 'app-gantt-editor',
   standalone: true,
   templateUrl: './gantt-editor.component.html',
   styleUrls: ['./gantt-editor.component.css'],
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, DxGanttModule]
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, DxGanttModule, DxTextBoxModule]
 })
 
 // export class GanttEditorComponent {
