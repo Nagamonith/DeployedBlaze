@@ -13,6 +13,7 @@ import { SuccessAlertDialogComponent } from '../../app/shared/dialogs/success-al
 import { LeftnavIcon } from '../../app/leftnavbartree/leftnavigationbar/leftnavigationbar-icon.enum';
 import * as XLSX from 'xlsx';
 import { DxTextBoxModule } from 'devextreme-angular';
+import { AddConfirmationDialogComponent } from '../../app/shared/dialogs/add-confirmation-dialog/add-confirmation-dialog.component';
 
 @Component({
   selector: 'app-gantt-editor',
@@ -61,6 +62,7 @@ export class GanttEditorComponent implements OnInit {
   sprintOriginalMergeDate: string = '';
   sprintCurrentMergeDate: string = '';
   public icons = LeftnavIcon;
+  EnteredBugId: number | null = null;
 
   projectNames = [
     'Select Project Name','Web DSM', 'Test Automation', 'Security', 'Sales&Marketing', 'Qualis Wizard',
@@ -656,6 +658,18 @@ SyncMysql(){
         });
 }
 
+generateReviewTasks(){
+
+  if(this.EnteredBugId != null){
+    this.dialog.open(AddConfirmationDialogComponent, {
+           width: '400px',
+           data: { message: 'Are you sure? you really want to Create 12 Review Tasks for ' + this.EnteredBugId + ' in Bugtracker???' }
+         });
+    this.EnteredBugId = null     
+       
+  }
+
+}
 
 }
 

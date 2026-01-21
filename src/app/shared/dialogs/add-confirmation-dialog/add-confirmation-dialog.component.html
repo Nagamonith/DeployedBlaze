@@ -3,9 +3,7 @@
 
   <div class="dialog-content">
     <div class="dialog-header">
-      <span class="dialog-icon">➕</span>
-      <span class="dialog-title">Confirm Adding</span>
-      <span class="dialog-close" (click)="onClose()">✕</span>
+      <span class="dialog-title">Confirm</span>
     </div>
 
     <div class="dialog-body">
@@ -13,7 +11,8 @@
     </div>
 
     <div class="dialog-actions">
-      <button mat-flat-button color="primary" class="btn-add" (click)="onAdd()">ok</button>
+      <button mat-flat-button color="primary" class="btn-add" (click)="onAdd()">Yes</button>
+      <button mat-flat-button color="primary" class="btn-add" (click)="onClose()">Cancel</button>
     </div>
   </div>
 </div>

@@ -32,21 +32,22 @@
           {{ showGrid ? 'Show Chart' : 'Show Grid' }}
         </button>
       </div>
-      <div>
-        <textarea></textarea>
-      </div>
-      <div>
-              <button class="custom-btn-primary" type="submit">Generate Review</button>
-
-      </div>
     </form>
-      <div class="filter-item">
-           <div class="export-container">
+        <div>
+          <dx-text-box
+            placeholder="Enter BugID"
+            [(ngModel)]="EnteredBugId"
+            [width]="100"
+            [height]="35">
+          </dx-text-box>
+      </div>
+      <div>
+            <button class="custom-btn-primary" (click)="generateReviewTasks()">Generate Review Tasks</button>
+      </div>
+
         <button class="custom-btn-primary" (click)="exportToExcel()">
           <span [innerHTML]="icons.Export"></span> Export to Excel
         </button>
-      </div>
-        </div>
   </div>
 
   <div class="gantt-editor-container">

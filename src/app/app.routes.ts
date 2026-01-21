@@ -52,7 +52,7 @@ export const routes: Routes = [
       { path: 'bug-time-summary', component: BugTimeSummaryComponent, canActivate: [AuthGuard] },
       { path: 'bug-details', component: BugDetailsComponent, canActivate: [AuthGuard] },
       { path: 'Dashboard', component: OverallDashboardComponent, canActivate: [AuthGuard, DashboardGuard] },
-      { path: 'Translation',component:TranslationComponent, canActivate:[AuthGuard]}
+      { path: 'translation',component:TranslationComponent, canActivate:[AuthGuard]}
     ]
   },
 
