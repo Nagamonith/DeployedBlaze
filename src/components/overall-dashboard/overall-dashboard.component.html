@@ -7,14 +7,14 @@
      
 
       <div>
-        <label class="form-label fw-bold me-2">Choose Date</label>
+        <label class="form-label fw-bold me-2">From Date</label>
         <input type="date" class="form-control" [(ngModel)]="startDate" />
       </div>
-<!-- 
+
       <div>
-        <label class="form-label fw-bold me-2">End Date</label>
+        <label class="form-label fw-bold me-2">To Date</label>
         <input type="date" class="form-control" [(ngModel)]="endDate" />
-      </div> -->
+      </div>
 
       <button class="btn btn-primary" style="margin-top:20px" (click)="loadData()">Search</button>
       
@@ -36,14 +36,19 @@
           <p class="label">Leave</p>
           <p class="value">{{ totalLeave }}</p>
         </div>
+
+     
       </div>
-       <!-- <div>
-        <label class="form-label fw-bold me-2">Filter by Employee</label>
-       <select class="form-select" [(ngModel)]="selectedEmployee" (change)="onEmployeeChange()">
-      <option *ngFor="let emp of employees" [value]="emp.empId">{{ emp.name }}</option>
-       </select></div> -->
+      <button class="btn btn-success" (click)="exportAttendanceReport()">
+      Export PDF
+    </button>
+     <button class="btn btn-success btn-sm d-flex align-items-center gap-1" (click)="exportToExcel()">
+        <i class="bi bi-file-earmark-excel"></i> Export to Excel
+      </button>
     </div>
   </div>
+
+
 
   <!-- Table -->
   <div class="table-responsive">
@@ -65,7 +70,9 @@
         <tr *ngFor="let row of dashboardData" [ngClass]="{
           'type-office': row.type === 'Office',
           'type-wfh': row.type === 'WFH',
-          'type-leave': row.type === 'Leave'
+          'type-leave': row.type === 'Leave',
+          'type-holiday': row.type === 'Holiday',
+          'type-weekend': row.type === 'Weekend'
         }">
           <td>{{ row.empName }}</td>
           <td>{{ row.date | date: 'yyyy-MM-dd' }}</td>

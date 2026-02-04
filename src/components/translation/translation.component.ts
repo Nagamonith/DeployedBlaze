@@ -1,93 +1,122 @@
-import { Component, ViewChild, OnInit} from '@angular/core';
-import { DxDataGridComponent, DxDataGridModule, DxTextBoxModule, DxButtonModule, DxPopupModule, DxTextAreaModule } from 'devextreme-angular';
+// import {
+//   AfterViewInit,
+//   Component,
+//   ElementRef,
+//   OnDestroy,
+//   OnInit,
+//   ViewChild
+// } from '@angular/core';
+// import jspreadsheet from 'jspreadsheet';
 
+// @Component({
+//   selector: 'app-translation',
+//   standalone: true,
+//   templateUrl: './translation.component.html',
+//   styleUrl: './translation.component.css'
+// })
+// export class TranslationComponent
+//   implements OnInit, AfterViewInit, OnDestroy {
 
-@Component({
-  selector: 'app-translation',
-  imports: [DxDataGridModule, DxTextBoxModule,DxButtonModule,DxPopupModule,DxTextAreaModule],
-  templateUrl: './translation.component.html',
-  styleUrl: './translation.component.css'
-})
+//   @ViewChild('spreadsheet', { static: true })
+//   spreadsheet!: ElementRef<HTMLDivElement>;
 
+//   worksheets!: jspreadsheet.worksheetInstance[];
 
-export class TranslationComponent implements OnInit {
+//   columns: any[] = [];
+//   tableData: any[] = [];
 
-  @ViewChild('grid', { static: false }) grid!: DxDataGridComponent;
+//   constructor() {
+//     jspreadsheet.setLicense('YOUR_LICENSE_KEY');
+//   }
 
-  translations: any[] = [];
-  filteredTranslations: any[] = [];
+//   /* ---------------- INIT ---------------- */
 
-  searchText = '';
+//   ngOnInit(): void {
+//     const backendResponse = {
+//       Columns: [
+//         { title: 'ID', type: 'Integer', width: 80 },
+//         { title: 'Key', type: 'String', width: 160 },
+//         { title: 'English', type: 'String', width: 220 },
+//         { title: 'French', type: 'String', width: 220 },
+//         { title: 'Status', type: 'Dropdown', source: ['Active', 'Inactive'] },
+//         { title: 'Created On', type: 'Date Time', width: 160 }
+//       ],
+//       Data: [
+//         [1, 'LOGIN_BTN', 'Login', 'Connexion', 'Active', '2025-01-01'],
+//         [2, 'LOGOUT_BTN', 'Logout', 'Déconnexion', 'Inactive', '2025-01-03']
+//       ]
+//     };
 
-  addPopupVisible = false;
-  newEnglishText = '';
+//     this.columns = this.mapColumns(backendResponse.Columns);
+//     this.tableData = backendResponse.Data;
+//   }
 
-  ngOnInit() {
-    this.translations = this.generateDummyData();
-    this.filteredTranslations = [...this.translations];
-  }
+//   ngAfterViewInit(): void {
+//     this.renderSpreadsheet();
+//   }
 
-  generateDummyData() {
-    const data = [];
-    for (let i = 1; i <= 100; i++) {
-      data.push({
-        key: `AUTO_KEY_${i}`,
-        en: `Sample English Text ${i}`,
-        fr: '',
-        de: '',
-        hi: ''
-      });
-    }
-    return data;
-  }
+//   ngOnDestroy(): void {
+//     jspreadsheet.destroyAll();
+//   }
 
-  // 🔍 Search ONLY English text
-  onSearch(e: any) {
-    const value = e.value?.toLowerCase() || '';
-    this.filteredTranslations = this.translations.filter(
-      item => item.en?.toLowerCase().includes(value)
-    );
-  }
+//   /* ---------------- RENDER ---------------- */
 
-  // 🟢 Clickable search result → focus row
-  onRowClick(e: any) {
-    this.grid.instance.selectRows([e.key], false);
-  }
+//   renderSpreadsheet(): void {
+//     jspreadsheet.destroyAll();
 
-  // ➕ Open widget
-  openAddPopup() {
-    this.newEnglishText = '';
-    this.addPopupVisible = true;
-  }
+//     this.worksheets = jspreadsheet(this.spreadsheet.nativeElement, [
+//       {
+//         data: this.tableData,
+//         columns: this.columns,
+//         editable: true,
+//         tableOverflow: true,
+//         columnDrag: false
+//       }
+//     ]);
+//   }
 
-  // ➕ Add Translation
-  addTranslation() {
-    if (!this.newEnglishText.trim()) return;
+//   /* ---------------- COLUMN MAPPING ---------------- */
 
-    const newKey = this.generateKey(this.newEnglishText);
+//   private mapColumns(cols: any[]): any[] {
+//     return cols.map(col => ({
+//       title: col.title,
+//       width: col.width ?? 120,
+//       type: this.mapType(col.type),
+//       source: col.source
+//     }));
+//   }
 
-    const newRow = {
-      key: newKey,
-      en: this.newEnglishText,
-      fr: '',
-      de: '',
-      hi: ''
-    };
+//   private mapType(type: string): string {
+//     switch (type) {
+//       case 'Integer':
+//       case 'Float':
+//         return 'number';
+//       case 'Date':
+//       case 'Date Time':
+//         return 'calendar';
+//       case 'Dropdown':
+//         return 'dropdown';
+//       default:
+//         return 'text';
+//     }
+//   }
 
-    this.translations.unshift(newRow);
-    this.filteredTranslations = [...this.translations];
+//   /* ---------------- ACTIONS ---------------- */
 
-    this.addPopupVisible = false;
-  }
+//   enableEdit(): void {
+//     this.worksheets[0].setConfig({ editable: true });
+//   }
 
-  // 🔑 Key generator
-  generateKey(text: string): string {
-    return (
-      'TXT_' +
-      text
-        .toUpperCase()
-        .replace(/[^A-Z0-9]+/g, '_')
-        .substring(0, 30)
-    );
-  }
-}
+//   disableEdit(): void {
+//     this.worksheets[0].setConfig({ editable: false });
+//   }
+
+//   save(): void {
+//     const payload = {
+//       Columns: this.columns,
+//       Data: this.worksheets[0].getData()
+//     };
+
+//     console.log('✅ JSON to send to backend:', payload);
+//   }
+// }

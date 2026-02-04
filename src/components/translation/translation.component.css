@@ -1,15 +1,9 @@
-.tms-container {
-  padding: 16px;
+.spreadsheet {
+  height: calc(100vh - 120px);
 }
 
 .toolbar {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.popup-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
