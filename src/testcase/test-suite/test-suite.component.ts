@@ -599,7 +599,7 @@ handleConfirmDelete(): void {
             'Test suite archived successfully',
             'success'
           );
-          this.loadTestSuites(); // reload NON-archived only
+          this.loadTestSuites();
         }),
         finalize(() => {
           this.pendingArchiveId.set(null);
@@ -611,13 +611,39 @@ handleConfirmDelete(): void {
     return;
   }
 
-  // 🔹 DELETE FLOW (existing, unchanged)
+  // 🔹 DELETE FLOW
   const suiteId = this.pendingDeleteId();
   if (!suiteId || !productId) return;
 
-  // 🔴 your existing delete code stays EXACTLY the same
-}
+  this.isDeleting.set(true);
 
+  this.testSuiteService
+    .deleteTestSuite(productId, suiteId, false)
+    .pipe(
+      tap(() => {
+        this.showAlertMessage(
+          'Test suite deleted successfully',
+          'success'
+        );
+
+        this.loadTestSuites(); // refresh list
+      }),
+      catchError((error) => {
+        this.showAlertMessage(
+          error.message || 'Failed to delete test suite',
+          'error'
+        );
+        return of(null);
+      }),
+      finalize(() => {
+        this.isDeleting.set(false);
+        this.pendingDeleteId.set(null);
+      })
+    )
+    .subscribe();
+
+  this.showAlert.set(false);
+}
 
 
 
