@@ -16,7 +16,10 @@
     <div class="project-header-static pd-project-header sticky-header">
       <span class="pd-project-title ml-20">{{ tabs[activeTabIndex]?.project?.Project_Name }}</span>
       <span class="badge bg-light text-dark pd-project-badge">Target Version: {{ tabs[activeTabIndex]?.project?.Target_Version || '(unspecified)' }}</span>
-    </div>
+      <span class="date-filter-link" (click)="openDateFilterModal()"><i class="bi bi-calendar-range me-1"></i>
+        Date Filter
+      </span>    
+</div>
     <ng-container *ngIf="tabs[activeTabIndex]?.project as project">
       <ng-container *ngIf="project">
         <div class="subtab-bar pd-subtab-bar sticky-subtab-bar">
@@ -39,7 +42,46 @@
   </ng-container>
 
   </div>
+<!-- Date Filter Modal -->
+<div class="modal-backdrop" *ngIf="dateFilterModalOpen" (click)="closeDateFilterModal()" ></div>
 
+<div class="modal" *ngIf="dateFilterModalOpen"   style="
+    position: fixed;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    background:#fff;
+    border-radius:10px;
+    width:400px;
+    max-width:90%;
+    z-index:1050;
+
+    /* ✨ Shadow */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+
+    overflow:hidden;
+  ">
+  <div class="simple-form-header">
+    <span class="header-title">Select Date Range</span>
+    <span class="close-icon" (click)="closeDateFilterModal()">
+      <i class="bi bi-x-lg"></i>
+    </span>
+  </div>
+
+  <div class="modal-content">
+    <label class="simple-form-label">From Date</label>
+    <input type="date" class="simple-form-input" [(ngModel)]="filterFromDate">
+
+    <label class="simple-form-label">To Date</label>
+    <input type="date" class="simple-form-input" [(ngModel)]="filterToDate">
+
+    <div class="modal-btn-row">
+      <button class="btn cust-btn-close" (click)="clearDateFilter()">Clear Filter</button>
+      <button class="btn cust-btn-primary me-2" (click)="applyDateFilter()">OK</button>
+      <button class="btn cust-btn-close" (click)="closeDateFilterModal()">Cancel</button>
+    </div>
+  </div>
+</div>
   <div class="scrollable-content">
   <div [ngSwitch]="tabs[activeTabIndex]?.type">
     <!-- Workload Tab -->
@@ -257,7 +299,7 @@
                     <div *ngIf="bugState.loading">Loading bug details...</div>
                     <div *ngIf="bugState.error" class="text-danger">{{ bugState.error }}</div>
                     <div *ngIf="!bugState.loading && (bugState.bugTaskDetails.length || bugState.timeTracking.length)" class="sprint-matrix-bottom-row">
-=                      <div class="sprint-matrix-tasks-table">
+                   <div class="sprint-matrix-tasks-table">
                         <div class="table-responsive">
                           <table class="table table-bordered table-hover sticky-header-table">
                             <thead>
@@ -269,6 +311,7 @@
                                 <th>End Date</th>
                                 <th>Resource Name</th>
                                 <th>Task Resource Name</th>
+                                <th>Total Hours</th>
                                 <th>Relationship Type</th>
                               </tr>
                             </thead>
@@ -281,6 +324,7 @@
                                 <td>{{ task.end_date }}</td>
                                 <td>{{ task.resource_name }}</td>
                                 <td>{{ task.task_resource_name }}</td>
+                                <td>{{ task.total_hours }}</td>
                                 <td>{{ task.relationship_type }}</td>
                               </tr>
                             </tbody>

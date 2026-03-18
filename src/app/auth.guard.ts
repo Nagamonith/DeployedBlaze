@@ -50,7 +50,6 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       return false;
     }
 
-    // ✅ Role-based restriction
     if (expectedRole && userRole !== expectedRole) {
       this.router.navigate(['/unauthorized']); // create this page or redirect to home
       return false;

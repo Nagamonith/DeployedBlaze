@@ -65,7 +65,7 @@ export class GanttEditorComponent implements OnInit {
   EnteredBugId: number | null = null;
 
   projectNames = [
-    'Select Project Name','Web DSM', 'Test Automation', 'Security', 'Sales&Marketing', 'Qualis Wizard',
+    'Select Project Name','Web DSM', 'Test Automation', 'Security', 'Sales&Marketing', 'Qualis Analytics',
     'Qualis Saas', 'Qualis Gage', 'Qualis FMEA', 'Qualis APQP', 'Qualis 4.0 SPC',
     'OEE', 'Licensing Integration', 'IT Support', 'DSM', 'DIS', 'DataLyzer Reporting',
     'DataLyzer Mould Application', 'Datalyzer License Management', 'DataLyzer FMEA',

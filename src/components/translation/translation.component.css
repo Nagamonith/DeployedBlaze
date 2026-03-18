@@ -7,3 +7,22 @@
   gap: 10px;
   margin-bottom: 10px;
 }
+.search-section {
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 500px;
+  padding: 12px 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
