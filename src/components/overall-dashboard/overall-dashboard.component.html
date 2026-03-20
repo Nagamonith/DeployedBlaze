@@ -62,7 +62,7 @@
           <th>Log Out</th>
           <th>Total Time</th>
           <th>Desk Time</th>
-          <!-- <th>Productive Hours</th> -->
+          <th>Sprintlyzer Hours</th>
           <th>Summary</th>
         </tr>
       </thead>
@@ -81,7 +81,7 @@
           <td>{{ row.logoutTime | date:'HH:mm:ss' }}</td>
           <td>{{ row.totalTime }}</td>
           <td>{{ row.deskTime }}</td>
-          <!-- <td>{{ row.productiveHours }}</td> -->
+          <td>{{ row.total_entered_hours }}</td>
           <td>
             <button class="btn btn-outline-primary btn-sm" (click)="openWorkloadPopup(row)">
               View
