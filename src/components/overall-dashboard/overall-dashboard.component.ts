@@ -219,13 +219,15 @@ exportToExcel(): void {
         EmpId: row.EmpId,
         EmpName: row.EmpName,
         EmpMail: row.EmpMail,
+        DateOfJoining: row.DateOfJoining,
+        EmpDesignation: row.EmpDesignation,
         Date: row.Date ? row.Date.substring(0, 10) : "",   // ✅ yyyy-MM-dd only
         Type: row.Type,
         LoginTime: row.LoginTime ? row.LoginTime.substring(11, 19) : "",
         LogoutTime: row.LogoutTime ? row.LogoutTime.substring(11, 19) : "",
         TotalTime: row.TotalTime,
         DeskTime: row.DeskTime,
-        total_entered_hours: row.total_entered_hours
+        TimeSheetEntered: row.total_entered_hours
       }));
 
       // ✅ Convert to Worksheet
@@ -238,12 +240,14 @@ exportToExcel(): void {
         { wch: 25 },  // EmpName
         { wch: 35 },  // EmpMail
         { wch: 15 },  // Date
-        { wch: 12 },  // Type
+        { wch: 35 },  // Type
         { wch: 12 },  // LoginTime
         { wch: 12 },  // LogoutTime
         { wch: 12 },  // TotalTime
         { wch: 12 },
-        { wch: 12 }   // DeskTime
+        { wch: 12 },
+        { wch: 12 },
+        { wch: 12 }
       ];
 
       // ✅ Workbook Creation
