@@ -135,21 +135,29 @@ console.log(this.userRole)
 }
 
 
-logout() {
-  this.dialog.open(LogoutAlertDialog, {
-    data: {
-      title: 'Confirm Logout',
-      message: 'Are you sure you want to log out?'
-    }
-  }).afterClosed().subscribe(result => {
-    if (result === true) {
+// logout() {
+//   this.dialog.open(LogoutAlertDialog, {
+//     data: {
+//       title: 'Confirm Logout',
+//       message: 'Are you sure you want to log out?'
+//     }
+//   }).afterClosed().subscribe(result => {
+//     if (result === true) {
 
 
+//       this.authService.logoutRedirect({
+//         postLogoutRedirectUri: window.location.origin + '/login'
+//       });
+//     }
+//   });
+// }
+logout(){
+  const result = true;
+  if (result === true) {
       this.authService.logoutRedirect({
         postLogoutRedirectUri: window.location.origin + '/login'
       });
     }
-  });
 }
 
 
