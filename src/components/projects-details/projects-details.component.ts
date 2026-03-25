@@ -356,6 +356,11 @@ export class ProjectsDetailsComponent implements OnInit {
     this.fetchProjects();
   }
 
+ OpenReviewChilds(taskid: any) {
+  window.open(`https://sprintlyzer.qualis40.io/mantisbt/view.php?id=${taskid}`);
+}
+
+  
   fetchProjects(): void {
     this.loading = true;
     this.http.get<any[]>(`${this.apiBaseUrl}/api/ganttprojects`).subscribe({
@@ -682,5 +687,26 @@ clearDateFilter() {
     }
     return `${sel.length} Selected`;
   }
+  getTotalHoursForBug(project: any, bugId: number): string {
+  const key = `${project.Project_Name}__${project.Target_Version}`;
+  const tasks = this.bugDetailsState[key]?.[bugId]?.bugTaskDetails || [];
+
+  let totalMinutes = 0;
+
+  tasks.forEach((task: any) => {
+    if (task.total_hours) {
+      const parts = task.total_hours.split('.');
+      const hours = parseInt(parts[0], 10) || 0;
+      const minutes = parseInt(parts[1], 10) || 0;
+
+      totalMinutes += (hours * 60) + minutes;
+    }
+  });
+
+  const finalHours = Math.floor(totalMinutes / 60);
+  const finalMinutes = totalMinutes % 60;
+
+  return `${finalHours}.${finalMinutes.toString().padStart(2, '0')}`;
+}
 
 }

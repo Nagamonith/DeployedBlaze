@@ -312,11 +312,12 @@
                                 <th>Resource Name</th>
                                 <th>Task Resource Name</th>
                                 <th>Total Hours</th>
+                                <th>Total Review Bugs</th>
                                 <th>Relationship Type</th>
                               </tr>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let task of bugState.bugTaskDetails">
+                              <tr *ngFor="let task of bugState.bugTaskDetails" (dblclick)="OpenReviewChilds(task.task_id)">
                                 <td>{{ task.bug_id }}</td>
                                 <td>{{ task.task_id }}</td>
                                 <td>{{ task.target_version }}</td>
@@ -325,8 +326,18 @@
                                 <td>{{ task.resource_name }}</td>
                                 <td>{{ task.task_resource_name }}</td>
                                 <td>{{ task.total_hours }}</td>
+                                <td>{{ task.total_defects}}</td>
                                 <td>{{ task.relationship_type }}</td>
                               </tr>
+                              <tr>
+                              <td colspan="7" style="text-align: right; font-weight: bold;">
+                                Total
+                              </td>
+                              <td style="font-weight: bold;">
+                                {{ getTotalHoursForBug(project, bugState.bugId) }}
+                              </td>
+                              <td colspan="2"></td>
+                            </tr>
                             </tbody>
                           </table>
                         </div>
